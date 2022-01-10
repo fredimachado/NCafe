@@ -12,6 +12,11 @@ public class InMemoryReadModelRepository<T> : IReadModelRepository<T> where T : 
         items.TryAdd(model.Id, model);
     }
 
+    public IEnumerable<T> GetAll()
+    {
+        return items.Values.ToList();
+    }
+
     public T GetById(Guid id)
     {
         return items.TryGetValue(id, out T result) ? result : null;
