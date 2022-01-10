@@ -6,6 +6,7 @@ using NCafe.Abstractions.Queries;
 using NCafe.Abstractions.Repositories;
 using NCafe.Infrastructure.Commands;
 using NCafe.Infrastructure.EventStore;
+using NCafe.Infrastructure.Logging;
 using NCafe.Infrastructure.Queries;
 using System.Reflection;
 
@@ -47,6 +48,13 @@ public static class DependencyRegistration
             .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
+
+        return services;
+    }
+
+    public static IServiceCollection AddCommandHandlerLogger(this IServiceCollection services)
+    {
+        services.TryDecorate(typeof(ICommandHandler<>), typeof(CommandHandlerLogger<>));
 
         return services;
     }

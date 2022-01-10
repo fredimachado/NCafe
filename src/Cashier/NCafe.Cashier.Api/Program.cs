@@ -11,15 +11,16 @@ using NCafe.Infrastructure.ReadModels;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddEventStoreRepository(builder.Configuration);
-builder.Services.AddCommandHandlers(typeof(PlaceOrder).Assembly);
-builder.Services.AddQueryHandlers(typeof(PlaceOrder).Assembly);
+builder.Services.AddEventStoreRepository(builder.Configuration)
+                .AddCommandHandlers(typeof(PlaceOrder).Assembly)
+                .AddCommandHandlerLogger()
+                .AddQueryHandlers(typeof(PlaceOrder).Assembly);
 
-builder.Services.AddSingleton<IReadModelRepository<Product>, InMemoryReadModelRepository<Product>>();
-builder.Services.AddHostedService<Worker>();
+builder.Services.AddSingleton<IReadModelRepository<Product>, InMemoryReadModelRepository<Product>>()
+                .AddHostedService<Worker>();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer()
+                .AddSwaggerGen();
 
 var app = builder.Build();
 
