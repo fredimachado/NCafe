@@ -27,13 +27,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Cashier.Application.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Admin.Domain", "Admin\NCafe.Admin.Domain\NCafe.Admin.Domain.csproj", "{A874805E-2CF2-462A-87D2-3DB131BC3F4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Admin.Application", "Admin\NCafe.Admin.Application\NCafe.Admin.Application.csproj", "{0728A3BB-BCB4-4643-B017-9B200B12EFAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Admin.Application", "Admin\NCafe.Admin.Application\NCafe.Admin.Application.csproj", "{0728A3BB-BCB4-4643-B017-9B200B12EFAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Admin.Api", "Admin\NCafe.Admin.Api\NCafe.Admin.Api.csproj", "{39C8B7B6-0A8C-4B05-AEDC-5009DA08DC98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Admin.Api", "Admin\NCafe.Admin.Api\NCafe.Admin.Api.csproj", "{39C8B7B6-0A8C-4B05-AEDC-5009DA08DC98}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2694AE6D-E1BB-49F4-B8F6-D023610909BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Admin.Application.Tests", "Admin\NCafe.Admin.Application.Tests\NCafe.Admin.Application.Tests.csproj", "{CC3C230D-D815-43BD-B69E-6C760B76A529}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Admin.Application.Tests", "Admin\NCafe.Admin.Application.Tests\NCafe.Admin.Application.Tests.csproj", "{CC3C230D-D815-43BD-B69E-6C760B76A529}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Barista.Domain", "Barista\NCafe.Barista.Domain\NCafe.Barista.Domain.csproj", "{866D6B1C-8D66-467F-B63C-5ADBA4740639}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Barista.Application", "Barista\NCafe.Barista.Application\NCafe.Barista.Application.csproj", "{A7C78CF4-A6D4-4FB9-9CAC-21B6592847FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Barista.Api", "Barista\NCafe.Barista.Api\NCafe.Barista.Api.csproj", "{AC8D560E-89B7-4DE2-BD19-5FF3125F16DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,6 +87,18 @@ Global
 		{CC3C230D-D815-43BD-B69E-6C760B76A529}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC3C230D-D815-43BD-B69E-6C760B76A529}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC3C230D-D815-43BD-B69E-6C760B76A529}.Release|Any CPU.Build.0 = Release|Any CPU
+		{866D6B1C-8D66-467F-B63C-5ADBA4740639}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{866D6B1C-8D66-467F-B63C-5ADBA4740639}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{866D6B1C-8D66-467F-B63C-5ADBA4740639}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{866D6B1C-8D66-467F-B63C-5ADBA4740639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7C78CF4-A6D4-4FB9-9CAC-21B6592847FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7C78CF4-A6D4-4FB9-9CAC-21B6592847FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7C78CF4-A6D4-4FB9-9CAC-21B6592847FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7C78CF4-A6D4-4FB9-9CAC-21B6592847FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC8D560E-89B7-4DE2-BD19-5FF3125F16DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC8D560E-89B7-4DE2-BD19-5FF3125F16DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC8D560E-89B7-4DE2-BD19-5FF3125F16DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC8D560E-89B7-4DE2-BD19-5FF3125F16DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +116,9 @@ Global
 		{39C8B7B6-0A8C-4B05-AEDC-5009DA08DC98} = {F4C2E948-EA5B-4C0E-9C52-8C217E5955B6}
 		{2694AE6D-E1BB-49F4-B8F6-D023610909BC} = {F4C2E948-EA5B-4C0E-9C52-8C217E5955B6}
 		{CC3C230D-D815-43BD-B69E-6C760B76A529} = {2694AE6D-E1BB-49F4-B8F6-D023610909BC}
+		{866D6B1C-8D66-467F-B63C-5ADBA4740639} = {B545EEC2-DBBF-4695-BC91-37028FF91F99}
+		{A7C78CF4-A6D4-4FB9-9CAC-21B6592847FC} = {B545EEC2-DBBF-4695-BC91-37028FF91F99}
+		{AC8D560E-89B7-4DE2-BD19-5FF3125F16DA} = {B545EEC2-DBBF-4695-BC91-37028FF91F99}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0136BF1-D5F3-4E83-8D23-E3F43534FBB5}
