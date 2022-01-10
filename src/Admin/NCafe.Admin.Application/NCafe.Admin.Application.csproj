@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\NCafe.Abstractions\NCafe.Abstractions.csproj" />
     <ProjectReference Include="..\NCafe.Admin.Domain\NCafe.Admin.Domain.csproj" />
   </ItemGroup>
 
