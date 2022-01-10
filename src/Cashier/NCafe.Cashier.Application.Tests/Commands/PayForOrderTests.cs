@@ -41,7 +41,7 @@ public class PayForOrderTests
     public async Task GivenOrderNotFound_ShouldThrowException()
     {
         // Arrange
-        A.CallTo(() => repository.GetById<Order, Guid>(A<Guid>._))
+        A.CallTo(() => repository.GetById<Order>(A<Guid>._))
             .Returns((Order)null);
         var command = new PayForOrder(Guid.NewGuid());
 
@@ -57,7 +57,7 @@ public class PayForOrderTests
     {
         // Arrange
         var orderId = Guid.NewGuid();
-        A.CallTo(() => repository.GetById<Order, Guid>(orderId))
+        A.CallTo(() => repository.GetById<Order>(orderId))
             .Returns(new Order(orderId, Guid.NewGuid(), 1));
 
         var command = new PayForOrder(orderId);

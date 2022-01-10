@@ -4,7 +4,7 @@ using NCafe.Cashier.Domain.Events;
 
 namespace NCafe.Cashier.Domain.Entities;
 
-public sealed class Order : AggregateRoot<Guid>
+public sealed class Order : AggregateRoot
 {
     private Order()
     {

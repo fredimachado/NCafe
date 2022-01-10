@@ -4,7 +4,7 @@ using NCafe.Admin.Domain.Events;
 
 namespace NCafe.Admin.Domain.Entities;
 
-public sealed class Product : AggregateRoot<Guid>
+public sealed class Product : AggregateRoot
 {
     private Product()
     {

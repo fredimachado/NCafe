@@ -10,7 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Domain\" />
+    <ProjectReference Include="..\..\Common\NCafe.Infrastructure\NCafe.Infrastructure.csproj" />
+    <ProjectReference Include="..\NCafe.Cashier.Application\NCafe.Cashier.Application.csproj" />
   </ItemGroup>
 
 </Project>

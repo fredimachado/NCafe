@@ -24,7 +24,7 @@ internal sealed class PayForOrderHandler : ICommandHandler<PayForOrder>
             throw new InvalidIdException();
         }
 
-        var order = await repository.GetById<Order, Guid>(command.Id);
+        var order = await repository.GetById<Order>(command.Id);
 
         if (order is null)
         {
