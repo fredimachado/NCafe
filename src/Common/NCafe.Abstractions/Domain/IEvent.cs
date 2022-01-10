@@ -3,12 +3,12 @@
 public interface IEvent
 {
     Guid Id { get; }
-    int Version { get; }
+    long Version { get; }
 }
 
 public abstract class Event : IEvent
 {
     public Guid Id { get; protected set; }
 
-    public int Version { get; protected internal set; }
+    public long Version { get; protected internal set; }
 }
