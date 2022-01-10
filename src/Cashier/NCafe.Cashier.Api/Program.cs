@@ -5,6 +5,7 @@ using NCafe.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddEventStoreRepository(builder.Configuration);
 builder.Services.AddCommandHandlers(typeof(PlaceOrder).Assembly);
 
 builder.Services.AddEndpointsApiExplorer();
