@@ -9,66 +9,65 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace NCafe.Cashier.Application.Tests.Commands
+namespace NCafe.Cashier.Application.Tests.Commands;
+
+public class PayForOrderTests
 {
-    public class PayForOrderTests
+    private readonly PayForOrderHandler sut;
+
+    private readonly IRepository repository;
+
+    public PayForOrderTests()
     {
-        private readonly PayForOrderHandler sut;
+        repository = A.Fake<IRepository>();
 
-        private readonly IRepository repository;
+        sut = new PayForOrderHandler(repository);
+    }
 
-        public PayForOrderTests()
-        {
-            repository = A.Fake<IRepository>();
+    [Fact]
+    public async Task GivenInvalidOrderId_ShouldThrowException()
+    {
+        // Arrange
+        var command = new PayForOrder(Guid.Empty);
 
-            sut = new PayForOrderHandler(repository);
-        }
+        // Act
+        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
 
-        [Fact]
-        public async Task GivenInvalidOrderId_ShouldThrowException()
-        {
-            // Arrange
-            var command = new PayForOrder(Guid.Empty);
+        // Assert
+        exception.ShouldBeOfType<InvalidIdException>();
+    }
 
-            // Act
-            var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+    [Fact]
+    public async Task GivenOrderNotFound_ShouldThrowException()
+    {
+        // Arrange
+        A.CallTo(() => repository.GetById<Order, Guid>(A<Guid>._))
+            .Returns((Order)null);
+        var command = new PayForOrder(Guid.NewGuid());
 
-            // Assert
-            exception.ShouldBeOfType<InvalidIdException>();
-        }
+        // Act
+        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
 
-        [Fact]
-        public async Task GivenOrderNotFound_ShouldThrowException()
-        {
-            // Arrange
-            A.CallTo(() => repository.GetById<Order, Guid>(A<Guid>._))
-                .Returns((Order)null);
-            var command = new PayForOrder(Guid.NewGuid());
+        // Assert
+        exception.ShouldBeOfType<OrderNotFoundException>();
+    }
 
-            // Act
-            var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+    [Fact]
+    public async Task GivenPlacedOrder_WhenPayingForOrder_ShouldUpdateOrder()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        A.CallTo(() => repository.GetById<Order, Guid>(orderId))
+            .Returns(new Order(orderId, Guid.NewGuid(), 1));
 
-            // Assert
-            exception.ShouldBeOfType<OrderNotFoundException>();
-        }
+        var command = new PayForOrder(orderId);
 
-        [Fact]
-        public async Task GivenPlacedOrder_WhenPayingForOrder_ShouldUpdateOrder()
-        {
-            // Arrange
-            var orderId = Guid.NewGuid();
-            A.CallTo(() => repository.GetById<Order, Guid>(orderId))
-                .Returns(new Order(orderId, Guid.NewGuid(), 1));
+        // Act
+        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
 
-            var command = new PayForOrder(orderId);
-
-            // Act
-            var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
-
-            // Assert
-            exception.ShouldBeNull();
-            A.CallTo(() => repository.Save(A<Order>.That.Matches(o => o.Id == orderId && o.HasBeenPaid == true)))
-                .MustHaveHappenedOnceExactly();
-        }
+        // Assert
+        exception.ShouldBeNull();
+        A.CallTo(() => repository.Save(A<Order>.That.Matches(o => o.Id == orderId && o.HasBeenPaid == true)))
+            .MustHaveHappenedOnceExactly();
     }
 }
