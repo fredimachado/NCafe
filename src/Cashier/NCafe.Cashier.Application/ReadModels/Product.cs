@@ -1,8 +1,9 @@
-﻿namespace NCafe.Cashier.Application.ReadModels;
+﻿using NCafe.Abstractions.ReadModels;
 
-public sealed class Product
+namespace NCafe.Cashier.Application.ReadModels;
+
+public sealed class Product : ReadModel
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
     public decimal Price { get; set; }
 }

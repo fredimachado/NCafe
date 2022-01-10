@@ -1,9 +1,9 @@
 ﻿using FakeItEasy;
+using NCafe.Abstractions.ReadModels;
 using NCafe.Abstractions.Repositories;
 using NCafe.Cashier.Application.Commands;
 using NCafe.Cashier.Application.Exceptions;
 using NCafe.Cashier.Application.ReadModels;
-using NCafe.Cashier.Application.Services;
 using NCafe.Cashier.Domain.Entities;
 using Shouldly;
 using System;
@@ -17,14 +17,14 @@ public class PlaceOrderTests
     private readonly PlaceOrderHandler sut;
 
     private readonly IRepository repository;
-    private readonly IProductReadService productReadService;
+    private readonly IReadModelRepository<Product> productRepository;
 
     public PlaceOrderTests()
     {
         repository = A.Fake<IRepository>();
-        productReadService = A.Fake<IProductReadService>();
+        productRepository = A.Fake<IReadModelRepository<Product>>();
 
-        sut = new PlaceOrderHandler(repository, productReadService);
+        sut = new PlaceOrderHandler(repository, productRepository);
     }
 
     [Fact]
@@ -32,8 +32,8 @@ public class PlaceOrderTests
     {
         // Arrange
         var productId = Guid.NewGuid();
-        A.CallTo(() => productReadService.GetProductAsync(productId))
-            .Returns((Product)null);
+        A.CallTo(() => productRepository.GetById(productId))
+            .Returns(null);
 
         var command = new PlaceOrder(productId, 1);
 
@@ -49,7 +49,7 @@ public class PlaceOrderTests
     {
         // Arrange
         var productId = Guid.NewGuid();
-        A.CallTo(() => productReadService.GetProductAsync(productId))
+        A.CallTo(() => productRepository.GetById(productId))
             .Returns(new Product { Id = productId });
 
         var command = new PlaceOrder(productId, 1);
