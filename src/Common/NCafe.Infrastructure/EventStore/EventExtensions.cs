@@ -3,15 +3,17 @@ using NCafe.Abstractions.Domain;
 using System.Text;
 using System.Text.Json;
 
-namespace NCafe.Infrastructure.Extensions;
+namespace NCafe.Infrastructure.EventStore;
 
 public static class EventExtensions
 {
+    private const string EventClrTypeNameHeader = "EventClrTypeName";
+
     public static Event AsAggregateEvent(this ResolvedEvent resolvedEvent)
     {
         var eventClrTypeName = JsonDocument.Parse(resolvedEvent.Event.Metadata)
             .RootElement
-            .GetProperty(Constants.EventClrTypeNameHeader)
+            .GetProperty(EventClrTypeNameHeader)
             .GetString();
 
         if (JsonSerializer.Deserialize(resolvedEvent.Event.Data.Span, Type.GetType(eventClrTypeName)) is Event @event)
@@ -31,7 +33,7 @@ public static class EventExtensions
     {
         var metadata = new Dictionary<string, string>
         {
-            { Constants.EventClrTypeNameHeader, @event.GetType().AssemblyQualifiedName }
+            { EventClrTypeNameHeader, @event.GetType().AssemblyQualifiedName }
         };
 
         return Serialize(metadata);
