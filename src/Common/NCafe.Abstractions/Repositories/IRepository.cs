@@ -4,7 +4,7 @@ namespace NCafe.Abstractions.Repositories;
 
 public interface IRepository
 {
-    Task<TAggregate> GetById<TAggregate, TId>(TId id)
-        where TAggregate : AggregateRoot<TId>;
-    Task Save<TId>(AggregateRoot<TId> aggregate);
+    Task<TAggregate> GetById<TAggregate>(Guid id)
+        where TAggregate : AggregateRoot;
+    Task Save<TId>(AggregateRoot aggregate);
 }

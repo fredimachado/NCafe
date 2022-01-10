@@ -2,9 +2,9 @@
 
 namespace NCafe.Abstractions.Domain;
 
-public abstract class AggregateRoot<TId>
+public abstract class AggregateRoot
 {
-    public TId Id { get; protected set; }
+    public Guid Id { get; protected set; }
     public int Version { get; protected set; } = -1;
 
     private readonly List<IEvent> _pendingEvents = new();
@@ -32,7 +32,7 @@ public abstract class AggregateRoot<TId>
     {
         if (@event.Version != Version + 1)
         {
-            throw new InvalidVersionException<TId>(@event, this);
+            throw new InvalidVersionException(@event, this);
         }
 
         ((dynamic)this).Apply((dynamic)@event);
