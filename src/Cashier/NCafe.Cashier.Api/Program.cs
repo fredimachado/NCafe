@@ -1,12 +1,19 @@
 using NCafe.Abstractions.Commands;
+using NCafe.Abstractions.ReadModels;
+using NCafe.Cashier.Api.ReadModel;
 using NCafe.Cashier.Application.Commands;
+using NCafe.Cashier.Application.ReadModels;
 using NCafe.Infrastructure;
+using NCafe.Infrastructure.ReadModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration);
 builder.Services.AddCommandHandlers(typeof(PlaceOrder).Assembly);
+
+builder.Services.AddSingleton<IReadModelRepository<Product>, InMemoryReadModelRepository<Product>>();
+builder.Services.AddHostedService<Worker>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
