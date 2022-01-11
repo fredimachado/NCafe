@@ -1,3 +1,4 @@
+using NCafe.Barista.Api.EventBus;
 using NCafe.Barista.Application.Commands;
 using NCafe.Infrastructure;
 
@@ -8,6 +9,8 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddCommandHandlers(typeof(PlaceOrder).Assembly)
                 .AddCommandHandlerLogger()
                 .AddQueryHandlers(typeof(PlaceOrder).Assembly);
+
+builder.Services.AddHostedService<OrdersConsumer>();
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
