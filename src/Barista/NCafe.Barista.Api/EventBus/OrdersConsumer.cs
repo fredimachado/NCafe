@@ -14,6 +14,8 @@ public class OrdersConsumer : BackgroundService
     private readonly ICommandDispatcher commandDispatcher;
     private readonly ILogger<OrdersConsumer> logger;
 
+    private IConsumer<Null, string> consumer;
+
     public OrdersConsumer(
         ICommandDispatcher commandDispatcher,
         IConfiguration configuration,
@@ -22,42 +24,71 @@ public class OrdersConsumer : BackgroundService
         consumerConfig = new ConsumerConfig
         {
             BootstrapServers = configuration["KafkaConfig:BootstrapServers"],
-            GroupId = configuration["KafkaConfig:BaristaConsumerGroupName"]
+            GroupId = configuration["KafkaConfig:BaristaConsumerGroupName"],
+            EnableAutoCommit = false,
+            AutoOffsetReset = AutoOffsetReset.Earliest
         };
         this.commandDispatcher = commandDispatcher;
         this.logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    public override Task StartAsync(CancellationToken cancellationToken)
     {
-        using var consumer = new ConsumerBuilder<Null, string>(consumerConfig)
-            .SetErrorHandler((_, e) => logger.LogError("Consumer error: {reason}", e.Reason))
-            .Build();
+        logger.LogInformation("Starting consumer background service.");
+
+        consumer = new ConsumerBuilder<Null, string>(consumerConfig)
+                    .SetErrorHandler((_, e) => logger.LogError("Consumer error: {reason}", e.Reason))
+                    .Build();
 
         consumer.Subscribe(Topic);
 
+        return base.StartAsync(cancellationToken);
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        // https://github.com/dotnet/runtime/issues/36063
+        await Task.Yield();
+
         try
         {
-            while (true)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    var cr = consumer.Consume(stoppingToken);
-                    logger.LogInformation("Consuming Order {orderPayload}", cr.Message.Value);
+                    var result = consumer.Consume(stoppingToken);
+                    logger.LogInformation("Consuming Order {orderPayload}", result.Message.Value);
 
-                    var orderPlaced = JsonSerializer.Deserialize<OrderPlaced>(cr.Message.Value);
+                    var orderPlaced = JsonSerializer.Deserialize<OrderPlaced>(result.Message.Value);
 
                     await commandDispatcher.DispatchAsync(new PlaceOrder(orderPlaced.Id, orderPlaced.ProductId, orderPlaced.Quantity));
+
+                    consumer.Commit(result);
                 }
                 catch (ConsumeException e)
                 {
                     logger.LogError(e, "Consumer error: {reason}", e.Error.Reason);
                 }
+                catch (Exception e)
+                {
+                    logger.LogError(e, "There was an error consuming a message.");
+                }
             }
         }
         catch (OperationCanceledException)
         {
+            logger.LogInformation("Closing consumer.");
             consumer.Close();
         }
+    }
+
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        logger.LogInformation("Stopping consumer background service.");
+
+        consumer.Unsubscribe();
+        consumer.Close();
+
+        return base.StopAsync(cancellationToken);
     }
 }
