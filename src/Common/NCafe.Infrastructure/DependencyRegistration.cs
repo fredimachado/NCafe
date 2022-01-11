@@ -62,8 +62,18 @@ public static class DependencyRegistration
         return services;
     }
 
-    public static IServiceCollection AddKafkaPublisher(this IServiceCollection services)
+    public static IServiceCollection AddKafkaPublisher(this IServiceCollection services, IConfiguration configuration)
     {
+        var section = configuration.GetRequiredSection(KafkaOptions.SectionKey);
+        var options = new KafkaOptions();
+        section.Bind(options);
+
+        if (string.IsNullOrWhiteSpace(options.BootstrapServers))
+        {
+            throw new InvalidOperationException("Invalid Kafka configuration.");
+        }
+
+        services.Configure<KafkaOptions>(section);
         services.AddSingleton<IPublisher, KafkaPublisher>();
 
         return services;
