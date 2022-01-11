@@ -1,10 +1,13 @@
 ﻿using EventStore.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using NCafe.Abstractions.Commands;
+using NCafe.Abstractions.EventBus;
 using NCafe.Abstractions.Queries;
 using NCafe.Abstractions.Repositories;
 using NCafe.Infrastructure.Commands;
+using NCafe.Infrastructure.EventBus;
 using NCafe.Infrastructure.EventStore;
 using NCafe.Infrastructure.Logging;
 using NCafe.Infrastructure.Queries;
@@ -55,6 +58,13 @@ public static class DependencyRegistration
     public static IServiceCollection AddCommandHandlerLogger(this IServiceCollection services)
     {
         services.TryDecorate(typeof(ICommandHandler<>), typeof(CommandHandlerLogger<>));
+
+        return services;
+    }
+
+    public static IServiceCollection AddKafkaPublisher(this IServiceCollection services)
+    {
+        services.AddSingleton<IPublisher, KafkaPublisher>();
 
         return services;
     }

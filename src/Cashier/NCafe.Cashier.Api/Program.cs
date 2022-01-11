@@ -19,6 +19,8 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
 builder.Services.AddSingleton<IReadModelRepository<Product>, InMemoryReadModelRepository<Product>>()
                 .AddHostedService<Worker>();
 
+builder.Services.AddKafkaPublisher();
+
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
 

@@ -35,11 +35,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2694AE6D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Admin.Application.Tests", "Admin\NCafe.Admin.Application.Tests\NCafe.Admin.Application.Tests.csproj", "{CC3C230D-D815-43BD-B69E-6C760B76A529}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Barista.Domain", "Barista\NCafe.Barista.Domain\NCafe.Barista.Domain.csproj", "{866D6B1C-8D66-467F-B63C-5ADBA4740639}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Barista.Domain", "Barista\NCafe.Barista.Domain\NCafe.Barista.Domain.csproj", "{866D6B1C-8D66-467F-B63C-5ADBA4740639}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Barista.Application", "Barista\NCafe.Barista.Application\NCafe.Barista.Application.csproj", "{A7C78CF4-A6D4-4FB9-9CAC-21B6592847FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Barista.Application", "Barista\NCafe.Barista.Application\NCafe.Barista.Application.csproj", "{A7C78CF4-A6D4-4FB9-9CAC-21B6592847FC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Barista.Api", "Barista\NCafe.Barista.Api\NCafe.Barista.Api.csproj", "{AC8D560E-89B7-4DE2-BD19-5FF3125F16DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Barista.Api", "Barista\NCafe.Barista.Api\NCafe.Barista.Api.csproj", "{AC8D560E-89B7-4DE2-BD19-5FF3125F16DA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38B2A41D-2CD0-48A4-8B0E-8380E6C20FAB}"
+	ProjectSection(SolutionItems) = preProject
+		..\docker-compose.yaml = ..\docker-compose.yaml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
