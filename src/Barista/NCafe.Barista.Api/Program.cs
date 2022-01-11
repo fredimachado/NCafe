@@ -1,8 +1,16 @@
+using NCafe.Barista.Application.Commands;
+using NCafe.Infrastructure;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddEventStoreRepository(builder.Configuration)
+                .AddCommandHandlers(typeof(PlaceOrder).Assembly)
+                .AddCommandHandlerLogger()
+                .AddQueryHandlers(typeof(PlaceOrder).Assembly);
+
+builder.Services.AddEndpointsApiExplorer()
+                .AddSwaggerGen();
 
 var app = builder.Build();
 
