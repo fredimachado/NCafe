@@ -12,11 +12,11 @@ public sealed class Order : AggregateRoot
 
     public Order(Guid id, Guid productId, int quantity)
     {
-        Id = Guard.Against.Default(id, nameof(id));
-        productId = Guard.Against.Default(productId, nameof(productId));
-        Quantity = Guard.Against.NegativeOrZero(quantity, nameof(quantity));
+        Guard.Against.Default(id, nameof(id));
+        Guard.Against.Default(productId, nameof(productId));
+        Guard.Against.NegativeOrZero(quantity, nameof(quantity));
 
-        RaiseEvent(new OrderPlaced(Id)
+        RaiseEvent(new OrderPlaced(id)
         {
             ProductId = productId,
             Quantity = quantity
