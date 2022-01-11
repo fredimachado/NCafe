@@ -1,6 +1,6 @@
 ﻿using Confluent.Kafka;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NCafe.Abstractions.EventBus;
 using System.Text.Json;
 
@@ -8,12 +8,12 @@ namespace NCafe.Infrastructure.EventBus;
 
 public class KafkaPublisher : IPublisher
 {
-    private readonly IConfiguration configuration;
+    private readonly KafkaOptions kafkaOptions;
     private readonly ILogger logger;
 
-    public KafkaPublisher(IConfiguration configuration, ILogger<KafkaPublisher> logger)
+    public KafkaPublisher(IOptions<KafkaOptions> options, ILogger<KafkaPublisher> logger)
     {
-        this.configuration = configuration;
+        this.kafkaOptions = options.Value;
         this.logger = logger;
     }
 
@@ -22,7 +22,7 @@ public class KafkaPublisher : IPublisher
         using var producer =
             new ProducerBuilder<Null, string>(new ProducerConfig()
             {
-                BootstrapServers = configuration["KafkaConfig:BootstrapServers"]
+                BootstrapServers = kafkaOptions.BootstrapServers
             })
             .Build();
 
