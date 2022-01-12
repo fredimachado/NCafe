@@ -63,7 +63,7 @@ public class ProductProjectionService : BackgroundService
         return Task.CompletedTask;
     }
 
-    private void SubscriptionDropped(StreamSubscription arg1, SubscriptionDroppedReason arg2, Exception arg3)
+    private void SubscriptionDropped(StreamSubscription subscription, SubscriptionDroppedReason reason, Exception exception)
     {
         logger.LogError("Subscription Dropped.", DateTimeOffset.Now);
     }
