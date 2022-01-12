@@ -1,5 +1,9 @@
 using NCafe.Abstractions.Commands;
+using NCafe.Abstractions.Queries;
+using NCafe.Admin.Api.Projections;
 using NCafe.Admin.Domain.Commands;
+using NCafe.Admin.Domain.Queries;
+using NCafe.Admin.Domain.ReadModels;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +11,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddCommandHandlers(typeof(CreateProduct).Assembly)
-                .AddCommandHandlerLogger();
+                .AddCommandHandlerLogger()
+                .AddQueryHandlers(typeof(CreateProduct).Assembly);
+
+builder.Services.AddInMemoryReadModelRepository<Product>()
+                .AddHostedService<ProductProjectionService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -22,6 +30,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.MapGet("/products", async (IQueryDispatcher queryDispatcher) =>
+{
+    var result = await queryDispatcher.QueryAsync(new GetProducts());
+    return Results.Ok(result);
+})
+.WithName("GetProducts");
 
 app.MapPost("/products", async (ICommandDispatcher commandDispatcher, CreateProduct command) =>
 {
