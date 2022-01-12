@@ -17,6 +17,8 @@ services:
     ports:
       - "1113:1113"
       - "2113:2113"
+    networks:
+      - ncafe
     logging:
       options:
         max-size: '100m'
@@ -30,30 +32,45 @@ services:
         target: /var/log/eventstore
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.0
+    image: confluentinc/cp-zookeeper:7.0.1
     hostname: zookeeper
     container_name: zookeeper
+    networks:
+      - ncafe
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - type: volume
+        source: zookeeper-volume-data
+        target: /var/lib/zookeeper/data
+      - type: volume
+        source: zookeeper-volume-logs
+        target: /var/lib/zookeeper/log
 
   kafka:
-    image: confluentinc/cp-kafka:7.0.0
+    image: confluentinc/cp-kafka:7.0.1
     container_name: kafka
     ports:
       - "9092:9092"
+    networks:
+      - ncafe
     depends_on:
       - zookeeper
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_INTERNAL://kafka:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_LOG_RETENTION_BYTES: -1
       KAFKA_LOG_RETENTION_HOURS: -1
+    volumes:
+      - type: volume
+        source: kafka-volume-data
+        target: /var/lib/kafka/data
 
   kafdrop:
     image: obsidiandynamics/kafdrop
@@ -61,14 +78,26 @@ services:
     restart: "no"
     ports:
       - 9000:9000
+    networks:
+      - ncafe
     environment:
       KAFKA_BROKERCONNECT: PLAINTEXT://kafka:29092
       JVM_OPTS: -Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify
     depends_on:
       - kafka
 
+networks:
+  ncafe:
+    name: ncafe
+
 volumes:
   eventstore-volume-data:
     driver: local
   eventstore-volume-logs:
+    driver: local
+  zookeeper-volume-data:
+    driver: local
+  zookeeper-volume-logs:
+    driver: local
+  kafka-volume-data:
     driver: local
