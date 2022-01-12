@@ -2,7 +2,7 @@
 
 Minimal .NET microservices implementation in the context of a cafe.
 
-Based on the [microcafe](https://github.com/rbanks54/microcafe) project by [Richard Banks](https://github.com/rbanks54).
+Heavily inspired on the [microcafe](https://github.com/rbanks54/microcafe) project by [Richard Banks](https://github.com/rbanks54).
 
 ### Warning
 
