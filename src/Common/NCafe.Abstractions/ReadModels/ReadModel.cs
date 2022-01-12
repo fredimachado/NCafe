@@ -1,7 +1,6 @@
-﻿namespace NCafe.Abstractions.ReadModels
+﻿namespace NCafe.Abstractions.ReadModels;
+
+public abstract class ReadModel
 {
-    public abstract class ReadModel
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }
