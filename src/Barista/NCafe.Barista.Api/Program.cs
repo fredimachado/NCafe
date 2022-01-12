@@ -1,6 +1,8 @@
 using NCafe.Abstractions.Commands;
+using NCafe.Abstractions.Queries;
 using NCafe.Barista.Api.MessageBus;
 using NCafe.Barista.Domain.Commands;
+using NCafe.Barista.Domain.Queries;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +29,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.MapGet("/orders", async (IQueryDispatcher queryDispatcher) =>
+{
+    var result = await queryDispatcher.QueryAsync(new GetOrders());
+    return Results.Ok(result);
+})
+.WithName("GetOrders");
 
 app.MapPost("/orders/{id:guid}/prepared", async (ICommandDispatcher commandDispatcher, Guid id) =>
 {
