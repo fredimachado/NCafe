@@ -1,5 +1,5 @@
 using NCafe.Abstractions.Commands;
-using NCafe.Admin.Application.Commands;
+using NCafe.Admin.Domain.Commands;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);

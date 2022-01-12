@@ -2,9 +2,9 @@ using NCafe.Abstractions.Commands;
 using NCafe.Abstractions.Queries;
 using NCafe.Abstractions.ReadModels;
 using NCafe.Cashier.Api.ReadModel;
-using NCafe.Cashier.Application.Commands;
-using NCafe.Cashier.Application.Queries;
-using NCafe.Cashier.Application.ReadModels;
+using NCafe.Cashier.Domain.Queries;
+using NCafe.Cashier.Domain.Commands;
+using NCafe.Cashier.Domain.ReadModels;
 using NCafe.Infrastructure;
 using NCafe.Infrastructure.ReadModels;
 

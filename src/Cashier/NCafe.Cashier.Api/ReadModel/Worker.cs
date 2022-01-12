@@ -1,7 +1,7 @@
 ﻿using EventStore.Client;
 using NCafe.Abstractions.ReadModels;
-using NCafe.Cashier.Application.ReadModels;
-using NCafe.Cashier.Application.ReadModels.Events;
+using NCafe.Cashier.Domain.ReadModels;
+using NCafe.Cashier.Domain.ReadModels.Events;
 using System.Text.Json;
 
 namespace NCafe.Cashier.Api.ReadModel;

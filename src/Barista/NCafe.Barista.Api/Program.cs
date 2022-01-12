@@ -1,5 +1,5 @@
 using NCafe.Barista.Api.EventBus;
-using NCafe.Barista.Application.Commands;
+using NCafe.Barista.Domain.Commands;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,7 +29,7 @@ app.UseHttpsRedirection();
 
 app.MapPost("/orders/{id:guid}/prepared", () =>
 {
-    
+    return "Prepared...";
 })
 .WithName("CompletePreparation");
 
