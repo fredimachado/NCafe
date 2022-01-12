@@ -4,7 +4,7 @@ using NCafe.Abstractions.Repositories;
 
 namespace NCafe.Infrastructure.EventStore;
 
-public class EventStoreRepository : IRepository
+internal class EventStoreRepository : IRepository
 {
     private readonly EventStoreClient eventStoreClient;
 

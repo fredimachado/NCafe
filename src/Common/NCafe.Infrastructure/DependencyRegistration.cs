@@ -5,12 +5,14 @@ using Microsoft.Extensions.Options;
 using NCafe.Abstractions.Commands;
 using NCafe.Abstractions.EventBus;
 using NCafe.Abstractions.Queries;
+using NCafe.Abstractions.ReadModels;
 using NCafe.Abstractions.Repositories;
 using NCafe.Infrastructure.Commands;
 using NCafe.Infrastructure.EventBus;
 using NCafe.Infrastructure.EventStore;
 using NCafe.Infrastructure.Logging;
 using NCafe.Infrastructure.Queries;
+using NCafe.Infrastructure.ReadModels;
 using System.Reflection;
 
 namespace NCafe.Infrastructure;
@@ -78,4 +80,12 @@ public static class DependencyRegistration
 
         return services;
     }
+
+    public static IServiceCollection AddInMemoryReadModelRepository<T>(this IServiceCollection services) where T : ReadModel
+    {
+        services.AddSingleton<IReadModelRepository<T>, InMemoryReadModelRepository<T>>();
+
+        return services;
+    }
+
 }

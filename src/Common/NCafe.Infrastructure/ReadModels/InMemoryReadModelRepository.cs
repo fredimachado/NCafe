@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace NCafe.Infrastructure.ReadModels;
 
-public class InMemoryReadModelRepository<T> : IReadModelRepository<T> where T : ReadModel
+internal class InMemoryReadModelRepository<T> : IReadModelRepository<T> where T : ReadModel
 {
     private static readonly ConcurrentDictionary<Guid, T> items = new();
 

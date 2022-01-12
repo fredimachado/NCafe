@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace NCafe.Infrastructure.EventBus;
 
-public class KafkaPublisher : IPublisher
+internal class KafkaPublisher : IPublisher
 {
     private readonly KafkaOptions kafkaOptions;
     private readonly ILogger logger;

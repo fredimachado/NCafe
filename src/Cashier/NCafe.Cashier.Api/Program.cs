@@ -16,7 +16,7 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddCommandHandlerLogger()
                 .AddQueryHandlers(typeof(PlaceOrder).Assembly);
 
-builder.Services.AddSingleton<IReadModelRepository<Product>, InMemoryReadModelRepository<Product>>()
+builder.Services.AddInMemoryReadModelRepository<Product>()
                 .AddHostedService<Worker>();
 
 builder.Services.AddKafkaPublisher(builder.Configuration);
