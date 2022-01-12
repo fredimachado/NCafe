@@ -1,23 +1,24 @@
 ﻿using EventStore.Client;
 using NCafe.Abstractions.ReadModels;
 using NCafe.Cashier.Domain.ReadModels;
-using NCafe.Cashier.Domain.ReadModels.Events;
 using System.Text.Json;
 
 namespace NCafe.Cashier.Api.ReadModel;
 
-public class Worker : BackgroundService
+public class ProductProjectionService : BackgroundService
 {
     private readonly IServiceProvider serviceProvider;
     private readonly EventStoreClient eventStoreClient;
     private readonly IReadModelRepository<Product> productRepository;
     private readonly ILogger logger;
 
-    public Worker(
+    private const string ProductCreatedEventName = "ProductCreated";
+
+    public ProductProjectionService(
         IServiceProvider serviceProvider,
         EventStoreClient eventStoreClient,
         IReadModelRepository<Product> productRepository,
-        ILogger<Worker> logger)
+        ILogger<ProductProjectionService> logger)
     {
         this.serviceProvider = serviceProvider;
         this.eventStoreClient = eventStoreClient;
@@ -43,15 +44,9 @@ public class Worker : BackgroundService
 
     private Task ProductEventAppeared(StreamSubscription subscription, ResolvedEvent @event, CancellationToken cancellationToken)
     {
-        if (@event.Event.EventType == nameof(ProductCreated))
+        if (@event.Event.EventType == ProductCreatedEventName)
         {
-            var state = JsonSerializer.Deserialize<ProductCreated>(@event.Event.Data.Span);
-            var product = new Product()
-            {
-                Id = state.Id,
-                Name = state.Name,
-                Price = state.Price
-            };
+            var product = JsonSerializer.Deserialize<Product>(@event.Event.Data.Span);
             productRepository.Add(product);
             logger.LogInformation(
                 "Added product '{productName}' ({productId}) with price ${productPrice}",

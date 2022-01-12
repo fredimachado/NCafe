@@ -17,7 +17,7 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddQueryHandlers(typeof(PlaceOrder).Assembly);
 
 builder.Services.AddInMemoryReadModelRepository<Product>()
-                .AddHostedService<Worker>();
+                .AddHostedService<ProductProjectionService>();
 
 builder.Services.AddKafkaPublisher(builder.Configuration);
 
