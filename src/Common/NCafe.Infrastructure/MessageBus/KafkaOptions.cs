@@ -1,4 +1,4 @@
-﻿namespace NCafe.Infrastructure.EventBus;
+﻿namespace NCafe.Infrastructure.MessageBus;
 
 public class KafkaOptions
 {

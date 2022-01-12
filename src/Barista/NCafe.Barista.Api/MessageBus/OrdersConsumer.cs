@@ -4,7 +4,7 @@ using NCafe.Abstractions.EventBus.Events;
 using NCafe.Barista.Domain.Commands;
 using System.Text.Json;
 
-namespace NCafe.Barista.Api.EventBus;
+namespace NCafe.Barista.Api.MessageBus;
 
 public class OrdersConsumer : BackgroundService
 {

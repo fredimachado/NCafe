@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using NCafe.Abstractions.EventBus;
 using System.Text.Json;
 
-namespace NCafe.Infrastructure.EventBus;
+namespace NCafe.Infrastructure.MessageBus;
 
 internal class KafkaPublisher : IPublisher
 {
@@ -13,7 +13,7 @@ internal class KafkaPublisher : IPublisher
 
     public KafkaPublisher(IOptions<KafkaOptions> options, ILogger<KafkaPublisher> logger)
     {
-        this.kafkaOptions = options.Value;
+        kafkaOptions = options.Value;
         this.logger = logger;
     }
 

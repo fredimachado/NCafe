@@ -1,5 +1,5 @@
 using NCafe.Abstractions.Commands;
-using NCafe.Barista.Api.EventBus;
+using NCafe.Barista.Api.MessageBus;
 using NCafe.Barista.Domain.Commands;
 using NCafe.Infrastructure;
 
