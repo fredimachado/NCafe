@@ -36,6 +36,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 		docker-compose.yaml = docker-compose.yaml
 		README.md = README.md
+		services-compose.yaml = services-compose.yaml
+		variables.env = variables.env
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A650B4F4-E754-46C8-B48C-1C1277078D1E}"

@@ -1,0 +1,45 @@
+version: '3.4'
+
+services:
+  admin:
+    build:
+      dockerfile: src/Admin/NCafe.Admin.Api/Dockerfile
+    container_name: ncafe-admin
+    restart: unless-stopped
+    env_file: .env-local
+    ports:
+      - 5010:443
+    networks:
+      - ncafe
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+  cashier:
+    build:
+      dockerfile: src/Cashier/NCafe.Cashier.Api/Dockerfile
+    container_name: ncafe-cashier
+    restart: unless-stopped
+    env_file: .env-local
+    ports:
+      - 5020:443
+    networks:
+      - ncafe
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+  barista:
+    build:
+      dockerfile: src/Barista/NCafe.Barista.Api/Dockerfile
+    container_name: ncafe-barista
+    restart: unless-stopped
+    env_file: .env-local
+    ports:
+      - 5030:443
+    networks:
+      - ncafe
+    volumes:
+      - ~/.aspnet/https:/https:ro
+
+networks:
+  ncafe:
+    name: ncafe
