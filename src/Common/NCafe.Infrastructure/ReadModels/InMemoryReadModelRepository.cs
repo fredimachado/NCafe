@@ -9,7 +9,7 @@ internal class InMemoryReadModelRepository<T> : IReadModelRepository<T> where T 
 
     public void Add(T model)
     {
-        items.TryAdd(model.Id, model);
+        items[model.Id] = model;
     }
 
     public IEnumerable<T> GetAll()
@@ -19,6 +19,6 @@ internal class InMemoryReadModelRepository<T> : IReadModelRepository<T> where T 
 
     public T GetById(Guid id)
     {
-        return items.TryGetValue(id, out T result) ? result : null;
+        return items.TryGetValue(id, out var result) ? result : null;
     }
 }
