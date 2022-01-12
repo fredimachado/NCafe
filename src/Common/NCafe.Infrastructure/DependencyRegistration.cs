@@ -23,7 +23,7 @@ public static class DependencyRegistration
     {
         services.AddSingleton(e =>
         {
-            var settings = EventStoreClientSettings.Create(configuration.GetConnectionString("eventstore:http"));
+            var settings = EventStoreClientSettings.Create(configuration.GetConnectionString("EventStore"));
             var client = new EventStoreClient(settings);
             return client;
         });
