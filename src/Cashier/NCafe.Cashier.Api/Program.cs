@@ -42,10 +42,10 @@ app.MapGet("/products", async (IQueryDispatcher queryDispatcher) =>
 })
 .WithName("GetProducts");
 
-app.MapPost("/order", async (ICommandDispatcher commandDispatcher, PlaceOrder command) =>
+app.MapPost("/orders", async (ICommandDispatcher commandDispatcher, PlaceOrder command) =>
 {
     await commandDispatcher.DispatchAsync(command);
-    return Results.Created("/order", null);
+    return Results.Created("/orders", null);
 })
 .WithName("PlaceOrder");
 
