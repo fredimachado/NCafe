@@ -1,3 +1,4 @@
+using NCafe.Abstractions.Commands;
 using NCafe.Barista.Api.EventBus;
 using NCafe.Barista.Domain.Commands;
 using NCafe.Infrastructure;
@@ -27,9 +28,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 
-app.MapPost("/orders/{id:guid}/prepared", () =>
+app.MapPost("/orders/{id:guid}/prepared", async (ICommandDispatcher commandDispatcher, Guid id) =>
 {
-    return "Prepared...";
+    await commandDispatcher.DispatchAsync(new CompleteOrder(id));
+    return Results.Created("/orders", null);
 })
 .WithName("CompletePreparation");
 
