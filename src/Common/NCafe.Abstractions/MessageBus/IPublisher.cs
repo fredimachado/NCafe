@@ -1,4 +1,4 @@
-﻿namespace NCafe.Abstractions.EventBus;
+﻿namespace NCafe.Abstractions.MessageBus;
 
 public interface IPublisher
 {

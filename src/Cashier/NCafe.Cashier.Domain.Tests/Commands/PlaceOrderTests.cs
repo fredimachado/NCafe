@@ -1,6 +1,6 @@
 ﻿using FakeItEasy;
-using NCafe.Abstractions.EventBus;
-using NCafe.Abstractions.EventBus.Events;
+using NCafe.Abstractions.MessageBus;
+using NCafe.Abstractions.MessageBus.Events;
 using NCafe.Abstractions.ReadModels;
 using NCafe.Abstractions.Repositories;
 using NCafe.Cashier.Domain.Commands;
@@ -68,7 +68,7 @@ public class PlaceOrderTests
     }
 
     [Fact]
-    public async Task GivenOrderSaved_ShouldPublishToEventBus()
+    public async Task GivenOrderSaved_ShouldPublishToMessageBus()
     {
         // Arrange
         var productId = Guid.NewGuid();

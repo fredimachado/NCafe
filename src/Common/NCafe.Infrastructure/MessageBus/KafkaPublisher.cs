@@ -1,7 +1,7 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NCafe.Abstractions.EventBus;
+using NCafe.Abstractions.MessageBus;
 using System.Text.Json;
 
 namespace NCafe.Infrastructure.MessageBus;

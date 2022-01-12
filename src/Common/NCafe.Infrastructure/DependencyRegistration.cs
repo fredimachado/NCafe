@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.EventBus;
+using NCafe.Abstractions.MessageBus;
 using NCafe.Abstractions.Queries;
 using NCafe.Abstractions.ReadModels;
 using NCafe.Abstractions.Repositories;

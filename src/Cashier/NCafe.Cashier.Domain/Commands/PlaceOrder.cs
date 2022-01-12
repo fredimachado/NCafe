@@ -1,6 +1,6 @@
 ﻿using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.EventBus;
-using NCafe.Abstractions.EventBus.Events;
+using NCafe.Abstractions.MessageBus;
+using NCafe.Abstractions.MessageBus.Events;
 using NCafe.Abstractions.ReadModels;
 using NCafe.Abstractions.Repositories;
 using NCafe.Cashier.Domain.Exceptions;

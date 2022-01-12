@@ -1,6 +1,6 @@
 ﻿using Confluent.Kafka;
 using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.EventBus.Events;
+using NCafe.Abstractions.MessageBus.Events;
 using NCafe.Barista.Domain.Commands;
 using System.Text.Json;
 
