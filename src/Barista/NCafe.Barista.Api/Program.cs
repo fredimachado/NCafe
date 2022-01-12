@@ -1,8 +1,10 @@
 using NCafe.Abstractions.Commands;
 using NCafe.Abstractions.Queries;
 using NCafe.Barista.Api.MessageBus;
+using NCafe.Barista.Api.Projections;
 using NCafe.Barista.Domain.Commands;
 using NCafe.Barista.Domain.Queries;
+using NCafe.Barista.Domain.ReadModels;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,9 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddCommandHandlers(typeof(PlaceOrder).Assembly)
                 .AddCommandHandlerLogger()
                 .AddQueryHandlers(typeof(PlaceOrder).Assembly);
+
+builder.Services.AddInMemoryReadModelRepository<BaristaOrder>()
+                .AddHostedService<OrderProjectionService>();
 
 builder.Services.AddHostedService<OrdersConsumer>();
 
