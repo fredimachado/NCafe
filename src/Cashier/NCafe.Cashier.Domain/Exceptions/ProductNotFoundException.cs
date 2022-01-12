@@ -6,5 +6,8 @@ public class ProductNotFoundException : NCafeException
 {
     public ProductNotFoundException(Guid productId) : base($"Product '{productId}' was not found.")
     {
+        ProductId = productId;
     }
+
+    public Guid ProductId { get; }
 }
