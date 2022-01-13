@@ -34,10 +34,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{38B2A41D-2CD0-48A4-8B0E-8380E6C20FAB}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		.env-local = .env-local
 		infrastructure-compose.yaml = infrastructure-compose.yaml
 		README.md = README.md
 		services-compose.yaml = services-compose.yaml
-		variables.env = variables.env
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A650B4F4-E754-46C8-B48C-1C1277078D1E}"
@@ -50,7 +50,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Admin.Domain.Tests", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{F28F0BC8-4EA1-4980-B721-ED47D569343B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Web", "src\UI\NCafe.Web\NCafe.Web.csproj", "{25EC5820-391C-43AB-A750-D73346C30897}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Web", "src\UI\NCafe.Web\NCafe.Web.csproj", "{25EC5820-391C-43AB-A750-D73346C30897}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
