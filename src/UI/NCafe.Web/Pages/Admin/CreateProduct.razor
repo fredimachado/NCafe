@@ -40,27 +40,27 @@
             var response = await HttpClient.PostAsJsonAsync(url, product);
             response.EnsureSuccessStatusCode();
 
-            await NotificationService.Open(new NotificationConfig
+            var _ = NotificationService.Open(new NotificationConfig
                 {
                     Message = "Product Created",
                     Description = $"Product created successfuly.",
                     NotificationType = NotificationType.Success
                 });
 
-            await Task.Delay(100);
-
             NavigationManager.NavigateTo("admin");
         }
         catch (Exception ex)
         {
-            await NotificationService.Open(new NotificationConfig
+            var _ = NotificationService.Open(new NotificationConfig
                 {
                     Message = "Error",
                     Duration = 0,
                     Description = $"There was an error while attempting to save the product.",
                     NotificationType = NotificationType.Error
                 });
-
+        }
+        finally
+        {
             isLoading = false;
         }
     }
