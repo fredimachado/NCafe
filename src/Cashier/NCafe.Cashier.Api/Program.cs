@@ -24,6 +24,18 @@ builder.Services.AddKafkaPublisher(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
 
+var corsPolicyName = "AllowAll";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicyName,
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,6 +46,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(corsPolicyName);
 
 app.MapGet("/products", async (IQueryDispatcher queryDispatcher) =>
 {
