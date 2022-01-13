@@ -1,10 +1,11 @@
 ﻿@page "/admin"
+@using NCafe.Web.Models
 @inject HttpClient Http
 @inject IConfiguration Configuration
 
 <PageTitle>Admin - NCafe</PageTitle>
 
-<h3>Products</h3>
+<h2>Products</h2>
 
 <div>
     <a class="btn btn-success" href="admin/create-product"><i class="oi oi-plus"></i> Create New</a>
@@ -19,29 +20,22 @@
 
 @if (products == null)
 {
-    <p><em>Loading...</em></p>
+    <Spin />
+}
+else if (!products.Items.Any())
+{
+    <Result Title="No products to show." />
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in products.Items)
-            {
-                <tr>
-                    <td>@product.Id</td>
-                    <td>@product.Name</td>
-                    <td>@($"{product.Price:C2}")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <Table TItem="Product"
+           DataSource="@products.Items"
+           Total="@(products.Items.Count())"
+           HidePagination="true">
+        <Column @bind-Field="@context.Id" />
+        <Column @bind-Field="@context.Name" Sortable />
+        <Column @bind-Field="@context.Price" Format="C2" Sortable />
+    </Table>
 }
 
 @code {
@@ -51,10 +45,5 @@ else
     {
         var url = $"{Configuration["AdminBaseAddress"]}/products";
         products = await Http.GetFromJsonAsync<Products>(url);
-    }
-
-    public sealed class Products
-    {
-        public IEnumerable<Product> Items { get; set; }
     }
 }

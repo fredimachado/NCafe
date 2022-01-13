@@ -1,46 +1,67 @@
 ﻿@page "/admin/create-product"
+@using NCafe.Web.Models
 @inject HttpClient HttpClient
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
 
 <PageTitle>Create Product - NCafe</PageTitle>
 
-<h3>Create Product</h3>
+<h2>Create Product</h2>
 
-<EditForm Model="@product" OnValidSubmit="@SubmitProduct">
-    <DataAnnotationsValidator />
-
-    <div class="form-group">
-        <label>Name:</label>
-        <div>
-            <InputText @bind-Value="product.Name" />
-            <ValidationMessage For="@(() => product.Name)" />
-        </div>
-    </div>
-    <div class="form-group ">
-        <div>
-            <label>Price:</label>
-            <div>
-                <InputNumber @bind-Value="product.Price" />
-                <ValidationMessage For="@(() => product.Price)" />
-            </div>
-        </div>
-    </div>
-
-    <button type="submit" class="btn btn-success">
-        Save
-    </button>
-</EditForm>
+<Form Loading="isLoading" Model="@product"
+          OnFinish="SubmitProduct"
+          LabelColSpan="8"
+          WrapperColSpan="16">
+    <FormItem Label="Name">
+        <Input @bind-Value="@context.Name" />
+    </FormItem>
+    <FormItem Label="Price">
+        <Input @bind-Value="@context.Price" />
+    </FormItem>
+    <FormItem WrapperColOffset="8" WrapperColSpan="16">
+        <Button Type="@ButtonType.Primary" HtmlType="submit">
+            Save
+        </Button>
+    </FormItem>
+</Form>
 
 @code {
+    private bool isLoading;
     private Product product = new Product();
-    
+
     async Task SubmitProduct()
     {
+        isLoading = true;
+
         var url = $"{Configuration["AdminBaseAddress"]}/products";
-        var response = await HttpClient.PostAsJsonAsync(url, product);
+        try
+        {
+            var response = await HttpClient.PostAsJsonAsync(url, product);
+            response.EnsureSuccessStatusCode();
 
+            await NotificationService.Open(new NotificationConfig
+                {
+                    Message = "Product Created",
+                    Description = $"Product created successfuly.",
+                    NotificationType = NotificationType.Success
+                });
 
-        NavigationManager.NavigateTo("admin");
+            await Task.Delay(100);
+
+            NavigationManager.NavigateTo("admin");
+        }
+        catch (Exception ex)
+        {
+            await NotificationService.Open(new NotificationConfig
+                {
+                    Message = "Error",
+                    Duration = 0,
+                    Description = $"There was an error while attempting to save the product.",
+                    NotificationType = NotificationType.Error
+                });
+
+            isLoading = false;
+        }
     }
 }
