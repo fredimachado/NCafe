@@ -4,14 +4,9 @@ using NCafe.Cashier.Domain.ReadModels;
 
 namespace NCafe.Cashier.Domain.Queries;
 
-public record GetProducts : IQuery<Products>;
+public record GetProducts : IQuery<Product[]>;
 
-public sealed class Products
-{
-    public IEnumerable<Product> Items { get; set; }
-}
-
-internal sealed class GetProductsHandler : IQueryHandler<GetProducts, Products>
+internal sealed class GetProductsHandler : IQueryHandler<GetProducts, Product[]>
 {
     private readonly IReadModelRepository<Product> productRepository;
 
@@ -20,12 +15,10 @@ internal sealed class GetProductsHandler : IQueryHandler<GetProducts, Products>
         this.productRepository = productRepository;
     }
 
-    public Task<Products> HandleAsync(GetProducts query)
+    public Task<Product[]> HandleAsync(GetProducts query)
     {
-        var products = new Products()
-        {
-            Items = productRepository.GetAll()
-        };
+        var products = productRepository.GetAll()
+            .ToArray();
         return Task.FromResult(products);
     }
 }

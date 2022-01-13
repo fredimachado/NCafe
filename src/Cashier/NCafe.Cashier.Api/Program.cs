@@ -1,12 +1,10 @@
 using NCafe.Abstractions.Commands;
 using NCafe.Abstractions.Queries;
-using NCafe.Abstractions.ReadModels;
 using NCafe.Cashier.Api.ReadModel;
 using NCafe.Cashier.Domain.Queries;
 using NCafe.Cashier.Domain.Commands;
 using NCafe.Cashier.Domain.ReadModels;
 using NCafe.Infrastructure;
-using NCafe.Infrastructure.ReadModels;
 
 var builder = WebApplication.CreateBuilder(args);
 

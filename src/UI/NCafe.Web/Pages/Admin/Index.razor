@@ -26,15 +26,15 @@
 {
     <Spin />
 }
-else if (!products.Items.Any())
+else if (!products.Any())
 {
     <Result Title="No products to show." />
 }
 else
 {
     <Table TItem="Product"
-           DataSource="@products.Items"
-           Total="@(products.Items.Count())"
+           DataSource="@products"
+           Total="@(products.Length)"
            HidePagination="true">
         <Column @bind-Field="@context.Id" />
         <Column @bind-Field="@context.Name" Sortable />
@@ -43,12 +43,12 @@ else
 }
 
 @code {
-    private Products products;
+    private Product[] products;
 
     protected override async Task OnInitializedAsync()
     {
         var url = $"{Configuration["AdminBaseAddress"]}/products";
-        products = await Http.GetFromJsonAsync<Products>(url);
+        products = await Http.GetFromJsonAsync<Product[]>(url);
     }
 
     void CreateProduct()

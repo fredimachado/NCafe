@@ -13,7 +13,7 @@
 {
     <Spin />
 }
-else if (!products.Items.Any())
+else if (!products.Any())
 {
     <Result Title="You need products in order to place an order.">
         <Extra>
@@ -33,7 +33,7 @@ else
                 TOption="Product"
                 @bind-Value="@value"
                 OnSelectionChange="OnSelectionChange"
-                Options="products.Items"
+                Options="products"
                 Placeholder="Product..." />
         </FormItem>
         <FormItem Label="Quantity">
@@ -50,7 +50,7 @@ else
 @code {
     private bool isLoading;
 
-    private Products products;
+    private Product[] products;
 
     private AutoComplete<Product> productAutoComplete;
     private string value;
@@ -62,7 +62,7 @@ else
     {
         baseAddress = Configuration["CashierBaseAddress"];
 
-        products = await Http.GetFromJsonAsync<Products>($"{baseAddress}/products");
+        products = await Http.GetFromJsonAsync<Product[]>($"{baseAddress}/products");
     }
 
     void OnSelectionChange(AutoCompleteOption item)
