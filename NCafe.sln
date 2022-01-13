@@ -48,6 +48,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Barista.Domain.Tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Admin.Domain.Tests", "src\Admin\NCafe.Admin.Domain.Tests\NCafe.Admin.Domain.Tests.csproj", "{23A26860-042D-4E27-8D3D-FDAFEF231C42}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{F28F0BC8-4EA1-4980-B721-ED47D569343B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Web", "src\UI\NCafe.Web\NCafe.Web.csproj", "{25EC5820-391C-43AB-A750-D73346C30897}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +102,10 @@ Global
 		{23A26860-042D-4E27-8D3D-FDAFEF231C42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23A26860-042D-4E27-8D3D-FDAFEF231C42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23A26860-042D-4E27-8D3D-FDAFEF231C42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25EC5820-391C-43AB-A750-D73346C30897}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25EC5820-391C-43AB-A750-D73346C30897}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25EC5820-391C-43AB-A750-D73346C30897}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25EC5820-391C-43AB-A750-D73346C30897}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -117,6 +125,7 @@ Global
 		{7DDB6328-1E67-4245-A1F0-E78085B5F8F4} = {A45EA559-97E3-4460-A2E5-F385D0476851}
 		{13022A59-EDA3-409C-AB1E-0C74BF557DBC} = {A650B4F4-E754-46C8-B48C-1C1277078D1E}
 		{23A26860-042D-4E27-8D3D-FDAFEF231C42} = {2694AE6D-E1BB-49F4-B8F6-D023610909BC}
+		{25EC5820-391C-43AB-A750-D73346C30897} = {F28F0BC8-4EA1-4980-B721-ED47D569343B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0136BF1-D5F3-4E83-8D23-E3F43534FBB5}

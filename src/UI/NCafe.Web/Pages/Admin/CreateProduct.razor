@@ -1,0 +1,46 @@
+﻿@page "/admin/create-product"
+@inject HttpClient HttpClient
+@inject IConfiguration Configuration
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create Product - NCafe</PageTitle>
+
+<h3>Create Product</h3>
+
+<EditForm Model="@product" OnValidSubmit="@SubmitProduct">
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label>Name:</label>
+        <div>
+            <InputText @bind-Value="product.Name" />
+            <ValidationMessage For="@(() => product.Name)" />
+        </div>
+    </div>
+    <div class="form-group ">
+        <div>
+            <label>Price:</label>
+            <div>
+                <InputNumber @bind-Value="product.Price" />
+                <ValidationMessage For="@(() => product.Price)" />
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Save
+    </button>
+</EditForm>
+
+@code {
+    private Product product = new Product();
+    
+    async Task SubmitProduct()
+    {
+        var url = $"{Configuration["AdminBaseAddress"]}/products";
+        var response = await HttpClient.PostAsJsonAsync(url, product);
+
+
+        NavigationManager.NavigateTo("admin");
+    }
+}

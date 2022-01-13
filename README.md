@@ -75,7 +75,8 @@ Of course, you can also run them via Visual Studio or VS Code.
 
 ### NCafe in action
 
-I'm working on a Blazor Webassembly UI at the moment. But you can try it now using Swagger.
+Start the NCafe.Web project (Blazor WebAssembly) and create products, then use Swagger to make a request
+to the other endpoints.
 
 1. Create a product via the POST `/products` endpoint in **Admin**
 2. Get a product Id using the GET `/products` endpoint
