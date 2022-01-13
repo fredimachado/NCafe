@@ -1,13 +1,39 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <article class="content px-4">
+<Layout>
+    <Sider Style="overflow: auto;height: 100vh;position: fixed;left: 0;">
+        <div id="logo">
+            <h2><Icon Type="coffee" Theme="outline"/> NCafe</h2>
+         </div>
+        <Menu Theme="MenuTheme.Dark" Mode="MenuMode.Inline" DefaultSelectedKeys=@(new[]{"4"})>
+            <MenuItem Key="1" RouterLink="admin">
+                <Icon Type="tool" Theme="outline" />
+                <span class="nav-text">Admin</span>
+            </MenuItem>
+            <MenuItem Key="2" RouterLink="cashier">
+                <Icon Type="dollar" Theme="outline"/>
+                <span class="nav-text">Cashier</span>
+            </MenuItem>
+            <MenuItem Key="3">
+                <Icon Type="coffee" Theme="outline"/>
+                <span class="nav-text">Barista</span>
+            </MenuItem>
+        </Menu>
+    </Sider>
+    <Layout Class="site-layout" Style=" margin-left: 200px; height: 100vh">
+        <Content Style="margin: 24px 16px 0; overflow: initial; ">
             @Body
-        </article>
-    </main>
-</div>
+        </Content>
+    </Layout>
+</Layout>
+
+<style>
+    #logo {
+        margin: 16px;
+    }
+    #logo * {
+        color: white;
+        vertical-align: bottom;
+        height: 43px;
+    }
+</style>
