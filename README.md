@@ -1,4 +1,4 @@
-# NCafe
+# <img src="images/logo.svg?raw=true" alt="Logo" width="28" /> NCafe
 
 Minimal .NET microservices implementation in the context of a cafe.
 
