@@ -75,10 +75,14 @@ Of course, you can also run them via Visual Studio or VS Code.
 
 ### NCafe in action
 
-Start the NCafe.Web project (Blazor WebAssembly) and create products, then use Swagger to make a request
-to the other endpoints.
+1. Start the NCafe.Web project (Blazor WebAssembly)
+2. Create a new product in the Admin page
+3. Place an order in the Cashier page
+4. Complete the order in the Barista page
 
 ![Admin Screenshot](images/admin.png?raw=true)
+
+Or, you can use Swagger for example:
 
 1. Create a product via the POST `/products` endpoint in **Admin**
 2. Get a product Id using the GET `/products` endpoint
