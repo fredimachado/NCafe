@@ -40,7 +40,7 @@
             var response = await HttpClient.PostAsJsonAsync(url, product);
             response.EnsureSuccessStatusCode();
 
-            var _ = NotificationService.Open(new NotificationConfig
+            _ = NotificationService.Open(new NotificationConfig
                 {
                     Message = "Product Created",
                     Description = $"Product created successfuly.",
@@ -51,7 +51,7 @@
         }
         catch (Exception ex)
         {
-            var _ = NotificationService.Open(new NotificationConfig
+            _ = NotificationService.Open(new NotificationConfig
                 {
                     Message = "Error",
                     Duration = 0,

@@ -82,7 +82,7 @@ else
             var response = await Http.PostAsJsonAsync($"{baseAddress}/orders", order);
             response.EnsureSuccessStatusCode();
 
-            var _ = NotificationService.Open(new NotificationConfig
+            _ = NotificationService.Open(new NotificationConfig
                 {
                     Message = "Order Created",
                     Description = $"Order created successfuly.",
@@ -97,7 +97,7 @@ else
         }
         catch (Exception ex)
         {
-            var _ = NotificationService.Open(new NotificationConfig
+            _ = NotificationService.Open(new NotificationConfig
                 {
                     Message = "Error",
                     Duration = 0,
