@@ -4,14 +4,9 @@ using NCafe.Barista.Domain.ReadModels;
 
 namespace NCafe.Barista.Domain.Queries;
 
-public record GetOrders : IQuery<Orders>;
+public record GetOrders : IQuery<BaristaOrder[]>;
 
-public sealed class Orders
-{
-    public IEnumerable<BaristaOrder> Items { get; set; }
-}
-
-internal sealed class GetOrdersHandler : IQueryHandler<GetOrders, Orders>
+internal sealed class GetOrdersHandler : IQueryHandler<GetOrders, BaristaOrder[]>
 {
     private readonly IReadModelRepository<BaristaOrder> orderRepository;
 
@@ -20,12 +15,10 @@ internal sealed class GetOrdersHandler : IQueryHandler<GetOrders, Orders>
         this.orderRepository = orderRepository;
     }
 
-    public Task<Orders> HandleAsync(GetOrders query)
+    public Task<BaristaOrder[]> HandleAsync(GetOrders query)
     {
-        var products = new Orders()
-        {
-            Items = orderRepository.GetAll()
-        };
+        var products = orderRepository.GetAll()
+            .ToArray();
         return Task.FromResult(products);
     }
 }
