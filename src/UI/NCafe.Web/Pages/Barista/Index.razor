@@ -1,8 +1,74 @@
 ﻿@page "/barista"
+@using NCafe.Web.Models
+@inject HttpClient Http
+@inject IConfiguration Configuration
+@inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
 
 <PageTitle>Barista - NCafe</PageTitle>
 
-<h2>New Orders</h2>
+<h2>Barista</h2>
 
-Soon...
+@if (orders == null)
+{
+    <Spin />
+}
+else if (!orders.Any(o => !o.IsCompleted))
+{
+    <Result Title="No new orders for now." />
+}
+else
+{
+    <Card Title="New Orders">
+    @foreach (var order in orders.Where(o => !o.IsCompleted))
+    {
+        <CardGrid Style="width:25%;text-align:center">
+            <div>@order.ProductId</div>
 
+            <Button Type="@ButtonType.Primary"
+                Icon="@IconType.Outline.Check"
+                Size="@ButtonSize.Large"
+                OnClick="() => CompleteOrder(order.Id)">Complete</Button>
+        </CardGrid>
+    }
+    </Card>
+}
+
+@code {
+    private BaristaOrder[] orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var url = $"{Configuration["BaristaBaseAddress"]}/orders";
+        orders = await Http.GetFromJsonAsync<BaristaOrder[]>(url);
+    }
+
+    async Task CompleteOrder(Guid orderId)
+    {
+        var url = $"{Configuration["BaristaBaseAddress"]}/orders/{orderId}/prepared";
+        try
+        {
+            var response = await Http.PostAsync(url, null);
+            response.EnsureSuccessStatusCode();
+
+            _ = NotificationService.Open(new NotificationConfig
+                {
+                    Message = "Order Completed",
+                    Description = $"Order completed successfuly.",
+                    NotificationType = NotificationType.Success
+                });
+
+            await OnInitializedAsync();
+        }
+        catch
+        {
+            _ = NotificationService.Open(new NotificationConfig
+                {
+                    Message = "Error",
+                    Duration = 0,
+                    Description = $"There was an error while attempting to complete the order.",
+                    NotificationType = NotificationType.Error
+                });
+        }
+    }
+}
