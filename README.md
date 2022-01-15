@@ -65,7 +65,7 @@ Run the following command to build and start all microservices containers:
 
     docker compose -f services-compose.yaml up -d
 
-Of course, you can also run them via Visual Studio or VS Code.
+Of course, you can also run them via the dotnet CLI or your favorite IDE/code editor.
 
 ### Swagger
 
