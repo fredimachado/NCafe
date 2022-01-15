@@ -16,7 +16,8 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddQueryHandlers(typeof(PlaceOrder).Assembly);
 
 builder.Services.AddInMemoryReadModelRepository<BaristaOrder>()
-                .AddHostedService<OrderProjectionService>();
+                .AddEventStoreProjectionService<BaristaOrder>()
+                .AddHostedService<BaristaOrderProjectionService>();
 
 builder.Services.AddHostedService<OrdersConsumer>();
 
