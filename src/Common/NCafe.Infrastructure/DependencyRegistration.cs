@@ -33,6 +33,14 @@ public static class DependencyRegistration
         return services;
     }
 
+    public static IServiceCollection AddEventStoreProjectionService<TModel>(this IServiceCollection services)
+        where TModel : ReadModel
+    {
+        services.AddSingleton<EventStoreProjectionService<TModel>>();
+
+        return services;
+    }
+
     public static IServiceCollection AddCommandHandlers(this IServiceCollection services, Assembly assembly)
     {
         services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
