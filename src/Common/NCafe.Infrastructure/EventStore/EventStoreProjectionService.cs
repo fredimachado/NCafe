@@ -102,7 +102,7 @@ public class EventStoreProjectionService<T> where T : ReadModel
 
     private void OnTypedEvent<TEvent>(TypedEvent<T, TEvent> typedEvent) where TEvent : class
     {
-        if (!handlersMap.TryAdd(typeof(TEvent).Name, x => typedEvent(x)))
+        if (!handlersMap.TryAdd(typeof(TEvent).Name, resolvedEvent => typedEvent(resolvedEvent)))
         {
             throw new ArgumentException($"Event type {typeof(TEvent).Name} already has a handler.");
         }
