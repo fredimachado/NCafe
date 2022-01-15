@@ -15,6 +15,7 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddQueryHandlers(typeof(CreateProduct).Assembly);
 
 builder.Services.AddInMemoryReadModelRepository<Product>()
+                .AddEventStoreProjectionService<Product>()
                 .AddHostedService<ProductProjectionService>();
 
 builder.Services.AddEndpointsApiExplorer();
