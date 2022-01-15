@@ -2,7 +2,7 @@
 
 namespace NCafe.Cashier.Domain.Events;
 
-public class OrderPaidFor : Event
+public sealed class OrderPaidFor : Event
 {
     public OrderPaidFor(Guid id)
     {
