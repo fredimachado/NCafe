@@ -1,10 +1,10 @@
 using NCafe.Abstractions.Commands;
 using NCafe.Abstractions.Queries;
-using NCafe.Cashier.Api.ReadModel;
 using NCafe.Cashier.Domain.Queries;
 using NCafe.Cashier.Domain.Commands;
 using NCafe.Cashier.Domain.ReadModels;
 using NCafe.Infrastructure;
+using NCafe.Cashier.Api.Projections;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +15,7 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddQueryHandlers(typeof(PlaceOrder).Assembly);
 
 builder.Services.AddInMemoryReadModelRepository<Product>()
+                .AddEventStoreProjectionService<Product>()
                 .AddHostedService<ProductProjectionService>();
 
 builder.Services.AddKafkaPublisher(builder.Configuration);

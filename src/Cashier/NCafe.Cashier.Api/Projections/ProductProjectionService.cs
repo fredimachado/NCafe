@@ -1,65 +1,30 @@
-﻿using EventStore.Client;
-using NCafe.Abstractions.ReadModels;
-using NCafe.Cashier.Domain.ReadModels;
-using System.Text.Json;
+﻿using NCafe.Cashier.Domain.ReadModels;
+using NCafe.Infrastructure.EventStore;
 
-namespace NCafe.Cashier.Api.ReadModel;
+namespace NCafe.Cashier.Api.Projections;
 
 public class ProductProjectionService : BackgroundService
 {
-    private readonly IServiceProvider serviceProvider;
-    private readonly EventStoreClient eventStoreClient;
-    private readonly IReadModelRepository<Product> productRepository;
-    private readonly ILogger logger;
+    private readonly EventStoreProjectionService<Product> projectionService;
 
-    private const string ProductCreatedEventName = "ProductCreated";
+    private const string streamName = "product";
 
-    public ProductProjectionService(
-        IServiceProvider serviceProvider,
-        EventStoreClient eventStoreClient,
-        IReadModelRepository<Product> productRepository,
-        ILogger<ProductProjectionService> logger)
+    public ProductProjectionService(EventStoreProjectionService<Product> projectionService)
     {
-        this.serviceProvider = serviceProvider;
-        this.eventStoreClient = eventStoreClient;
-        this.productRepository = productRepository;
-        this.logger = logger;
+        this.projectionService = projectionService;
+
+        projectionService.OnCreate<ProductCreated>(@event => new Product
+        {
+            Id = @event.Id,
+            Name = @event.Name,
+            Price = @event.Price
+        });
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        using var scope = serviceProvider.CreateScope();
-
-        await eventStoreClient.SubscribeToStreamAsync(
-            "$ce-product",
-            ProductEventAppeared,
-            subscriptionDropped: SubscriptionDropped,
-            resolveLinkTos: true,
-            cancellationToken: stoppingToken);
-
-        logger.LogInformation("Subscribed to EventStore Stream.", DateTimeOffset.Now);
+        await projectionService.Start(streamName, stoppingToken);
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
-    }
-
-    private Task ProductEventAppeared(StreamSubscription subscription, ResolvedEvent @event, CancellationToken cancellationToken)
-    {
-        if (@event.Event.EventType == ProductCreatedEventName)
-        {
-            var product = JsonSerializer.Deserialize<Product>(@event.Event.Data.Span);
-            productRepository.Add(product);
-            logger.LogInformation(
-                "Added product '{productName}' ({productId}) with price ${productPrice}",
-                product.Name,
-                product.Id,
-                product.Price);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    private void SubscriptionDropped(StreamSubscription subscription, SubscriptionDroppedReason reason, Exception exception)
-    {
-        logger.LogError("Subscription Dropped.", DateTimeOffset.Now);
     }
 }
