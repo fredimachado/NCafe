@@ -101,12 +101,13 @@ Implementations for external dependencies are defined in this project. Like:
 There are some other implementations in here as well, like Command and Query dispatchers, a Logging decorator and
 read model repositories (only in-memory for now).
 
-This project also contains methods for registering all the implementations for the interfaces defined
+This project also contains methods for registering all the implementations for interfaces defined
 in the Abstractions project.
 
 ## NCafe's CQRS + Event Sourcing implementation
 
 ![CQRS and Event Sourcing in NCafe](images/ncafe-cqrs-event-sourcing.png?raw=true)
+Inspired by https://codeopinion.com/cqrs-event-sourcing-code-walk-through/.
 
 ### Command
 
