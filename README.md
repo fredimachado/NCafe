@@ -8,12 +8,33 @@ Heavily inspired on the [microcafe](https://github.com/rbanks54/microcafe) proje
 
 This code should be treated as sample code, not production-ready code.
 
+## Content
+
+- [Infrastructure](#infrastructure)
+- [Architecture](#architecture)
+  - [Shared Abstractions (Core)](#shared-abstractions-core)
+  - [Application Domain](#application-domain)
+  - [Web API](#web-api)
+  - [Infrastructure](#infrastructure)
+- [NCafe's CQRS + Event Sourcing implementation](#ncafes-cqrs-event-sourcing-implementation)
+  - [Command](#command)
+  - [Query](#query)
+  - [Projections](#projections)
+- [How to run](#how-to-run)
+  - [Starting the infrastructure containers](#starting-the-infrastructure-containers)
+  - [Starting the microservices](#starting-the-microservices)
+  - [Swagger](#swagger)
+  - [NCafe in action](#ncafe-in-action)
+  - [EventStore](#eventstore)
+  - [RabbitMQ](#rabbitmq)
+  - [Stopping everything](#stopping-everything)
+
 ## Infrastructure
 
 NCafe microservices require the following services:
 
-- **EventStore**: Database built for Event Sourcing where we store events as a source of truth instead of current state.
-- **RabbitMq**: Message broker used for asynchronous messaging.
+- **EventStore**: Database built for Event Sourcing where we store events as the source of truth instead of current state.
+- **RabbitMQ**: Message broker used for asynchronous messaging.
 
 ## Architecture
 
@@ -43,7 +64,7 @@ application domain projects.
 Depends only on Shard Abstractions (Core) in order to define domain entities (aggregates),
 events, commands, queries and their respective handlers and business logic. So it might have:
 
-- **Entities**: It's current state is defined by a stream of events stored in EventStore.
+- **Entities**: Their current state is defined by a stream of events stored in EventStore.
 Provide methods to make it do something (ex.: `CompletePreparation`).
 These methods will raise events (after doing some validation if necessary), that will be appended
 to its event stream in EventStore
@@ -58,11 +79,30 @@ abstractions/interfaces (ex.: `IRepository`) instead of implementations
 
 ### Web API
 
-Soon...
+The Web API projects simply register the required dependencies using methods from the Infrastructure project and map the
+endpoints, which use `ICommandDispatcher` or `IQueryDispatcher` (see `Program.cs`).
+
+These projects have a reference to its Application Domain project and the Infrastructure Project.
+
+Projection services can also be in the Web API project (Find more about projections below).
+
+In case the microservice needs to consume integration events, a Consumer service can be created implementing IHostedService
+(see `OrdersConsumerService` in `Barista.Api`). Basically, this service implements .NET's `IHostedService`, subscribes
+to a RabbitMQ stream specifying a queue, a topic and a callback, which in case will use `ICommandDispatcher` to, you guessed it,
+dispatch a command in the domain.
 
 ### Infrastructure
 
-Soon...
+Implementations for external dependencies are defined in this project. Like:
+
+- EventStore Repository and Projection Service
+- RabbitMQ publisher
+
+There are some other implementations in here as well, like Command and Query dispatchers, a Logging decorator and
+read model repositories (only in-memory for now).
+
+This project also contains methods for registering all the implementations for the interfaces defined
+in the Abstractions project.
 
 ## NCafe's CQRS + Event Sourcing implementation
 
@@ -73,21 +113,26 @@ Soon...
 Depending on the command, the handler will instantiate the domain model (entity/aggregate), for example in `PlaceOrderHandler`.
 Then the entity will be saved using `IRepository`.
 
-For other commands, the handler will first fetch the entity from the repository
-by Id, then tell it to do something (ex.: `CompletePreparation`) and then save it using the repository.
+For other commands, the handler will first fetch the entity by id from the repository,
+then tell it to do something (ex.: `CompletePreparation`) and then save it using the repository.
 
 When fetching an entity, the repository will actually get all events for the specific aggregate and apply them in order. This will
 re-build the current state of the entity based on the events.
 
-The Save method in the repository actually sends pending events to EventStore, for example, the `OrderPrepared` event
+The Save method in the repository sends pending events to EventStore, for example, the `OrderPrepared` event
 after `CompletePreparation` is called (see the Barista.Domain project).
+
+### Query
+
+This is the simplest part of the system. The handlers will use a read model repository to return one or more items from the
+query database (in-memory for now). The data from this database comes from a projection service, described below.
 
 ### Projections
 
-All Projection services subscribed to the affected EventStore event stream (ex.: `baristaOrder`), will receive the new event
+All Projection services subscribed to EventStore event streams (ex.: `baristaOrder`), will receive new events
 from EventStore and use it to update the query database (read model) if necessary.
 
-In NCafe, Projection services are implemented using .NET's BackgroundService running in the API projects, as the read models are
+In NCafe, Projection services are implemented using .NET's `BackgroundService` running in the API projects, as the read models are
 being stored using an in-memory repository for the time being. But when switch to a proper database, we can easily move the
 projection specific code to it's own microservice. In fact, I think we will have to move the code, otherwise we need a way to run
 only one projection service in case there's a need to scale out (create more instances of) the API microservice. In case you're
@@ -97,11 +142,6 @@ database. So they would all try to do the same inserts/updates. It looks like tr
 Also, when we move to a database, we'll need to save checkpoints, so when we restart the projection service we can tell EventStore
 that we only care about events from a specific position in the stream. Saving the version should be enough.
 
-### Query
-
-This is the simplest part of the system. The handlers will use a read model repository to return one or more items from the
-query database (in-memory for now). The data from this database comes from a projection service, described above.
-
 ## How to run
 
 In order to run the solution, you need the following:
@@ -109,12 +149,12 @@ In order to run the solution, you need the following:
 - .NET 6 SDK
 - Docker
 
-In case you want to run the microservices in docker (except the infrastructure ones), we need to generate a certificate,
+In case you want to run the microservices using docker (except the infrastructure ones), we need to generate a certificate,
 but we only need to do this once though.
 
-You can skip this if you will run the microservices via the dotnet CLI or an IDE/code editor.
-
 ### If you're running Windows using Linux containers
+
+**Note**: You can skip this if you don't plan to run the microservice using docker.
 
 Run the following commands on your favorite terminal:
 
@@ -125,6 +165,8 @@ I'm assuming you're using PowerShell. If you're using CMD, replace `$env:USERPRO
 If you decide to use a different Pfx file name or password, you'll have to update `.env-local` accordingly.
 
 ### If you're on macOS or Linux
+
+**Note**: You can skip this if you don't plan to run the microservice using docker.
 
 Run the following commands:
 
@@ -139,9 +181,10 @@ Run the following command:
 
     docker compose -f infrastructure-compose.yaml up -d
 
-### Starting microservices
+### Starting the microservices
 
 You can start the microservices via the dotnet CLI or your favorite IDE/code editor.
+If you're using Visual Studio you can also set multiple startup projects by going to solution properties.
 
 If you prefer docker, run the following command to build and start all microservices containers (certificate required):
 
@@ -176,6 +219,10 @@ You can check all the events in EventStore by going to the `Stream Browser`
 in [http://localhost:2113/](http://localhost:2113/).
 
 ![EventStore Screenshot](images/eventstore.png?raw=true)
+
+### RabbitMQ
+
+You can check the message queue in [http://localhost:15672/](http://localhost:15672/).
 
 ### Stopping everything
 
