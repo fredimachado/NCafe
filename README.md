@@ -13,6 +13,7 @@ This code should be treated as sample code, not production-ready code.
 NCafe microservices require the following services:
 
 - **EventStore**: Database built for Event Sourcing where we store events as a source of truth instead of current state.
+- **RabbitMq**: Message broker used for asynchronous messaging.
 
 ## How it works
 

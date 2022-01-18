@@ -31,6 +31,28 @@ services:
         source: eventstore-volume-logs
         target: /var/log/eventstore
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.9-management-alpine
+    networks:
+      - ncafe
+    environment:
+        - RABBITMQ_DEFAULT_USER=myuser
+        - RABBITMQ_DEFAULT_PASS=mypassword
+    ports:
+        - '5672:5672'
+        - '15672:15672'
+    volumes:
+      - type: volume
+        source: rabbitmq-volume-etc
+        target: /etc/rabbitmq
+      - type: volume
+        source: rabbitmq-volume-data
+        target: /var/lib/rabbitmq
+      - type: volume
+        source: rabbitmq-volume-logs
+        target: /var/log/rabbitmq
+
 networks:
   ncafe:
     name: ncafe
@@ -39,4 +61,10 @@ volumes:
   eventstore-volume-data:
     driver: local
   eventstore-volume-logs:
+    driver: local
+  rabbitmq-volume-etc:
+    driver: local
+  rabbitmq-volume-data:
+    driver: local
+  rabbitmq-volume-logs:
     driver: local

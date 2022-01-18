@@ -18,6 +18,7 @@ builder.Services.AddInMemoryReadModelRepository<Product>()
                 .AddEventStoreProjectionService<Product>()
                 .AddHostedService<ProductProjectionService>();
 
+builder.Services.AddRabbitMqPublisher(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();

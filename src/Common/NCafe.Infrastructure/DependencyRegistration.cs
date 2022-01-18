@@ -72,6 +72,19 @@ public static class DependencyRegistration
         return services;
     }
 
+    public static IServiceCollection AddRabbitMqPublisher(this IServiceCollection services, IConfiguration configuration)
+    {
+        if (string.IsNullOrWhiteSpace(configuration.GetConnectionString("RabbitMq")))
+        {
+            // Fail fast. Service shouldn't be able to start with invalid configuration.
+            throw new InvalidOperationException("Invalid RabbitMq configuration.");
+        }
+
+        services.AddSingleton<IPublisher, RabbitMqPublisher>();
+
+        return services;
+    }
+
     public static IServiceCollection AddInMemoryReadModelRepository<T>(this IServiceCollection services) where T : ReadModel
     {
         services.AddSingleton<IReadModelRepository<T>, InMemoryReadModelRepository<T>>();
