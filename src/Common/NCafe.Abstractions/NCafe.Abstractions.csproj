@@ -5,4 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+    <ItemGroup>
+        <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+            <_Parameter1>NCafe.Infrastructure</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
 </Project>

@@ -9,16 +9,6 @@ public abstract class AggregateRoot
 
     private readonly List<IEvent> _pendingEvents = new();
 
-    public IEnumerable<IEvent> GetPendingEvents()
-    {
-        return _pendingEvents.ToArray();
-    }
-
-    public void ClearPendingEvents()
-    {
-        _pendingEvents.Clear();
-    }
-
     protected void RaiseEvent(Event @event)
     {
         @event.Version = Version + 1;
@@ -28,7 +18,17 @@ public abstract class AggregateRoot
         _pendingEvents.Add(@event);
     }
 
-    public void ApplyEvent(IEvent @event)
+    internal IEnumerable<IEvent> GetPendingEvents()
+    {
+        return _pendingEvents.ToArray();
+    }
+
+    internal void ClearPendingEvents()
+    {
+        _pendingEvents.Clear();
+    }
+
+    internal void ApplyEvent(IEvent @event)
     {
         if (@event.Version != Version + 1)
         {
