@@ -11,7 +11,7 @@ public delegate T TypedEvent<T, TEvent>(ResolvedEvent resolvedEvent) where T : c
 public delegate Guid GetModelId<in TEvent>(TEvent @event);
 public delegate void ModelUpdate<in TEvent, T>(TEvent @event, T model);
 
-public class EventStoreProjectionService<T> where T : ReadModel
+public sealed class EventStoreProjectionService<T> where T : ReadModel
 {
     private readonly IServiceProvider serviceProvider;
     private readonly EventStoreClient eventStoreClient;

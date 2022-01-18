@@ -4,7 +4,7 @@ using NCafe.Abstractions.MessageBus;
 
 namespace NCafe.Infrastructure.MessageBus;
 
-public class RabbitMqPublisher : IPublisher
+internal class RabbitMqPublisher : IPublisher
 {
     private readonly IBus bus;
 

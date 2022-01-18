@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace NCafe.Infrastructure.EventStore;
 
-public static class EventExtensions
+internal static class EventExtensions
 {
     private const string EventClrTypeNameHeader = "EventClrTypeName";
 
