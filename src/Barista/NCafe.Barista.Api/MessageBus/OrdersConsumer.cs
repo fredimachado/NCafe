@@ -32,9 +32,9 @@ public class OrdersConsumer : IHostedService
             MessageReceived,
             config =>
             {
-                config.WithDurable(true);
-                config.WithQueueName(Queue);
-                config.WithTopic(Topic);
+                config.WithDurable(true)
+                      .WithQueueName(Queue)
+                      .WithTopic(Topic);
             },
             cancellationToken);
     }
