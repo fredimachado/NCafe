@@ -35,7 +35,8 @@ public class OrdersConsumer : IHostedService
                 config.WithDurable(true);
                 config.WithQueueName(Queue);
                 config.WithTopic(Topic);
-            });
+            },
+            cancellationToken);
     }
 
     private async Task MessageReceived(OrderPlaced orderPlaced, CancellationToken cancellationToken)
