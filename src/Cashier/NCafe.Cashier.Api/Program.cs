@@ -18,7 +18,6 @@ builder.Services.AddInMemoryReadModelRepository<Product>()
                 .AddEventStoreProjectionService<Product>()
                 .AddHostedService<ProductProjectionService>();
 
-builder.Services.AddKafkaPublisher(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();

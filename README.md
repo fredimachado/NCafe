@@ -13,8 +13,6 @@ This code should be treated as sample code, not production-ready code.
 NCafe microservices require the following services:
 
 - **EventStore**: Database built for Event Sourcing where we store events as a source of truth instead of current state.
-- **Kafka/Zookeeper**: Event streaming platform that NCafe uses for integration events.
-- **Kafdrop**: Web UI for viewing Kafka topics and browsing consumer groups.
 
 ## How it works
 
