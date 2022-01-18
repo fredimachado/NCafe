@@ -107,6 +107,7 @@ in the Abstractions project.
 ## NCafe's CQRS + Event Sourcing implementation
 
 ![CQRS and Event Sourcing in NCafe](images/ncafe-cqrs-event-sourcing.png?raw=true)
+
 Inspired by https://codeopinion.com/cqrs-event-sourcing-code-walk-through/.
 
 ### Command
