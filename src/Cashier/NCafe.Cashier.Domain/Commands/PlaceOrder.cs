@@ -17,6 +17,8 @@ internal sealed class PlaceOrderHandler : ICommandHandler<PlaceOrder>
     private readonly IReadModelRepository<Product> productReadRepository;
     private readonly IPublisher publisher;
 
+    private const string Topic = "orders";
+
     public PlaceOrderHandler(
         IRepository repository,
         IReadModelRepository<Product> productReadRepository,
@@ -39,6 +41,6 @@ internal sealed class PlaceOrderHandler : ICommandHandler<PlaceOrder>
 
         await repository.Save(order);
 
-        await publisher.Publish("orders", new OrderPlaced(order.Id, order.ProductId, order.Quantity));
+        await publisher.Publish(Topic, new OrderPlaced(order.Id, order.ProductId, order.Quantity));
     }
 }
