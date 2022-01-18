@@ -19,7 +19,7 @@ builder.Services.AddInMemoryReadModelRepository<BaristaOrder>()
                 .AddEventStoreProjectionService<BaristaOrder>()
                 .AddHostedService<BaristaOrderProjectionService>();
 
-builder.Services.AddHostedService<OrdersConsumer>();
+builder.Services.AddHostedService<OrdersConsumerService>();
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();

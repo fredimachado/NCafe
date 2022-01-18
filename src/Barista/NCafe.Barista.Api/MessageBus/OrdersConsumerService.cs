@@ -5,19 +5,19 @@ using NCafe.Barista.Domain.Commands;
 
 namespace NCafe.Barista.Api.MessageBus;
 
-public class OrdersConsumer : IHostedService
+public class OrdersConsumerService : IHostedService
 {
     private const string Queue = "barista_queue";
     private const string Topic = "orders";
 
     private readonly IBus bus;
     private readonly ICommandDispatcher commandDispatcher;
-    private readonly ILogger<OrdersConsumer> logger;
+    private readonly ILogger logger;
 
-    public OrdersConsumer(
+    public OrdersConsumerService(
         ICommandDispatcher commandDispatcher,
         IConfiguration configuration,
-        ILogger<OrdersConsumer> logger)
+        ILogger<OrdersConsumerService> logger)
     {
         bus = RabbitHutch.CreateBus(configuration.GetConnectionString("RabbitMq"));
         this.commandDispatcher = commandDispatcher;
