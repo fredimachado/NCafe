@@ -4,13 +4,20 @@ Minimal .NET microservices implementation in the context of a cafe.
 
 Heavily inspired on the [microcafe](https://github.com/rbanks54/microcafe) project by [Richard Banks](https://github.com/rbanks54).
 
+### Tech stack:
+
+- **C# 10/.NET 6**
+- **ASP.NET Core minimal APIs**
+- **Docker**
+- **EventStore**: Database for Event Sourcing where we store events as the source of truth instead of current state
+- **RabbitMQ**: Message broker used for asynchronous messaging
+
 ### Warning
 
 This code should be treated as sample code, not production-ready code.
 
 ## Content
 
-- [Infrastructure](#infrastructure)
 - [Architecture](#architecture)
   - [Shared Abstractions (Core)](#shared-abstractions-core)
   - [Application Domain](#application-domain)
@@ -29,13 +36,6 @@ This code should be treated as sample code, not production-ready code.
   - [RabbitMQ](#rabbitmq)
   - [Stopping everything](#stopping-everything)
 
-## Infrastructure
-
-NCafe microservices require the following services:
-
-- **EventStore**: Database built for Event Sourcing where we store events as the source of truth instead of current state.
-- **RabbitMQ**: Message broker used for asynchronous messaging.
-
 ## Architecture
 
 NCafe's architecture is based on Clean Architecture, so dependencies only point torwards the center.
@@ -49,20 +49,20 @@ All common interfaces and abstractions are here. For example:
 
 - **AggregateRoot**: Abstract base class for our domain entities
 - **IEvent and Event**: Base for events that represent state changes of entities
-- **IRepository**: Interface used to get and save domain entities
+- **IRepository**: Interface used to fetch and save domain entities
 - **IPublisher**: Interface for publishing integration events
 - **Shared events**: Events that will be published with IPublisher
-- **Read Model**: Interface used to get and save read models (projections)
+- **Read Model**: Interface used to fetch and save read models (projections)
 - **Command, Query, Dispatchers and Handlers interfaces**
 - **Basic exceptions**
 
-So, basically, no implementations are allowed in this project. It will be referenced by
-application domain projects.
+So, basically, this project is the core of our solution and will only contain the
+abstractions used by other layers.
 
 ### Application Domain
 
 Depends only on Shard Abstractions (Core) in order to define domain entities (aggregates),
-events, commands, queries and their respective handlers and business logic. So it might have:
+events, commands, queries, their respective handlers and business logic. So it might have:
 
 - **Entities**: Their current state is defined by a stream of events stored in EventStore.
 Provide methods to make it do something (ex.: `CompletePreparation`).
@@ -86,10 +86,10 @@ These projects have a reference to its Application Domain project and the Infras
 
 Projection services can also be in the Web API project (Find more about projections below).
 
-In case the microservice needs to consume integration events, a Consumer service can be created implementing IHostedService
+In case the microservice needs to consume integration events, a Consumer service can be created
 (see `OrdersConsumerService` in `Barista.Api`). Basically, this service implements .NET's `IHostedService`, subscribes
 to a RabbitMQ stream specifying a queue, a topic and a callback, which in case will use `ICommandDispatcher` to, you guessed it,
-dispatch a command in the domain.
+dispatch a command to the domain.
 
 ### Infrastructure
 
