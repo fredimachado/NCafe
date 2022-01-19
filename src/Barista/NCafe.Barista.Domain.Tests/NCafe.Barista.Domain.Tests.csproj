@@ -25,4 +25,12 @@
     <ProjectReference Include="..\NCafe.Barista.Domain\NCafe.Barista.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="System" />
+    <Using Include="System.Threading.Tasks" />
+    <Using Include="FakeItEasy" />
+    <Using Include="Shouldly" />
+    <Using Include="Xunit" />
+  </ItemGroup>
+
 </Project>

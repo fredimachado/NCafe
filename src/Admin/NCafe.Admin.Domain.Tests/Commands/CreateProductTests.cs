@@ -1,11 +1,7 @@
-﻿using FakeItEasy;
-using NCafe.Abstractions.Repositories;
+﻿using NCafe.Abstractions.Repositories;
 using NCafe.Admin.Domain.Commands;
 using NCafe.Admin.Domain.Exceptions;
 using NCafe.Admin.Domain.Entities;
-using Shouldly;
-using System.Threading.Tasks;
-using Xunit;
 
 namespace NCafe.Admin.Domain.Tests.Commands;
 
