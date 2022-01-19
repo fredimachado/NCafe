@@ -13,20 +13,17 @@ public delegate void ModelUpdate<in TEvent, T>(TEvent @event, T model);
 
 public sealed class EventStoreProjectionService<T> where T : ReadModel
 {
-    private readonly IServiceProvider serviceProvider;
     private readonly EventStoreClient eventStoreClient;
     private readonly IReadModelRepository<T> repository;
     private readonly ILogger logger;
 
-    private readonly Dictionary<string, UntypedEvent> handlersMap = new();
+    private readonly Dictionary<string, Func<ResolvedEvent, T>> handlersMap = new();
 
     public EventStoreProjectionService(
-        IServiceProvider serviceProvider,
         EventStoreClient eventStoreClient,
         IReadModelRepository<T> repository,
         ILogger<EventStoreProjectionService<T>> logger)
     {
-        this.serviceProvider = serviceProvider;
         this.eventStoreClient = eventStoreClient;
         this.repository = repository;
         this.logger = logger;
@@ -41,8 +38,6 @@ public sealed class EventStoreProjectionService<T> where T : ReadModel
         streamName = $"$ce-{streamName}";
 
         logger.LogInformation("Subscribing to EventStore Stream '{EventStoreStream}'.", streamName);
-
-        using var scope = serviceProvider.CreateScope();
 
         await eventStoreClient.SubscribeToStreamAsync(
             streamName,
@@ -112,6 +107,4 @@ public sealed class EventStoreProjectionService<T> where T : ReadModel
     {
         return (TEvent)JsonSerializer.Deserialize(resolvedEvent.Event.Data.Span, typeof(TEvent));
     }
-
-    private delegate T UntypedEvent(ResolvedEvent resolvedEvent);
 }
