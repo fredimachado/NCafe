@@ -14,7 +14,9 @@ Heavily inspired on the [microcafe](https://github.com/rbanks54/microcafe) proje
 
 ### Warning
 
-This code should be treated as sample code, not production-ready code.
+This code should be treated as sample code and is the fruit of my studies on microservices,
+CQRS and Event Sourcing. I tried to write some documentation below for those who are also starting
+on this journey. I hope it helps! :smile:
 
 ## Content
 
