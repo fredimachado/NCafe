@@ -4,6 +4,11 @@ Minimal .NET microservices implementation in the context of a cafe.
 
 Heavily inspired on the [microcafe](https://github.com/rbanks54/microcafe) project by [Richard Banks](https://github.com/rbanks54).
 
+More information about the application domain, please check the links below:
+
+https://www.slideshare.net/rbanks54/architecting-microservices-in-net
+https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html
+
 ### Tech stack:
 
 - **C# 10/.NET 6**
@@ -17,6 +22,19 @@ Heavily inspired on the [microcafe](https://github.com/rbanks54/microcafe) proje
 This code should be treated as sample code and is the fruit of my studies on microservices,
 CQRS and Event Sourcing. I tried to write some documentation below for those who are also starting
 on this journey. I hope it helps! :smile:
+
+### TODO
+
+- [ ] Use SignalR to update the Barista page in real time as new orders are placed
+- [ ] Use a database for the read models (projections)
+- [ ] Move projection services to their own microservice so reads and writes are separate
+- [ ] Add option for cashier to mark order as paid or cancel it
+- [ ] Cashier should be able to add the customer name to the order
+- [ ] Cashier should be able to add multiple products to the same order
+- [ ] Add timestamp to orders so we can show the "oldest" first
+- [ ] Barista should be able to see the name of the customer and products/quantities
+- [ ] Admin should be able to edit products
+- [ ] Admin should be able to delete products
 
 ## Content
 
