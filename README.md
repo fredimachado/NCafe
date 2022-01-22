@@ -38,7 +38,7 @@ on this journey. I hope it helps! :smile:
 
 ## Content
 
-- [Architecture](#architecture)
+- [NCafe Solution](#ncafe-solution)
   - [Shared Abstractions (Core)](#shared-abstractions-core)
   - [Application Domain](#application-domain)
   - [Web API](#web-api)
@@ -56,10 +56,10 @@ on this journey. I hope it helps! :smile:
   - [RabbitMQ](#rabbitmq)
   - [Stopping everything](#stopping-everything)
 
-## Architecture
+## NCafe Solution
 
-NCafe's architecture is based on Clean Architecture, so dependencies only point torwards the center.
-Shared abstractions in this case. Yeah, I should probably name it "Core" I guess. Sorry, naming is hard for me.
+The NCafe Solution is based on Clean Architecture, so dependencies only point torwards the center.
+Shared abstractions in this case. Yeah, I should have probably named it "Core" I guess. Sorry, naming is hard for me.
 
 ![Clean Architecture](images/architecture.png?raw=true)
 
