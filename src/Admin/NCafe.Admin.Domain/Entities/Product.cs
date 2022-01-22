@@ -1,5 +1,5 @@
 ﻿using Ardalis.GuardClauses;
-using NCafe.Abstractions.Domain;
+using NCafe.Core.Domain;
 using NCafe.Admin.Domain.Events;
 
 namespace NCafe.Admin.Domain.Entities;

@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NCafe.Abstractions\NCafe.Abstractions.csproj" />
+    <ProjectReference Include="..\NCafe.Core\NCafe.Core.csproj" />
   </ItemGroup>
 
 </Project>

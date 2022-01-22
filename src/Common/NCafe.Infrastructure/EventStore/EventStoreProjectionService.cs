@@ -1,6 +1,6 @@
 ﻿using EventStore.Client;
 using Microsoft.Extensions.Logging;
-using NCafe.Abstractions.ReadModels;
+using NCafe.Core.ReadModels;
 using System.Text.Json;
 
 namespace NCafe.Infrastructure.EventStore;

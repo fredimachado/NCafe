@@ -1,10 +1,10 @@
-using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.Queries;
 using NCafe.Barista.Api.MessageBus;
 using NCafe.Barista.Api.Projections;
 using NCafe.Barista.Domain.Commands;
 using NCafe.Barista.Domain.Queries;
 using NCafe.Barista.Domain.ReadModels;
+using NCafe.Core.Commands;
+using NCafe.Core.Queries;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);

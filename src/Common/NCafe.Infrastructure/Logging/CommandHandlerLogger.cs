@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using NCafe.Abstractions.Commands;
+using NCafe.Core.Commands;
 
 namespace NCafe.Infrastructure.Logging;
 

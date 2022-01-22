@@ -39,7 +39,7 @@ on this journey. I hope it helps! :smile:
 ## Content
 
 - [NCafe Solution](#ncafe-solution)
-  - [Shared Abstractions (Core)](#shared-abstractions-core)
+  - [Core (Shared Abstractions)](#core-shared-abstractions)
   - [Application Domain](#application-domain)
   - [Web API](#web-api)
   - [Infrastructure](#infrastructure)
@@ -59,11 +59,10 @@ on this journey. I hope it helps! :smile:
 ## NCafe Solution
 
 The NCafe Solution is based on Clean Architecture, so dependencies only point torwards the center.
-Shared abstractions in this case. Yeah, I should have probably named it "Core" I guess. Sorry, naming is hard for me.
 
 ![Clean Architecture](images/architecture.png?raw=true)
 
-#### Shared Abstractions (Core)
+#### Core (Shared Abstractions)
 
 All common interfaces and abstractions are here. For example:
 
@@ -77,11 +76,11 @@ All common interfaces and abstractions are here. For example:
 - **Basic exceptions**
 
 So, basically, this project is the core of our solution and will only contain the
-abstractions used by other layers.
+abstractions used by other layers. This project doesn't have any microservice specific code.
 
 ### Application Domain
 
-Depends only on Shard Abstractions (Core) in order to define domain entities (aggregates),
+Depends only on the Core project in order to define domain entities (aggregates),
 events, commands, queries, their respective handlers and business logic. So it might have:
 
 - **Entities**: Their current state is defined by a stream of events stored in EventStore.
@@ -122,7 +121,7 @@ There are some other implementations in here as well, like Command and Query dis
 read model repositories (only in-memory for now).
 
 This project also contains methods for registering all the implementations for interfaces defined
-in the Abstractions project.
+in the Core project.
 
 ## NCafe's CQRS + Event Sourcing implementation
 

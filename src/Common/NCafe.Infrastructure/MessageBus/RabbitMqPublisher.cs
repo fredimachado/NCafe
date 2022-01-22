@@ -1,6 +1,6 @@
 ﻿using EasyNetQ;
 using Microsoft.Extensions.Configuration;
-using NCafe.Abstractions.MessageBus;
+using NCafe.Core.MessageBus;
 
 namespace NCafe.Infrastructure.MessageBus;
 

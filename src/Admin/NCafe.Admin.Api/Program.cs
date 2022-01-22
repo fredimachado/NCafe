@@ -1,5 +1,5 @@
-using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.Queries;
+using NCafe.Core.Commands;
+using NCafe.Core.Queries;
 using NCafe.Admin.Api.Projections;
 using NCafe.Admin.Domain.Commands;
 using NCafe.Admin.Domain.Queries;

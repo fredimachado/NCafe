@@ -1,4 +1,4 @@
-﻿namespace NCafe.Abstractions.Commands;
+﻿namespace NCafe.Core.Commands;
 
 public interface ICommandHandler<in TCommand> where TCommand : class, ICommand
 {

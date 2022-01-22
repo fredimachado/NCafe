@@ -1,7 +1,7 @@
 ﻿using EasyNetQ;
-using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.MessageBus.Events;
 using NCafe.Barista.Domain.Commands;
+using NCafe.Core.Commands;
+using NCafe.Core.MessageBus.Events;
 
 namespace NCafe.Barista.Api.MessageBus;
 

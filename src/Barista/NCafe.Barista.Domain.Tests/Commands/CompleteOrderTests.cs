@@ -1,7 +1,7 @@
-﻿using NCafe.Abstractions.Repositories;
-using NCafe.Barista.Domain.Commands;
+﻿using NCafe.Barista.Domain.Commands;
 using NCafe.Barista.Domain.Entities;
 using NCafe.Barista.Domain.Exceptions;
+using NCafe.Core.Repositories;
 
 namespace NCafe.Barista.Domain.Tests.Commands;
 

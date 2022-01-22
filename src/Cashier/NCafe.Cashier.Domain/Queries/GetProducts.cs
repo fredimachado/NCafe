@@ -1,6 +1,6 @@
-﻿using NCafe.Abstractions.Queries;
-using NCafe.Abstractions.ReadModels;
-using NCafe.Cashier.Domain.ReadModels;
+﻿using NCafe.Cashier.Domain.ReadModels;
+using NCafe.Core.Queries;
+using NCafe.Core.ReadModels;
 
 namespace NCafe.Cashier.Domain.Queries;
 

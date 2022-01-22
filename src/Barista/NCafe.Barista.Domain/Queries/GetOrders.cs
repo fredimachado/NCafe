@@ -1,6 +1,6 @@
-﻿using NCafe.Abstractions.Queries;
-using NCafe.Abstractions.ReadModels;
-using NCafe.Barista.Domain.ReadModels;
+﻿using NCafe.Barista.Domain.ReadModels;
+using NCafe.Core.Queries;
+using NCafe.Core.ReadModels;
 
 namespace NCafe.Barista.Domain.Queries;
 

@@ -1,5 +1,5 @@
-﻿using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.Repositories;
+﻿using NCafe.Core.Commands;
+using NCafe.Core.Repositories;
 using NCafe.Admin.Domain.Entities;
 using NCafe.Admin.Domain.Exceptions;
 

@@ -1,8 +1,8 @@
-﻿using NCafe.Abstractions.Exceptions;
-using NCafe.Abstractions.Repositories;
-using NCafe.Cashier.Domain.Commands;
+﻿using NCafe.Cashier.Domain.Commands;
 using NCafe.Cashier.Domain.Entities;
 using NCafe.Cashier.Domain.Exceptions;
+using NCafe.Core.Exceptions;
+using NCafe.Core.Repositories;
 
 namespace NCafe.Cashier.Domain.Tests.Commands;
 

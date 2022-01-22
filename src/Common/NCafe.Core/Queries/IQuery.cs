@@ -1,4 +1,4 @@
-﻿namespace NCafe.Abstractions.Queries;
+﻿namespace NCafe.Core.Queries;
 
 public interface IQuery
 {

@@ -1,5 +1,5 @@
 ﻿using EventStore.Client;
-using NCafe.Abstractions.Domain;
+using NCafe.Core.Domain;
 using System.Text;
 using System.Text.Json;
 

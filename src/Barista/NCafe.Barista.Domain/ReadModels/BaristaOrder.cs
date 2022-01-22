@@ -1,4 +1,4 @@
-﻿using NCafe.Abstractions.ReadModels;
+﻿using NCafe.Core.ReadModels;
 
 namespace NCafe.Barista.Domain.ReadModels;
 

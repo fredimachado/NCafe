@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Admin", "Admin", "{F4C2E948
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{728C5CE5-C0F8-45B9-B9ED-E6AA7C219095}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Abstractions", "src\Common\NCafe.Abstractions\NCafe.Abstractions.csproj", "{82E21B46-0371-42CD-9A2D-AAE7DB1D3BCC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Core", "src\Common\NCafe.Core\NCafe.Core.csproj", "{82E21B46-0371-42CD-9A2D-AAE7DB1D3BCC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Infrastructure", "src\Common\NCafe.Infrastructure\NCafe.Infrastructure.csproj", "{4D8FBA5D-0AFD-4A31-98B8-A4B3A2D53CF6}"
 EndProject

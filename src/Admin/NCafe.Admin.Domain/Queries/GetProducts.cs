@@ -1,6 +1,6 @@
-﻿using NCafe.Abstractions.Queries;
-using NCafe.Abstractions.ReadModels;
-using NCafe.Admin.Domain.ReadModels;
+﻿using NCafe.Admin.Domain.ReadModels;
+using NCafe.Core.Queries;
+using NCafe.Core.ReadModels;
 
 namespace NCafe.Admin.Domain.Queries;
 

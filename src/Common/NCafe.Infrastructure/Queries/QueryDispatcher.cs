@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NCafe.Abstractions.Queries;
+using NCafe.Core.Queries;
 
 namespace NCafe.Infrastructure.Queries;
 

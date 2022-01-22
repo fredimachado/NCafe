@@ -1,4 +1,4 @@
-﻿namespace NCafe.Abstractions.ReadModels;
+﻿namespace NCafe.Core.ReadModels;
 
 public abstract class ReadModel
 {

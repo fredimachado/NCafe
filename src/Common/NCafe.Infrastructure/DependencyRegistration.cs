@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.MessageBus;
-using NCafe.Abstractions.Queries;
-using NCafe.Abstractions.ReadModels;
-using NCafe.Abstractions.Repositories;
+using NCafe.Core.Commands;
+using NCafe.Core.MessageBus;
+using NCafe.Core.Queries;
+using NCafe.Core.ReadModels;
+using NCafe.Core.Repositories;
 using NCafe.Infrastructure.Commands;
 using NCafe.Infrastructure.EventStore;
 using NCafe.Infrastructure.Logging;

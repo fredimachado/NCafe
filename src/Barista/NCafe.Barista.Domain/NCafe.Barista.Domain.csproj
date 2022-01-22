@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\NCafe.Abstractions\NCafe.Abstractions.csproj" />
+    <ProjectReference Include="..\..\Common\NCafe.Core\NCafe.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

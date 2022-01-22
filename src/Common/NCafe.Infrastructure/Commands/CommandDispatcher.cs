@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NCafe.Abstractions.Commands;
+using NCafe.Core.Commands;
 
 namespace NCafe.Infrastructure.Commands;
 

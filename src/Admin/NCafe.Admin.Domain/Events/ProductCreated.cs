@@ -1,4 +1,4 @@
-﻿using NCafe.Abstractions.Domain;
+﻿using NCafe.Core.Domain;
 
 namespace NCafe.Admin.Domain.Events;
 

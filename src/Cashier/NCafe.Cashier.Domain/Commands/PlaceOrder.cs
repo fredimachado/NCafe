@@ -1,11 +1,11 @@
-﻿using NCafe.Abstractions.Commands;
-using NCafe.Abstractions.MessageBus;
-using NCafe.Abstractions.MessageBus.Events;
-using NCafe.Abstractions.ReadModels;
-using NCafe.Abstractions.Repositories;
+﻿using NCafe.Core.MessageBus.Events;
 using NCafe.Cashier.Domain.Exceptions;
 using NCafe.Cashier.Domain.Entities;
 using NCafe.Cashier.Domain.ReadModels;
+using NCafe.Core.Commands;
+using NCafe.Core.MessageBus;
+using NCafe.Core.ReadModels;
+using NCafe.Core.Repositories;
 
 namespace NCafe.Cashier.Domain.Commands;
 

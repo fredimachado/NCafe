@@ -1,6 +1,6 @@
-﻿using NCafe.Abstractions.Exceptions;
+﻿using NCafe.Core.Exceptions;
 
-namespace NCafe.Abstractions.Domain;
+namespace NCafe.Core.Domain;
 
 public abstract class AggregateRoot
 {

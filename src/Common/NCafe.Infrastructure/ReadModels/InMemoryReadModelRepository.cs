@@ -1,4 +1,4 @@
-﻿using NCafe.Abstractions.ReadModels;
+﻿using NCafe.Core.ReadModels;
 using System.Collections.Concurrent;
 
 namespace NCafe.Infrastructure.ReadModels;

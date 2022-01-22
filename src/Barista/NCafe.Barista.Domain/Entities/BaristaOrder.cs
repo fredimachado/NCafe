@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
-using NCafe.Abstractions.Domain;
 using NCafe.Barista.Domain.Events;
+using NCafe.Core.Domain;
 
 namespace NCafe.Barista.Domain.Entities;
 

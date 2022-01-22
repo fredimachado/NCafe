@@ -1,6 +1,6 @@
 ﻿using EventStore.Client;
-using NCafe.Abstractions.Domain;
-using NCafe.Abstractions.Repositories;
+using NCafe.Core.Domain;
+using NCafe.Core.Repositories;
 
 namespace NCafe.Infrastructure.EventStore;
 
