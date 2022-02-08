@@ -1,9 +1,11 @@
 ﻿@page "/barista"
+@using Microsoft.AspNetCore.SignalR.Client
 @using NCafe.Web.Models
 @inject HttpClient Http
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
+@implements IAsyncDisposable
 
 <PageTitle>Barista - NCafe</PageTitle>
 
@@ -35,12 +37,15 @@ else
 }
 
 @code {
-    private BaristaOrder[] orders;
+    private HubConnection? hubConnection;
+    private List<BaristaOrder> orders;
 
     protected override async Task OnInitializedAsync()
     {
         var url = $"{Configuration["BaristaBaseAddress"]}/orders";
-        orders = await Http.GetFromJsonAsync<BaristaOrder[]>(url);
+        orders = await Http.GetFromJsonAsync<List<BaristaOrder>>(url);
+
+        await StartHubAsync();
     }
 
     async Task CompleteOrder(Guid orderId)
@@ -58,7 +63,10 @@ else
                     NotificationType = NotificationType.Success
                 });
 
-            await OnInitializedAsync();
+            var order = orders.FirstOrDefault(o => o.Id == orderId);
+            orders.Remove(order);
+
+            StateHasChanged();
         }
         catch
         {
@@ -69,6 +77,29 @@ else
                     Description = $"There was an error while attempting to complete the order.",
                     NotificationType = NotificationType.Error
                 });
+        }
+    }
+
+    private async Task StartHubAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl($"{Configuration["BaristaBaseAddress"]}/orderHub")
+            .Build();
+
+        hubConnection.On<NCafe.Core.Hubs.Order>("ReceiveOrder", order =>
+        {
+            orders?.Add(new BaristaOrder { Id = order.Id, ProductId = order.ProductId, Quantity = order.Quantity });
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
         }
     }
 }

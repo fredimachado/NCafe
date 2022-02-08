@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.ResponseCompression;
+using NCafe.Barista.Api.Hubs;
 using NCafe.Barista.Api.MessageBus;
 using NCafe.Barista.Api.Projections;
 using NCafe.Barista.Domain.Commands;
@@ -36,6 +38,13 @@ builder.Services.AddCors(options =>
         });
 });
 
+builder.Services.AddSignalR();
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        new[] { "application/octet-stream" });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -61,5 +70,7 @@ app.MapPost("/orders/{id:guid}/prepared", async (ICommandDispatcher commandDispa
     return Results.Created("/orders", null);
 })
 .WithName("CompletePreparation");
+
+app.MapHub<OrderHub>("/orderHub");
 
 app.Run();

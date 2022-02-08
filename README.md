@@ -25,7 +25,7 @@ on this journey. I hope it helps! :smile:
 
 ### TODO
 
-- [ ] Use SignalR to update the Barista page in real time as new orders are placed
+- [x] Use SignalR to update the Barista page in real time as new orders are placed
 - [ ] Use a database for the read models (projections)
 - [ ] Move projection services to their own microservice so reads and writes are separate
 - [ ] Add option for cashier to mark order as paid or cancel it
