@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Using Include="System" />
+    <Using Include="System.Linq" />
     <Using Include="System.Threading.Tasks" />
     <Using Include="FakeItEasy" />
     <Using Include="Shouldly" />

@@ -18,7 +18,7 @@ public abstract class AggregateRoot
         _pendingEvents.Add(@event);
     }
 
-    internal IEnumerable<IEvent> GetPendingEvents()
+    public IEnumerable<IEvent> GetPendingEvents()
     {
         return _pendingEvents.ToArray();
     }
