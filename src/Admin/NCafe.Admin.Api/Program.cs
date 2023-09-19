@@ -58,4 +58,6 @@ app.MapPost("/products", async (ICommandDispatcher commandDispatcher, CreateProd
 })
 .WithName("CreateProduct");
 
+app.MapGet("/healthz", () => "OK");
+
 app.Run();
