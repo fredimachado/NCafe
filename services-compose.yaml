@@ -8,11 +8,9 @@ services:
     restart: unless-stopped
     env_file: .env-local
     ports:
-      - 5010:443
+      - 5010:80
     networks:
       - ncafe
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
   cashier:
     build:
@@ -21,11 +19,9 @@ services:
     restart: unless-stopped
     env_file: .env-local
     ports:
-      - 5020:443
+      - 5020:80
     networks:
       - ncafe
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
   barista:
     build:
@@ -34,11 +30,9 @@ services:
     restart: unless-stopped
     env_file: .env-local
     ports:
-      - 5030:443
+      - 5030:80
     networks:
       - ncafe
-    volumes:
-      - ~/.aspnet/https:/https:ro
 
 networks:
   ncafe:

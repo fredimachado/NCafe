@@ -42,7 +42,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseCors(corsPolicyName);
 
 app.MapGet("/products", async (IQueryDispatcher queryDispatcher) =>

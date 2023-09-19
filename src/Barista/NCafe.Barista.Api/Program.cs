@@ -47,6 +47,8 @@ builder.Services.AddResponseCompression(opts =>
 
 var app = builder.Build();
 
+app.UseResponseCompression();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -54,7 +56,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 app.UseCors(corsPolicyName);
 
 app.MapGet("/orders", async (IQueryDispatcher queryDispatcher) =>

@@ -20,7 +20,7 @@ https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html
 ### Warning
 
 This code should be treated as sample code and is the fruit of my studies on microservices,
-CQRS and Event Sourcing. I tried to write some documentation below for those who are also starting
+CQRS and Event Sourcing. I wrote some documentation below for those who are starting
 on this journey. I hope it helps! :smile:
 
 ### TODO
@@ -173,29 +173,6 @@ In order to run the solution, you need the following:
 In case you want to run the microservices using docker (except the infrastructure ones), we need to generate a certificate,
 but we only need to do this once though.
 
-### If you're running Windows using Linux containers
-
-**Note**: You can skip this if you don't plan to run the microservice using docker.
-
-Run the following commands on your favorite terminal:
-
-    dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\ncafe-aspnetapp.pfx -p ncafe
-    dotnet dev-certs https --trust
-
-I'm assuming you're using PowerShell. If you're using CMD, replace `$env:USERPROFILE` with `%USERPROFILE%`.
-If you decide to use a different Pfx file name or password, you'll have to update `.env-local` accordingly.
-
-### If you're on macOS or Linux
-
-**Note**: You can skip this if you don't plan to run the microservice using docker.
-
-Run the following commands:
-
-    dotnet dev-certs https -ep ${HOME}/.aspnet/https/ncafe-aspnetapp.pfx -p ncafe
-    dotnet dev-certs https --trust
-
-More info about hosting ASP.NET Core images with Docker Compose over HTTPS: https://docs.microsoft.com/en-us/aspnet/core/security/docker-compose-https?view=aspnetcore-6.0
-
 ### Starting the infrastructure containers
 
 Run the following command:
@@ -213,9 +190,9 @@ If you prefer docker, run the following command to build and start all microserv
 
 ### Swagger
 
-- **Admin**: [https://localhost:5010/swagger/index.html](https://localhost:5010/swagger/index.html)
-- **Cashier**: [https://localhost:5020/swagger/index.html](https://localhost:5020/swagger/index.html)
-- **Barista**: [https://localhost:5030/swagger/index.html](https://localhost:5030/swagger/index.html)
+- **Admin**: [http://localhost:5010/swagger/index.html](http://localhost:5010/swagger/index.html)
+- **Cashier**: [http://localhost:5020/swagger/index.html](http://localhost:5020/swagger/index.html)
+- **Barista**: [http://localhost:5030/swagger/index.html](http://localhost:5030/swagger/index.html)
 
 ### NCafe in action
 
