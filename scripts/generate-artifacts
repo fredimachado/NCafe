@@ -73,7 +73,7 @@ sed -i -E 's/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/{{ requiredEnv "\1" }}/g' appspec-tem
 # create deploy directory and move appspec file to it
 deploy_dir=deploy
 rm -rf "$deploy_dir"
-mkdir -p "$deploy_dir"
+mkdir -p "$deploy_dir/charts/"
 
 mv appspec-temp.yaml "$deploy_dir/appspec.yaml.gotmpl"
 
@@ -93,7 +93,7 @@ releases:
 
 # copy helm chart
 echo "Copying helm chart"
-cp "$repo/$chart" "$deploy_dir/charts/" -r
+cp -r "$repo/$chart" "$deploy_dir/charts/"
 
 # update appVersion value in helm chart
 sed -i -E 's/^(appVersion\:)(.*$)/\1 "'$tag'"/g' "$deploy_dir/charts/$chart/Chart.yaml"
