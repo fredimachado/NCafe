@@ -9,6 +9,8 @@ on:
 
 env:
   PROJECT_NAME: NCafe.Admin.Api
+  REGISTRY: ghcr.io
+  IMAGE_NAME: fredimachado/ncafe-admin-api
       
 defaults:
   run:
@@ -16,8 +18,11 @@ defaults:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
     - uses: actions/checkout@v3
@@ -39,14 +44,23 @@ jobs:
     - name: Publish
       run: dotnet publish -c Release --no-restore --no-build -o ./output
 
-    - name: Archive publish artifacts
-      uses: actions/upload-artifact@v3
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
       with:
-        name: publish-output
-        path: src/Admin/NCafe.Admin.Api/output/
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Archive test results
-      uses: actions/upload-artifact@v3
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
       with:
-        name: test-report
-        path: src/Admin/NCafe.Admin.Api/testresults/
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      with:
+        context: src/Admin/NCafe.Admin.Api
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
