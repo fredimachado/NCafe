@@ -1,0 +1,51 @@
+name: Admin API
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/Admin/**'
+
+env:
+  PROJECT_NAME: NCafe.Admin.Api
+      
+defaults:
+  run:
+    working-directory: src/Admin/NCafe.Admin.Api
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Test
+      run: dotnet test --no-restore --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/ ../**.Tests/**.csproj
+
+    - name: Build
+      run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
+
+    - name: Publish
+      run: dotnet publish -c Release --no-restore --no-build -o ./output
+
+    - name: Archive publish artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: publish-output
+        path: ./output
+
+    - name: Archive test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-report
+        path: ./testresults
