@@ -25,6 +25,7 @@ jobs:
       packages: write
 
     steps:
+
     - uses: actions/checkout@v3
 
     - name: Setup .NET
@@ -64,3 +65,14 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Generate release artifacts
+      run: |
+        chmod +x $GITHUB_WORKSPACE/scripts/generate-artifacts
+        $GITHUB_WORKSPACE/scripts/generate-artifacts -a appspec.yaml -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -t ${{ steps.meta.outputs.tags }} -r $GITHUB_WORKSPACE/helm
+
+    - name: Archive publish artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-artifacts
+        path: src/Admin/NCafe.Admin.Api/deploy/

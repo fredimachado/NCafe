@@ -1,0 +1,26 @@
+name: ncafe-admin-api
+
+ingress:
+  enabled: true
+  hosts:
+    - host: ncafe-admin-api-dev.fredi.au
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 350m
+    memory: 512Mi
+
+environment:
+  - name: ConnectionStrings__EventStore
+    valueFromSecret: SecretKey
+
+secrets:
+  SecretKey: "{{CONNECTIONSTRINGS__EVENTSTORE}}"
+
+replicaCount: 1

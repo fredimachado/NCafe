@@ -1,0 +1,101 @@
+#!/bin/bash
+set -e
+
+helpFunction()
+{
+   echo ""
+   echo "Usage: $0 -a /path/to/appspec.yaml -i repository/image -t latest -r ../helm -c chart-name"
+   echo -e "\t-a Path to appspec.yaml"
+   echo -e "\t-i Docker image"
+   echo -e "\t-t Docker image tag"
+   echo -e "\t-r Helm chart repository path"
+   echo -e "\t-c Helm chart name"
+   exit 1 # Exit script after printing help
+}
+
+while getopts "a:i:t:r:c:" opt
+do
+   case "$opt" in
+      a ) appspec="$OPTARG" ;;
+      i ) image="$OPTARG" ;;
+      t ) tag="$OPTARG" ;;
+      r ) repo="$OPTARG" ;;
+      c ) chart="$OPTARG" ;;
+      ? ) helpFunction ;; # Print helpFunction in case parameter is non-existent
+   esac
+done
+
+# Print helpFunction in case required parameters are empty
+if [ -z "$appspec" ] || [ -z "$image" ] || [ -z "$tag" ] || [ -z "$repo" ]
+then
+   echo "Some or all of the parameters are empty";
+   helpFunction
+fi
+
+if [ -z "$chart" ]
+then
+   chart="web-app"
+fi
+
+# appspec file must exist
+if [ ! -f "$appspec" ]
+then
+   echo "Appspec file '$appspec' was not found!"
+   helpFunction
+fi
+
+# appspec file must have a value in name property
+app_name=$(sed -nr 's/^name: (.*)\s*/\1/p' $appspec)
+if [ -z "$app_name" ]
+then
+   echo "name property must have a value in appspec.yaml file"
+   exit 1
+fi
+
+# set up temporary appspec file with image information
+rm -f appspec-temp.yaml
+
+if ! grep -q 'image:' "$appspec"
+then
+   echo "image:
+  repository: $image
+  tag: $tag
+" >> appspec-temp.yaml
+fi
+
+# append appspec file contents to temporary appspec file
+cat "$appspec" >> appspec-temp.yaml
+
+# replace environment variables with requiredEnv in appspec file
+# so deployment fails if environment variables are not set
+sed -i -E 's/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/{{ requiredEnv "\1" }}/g' appspec-temp.yaml
+
+# create deploy directory and move appspec file to it
+deploy_dir=deploy
+rm -rf "$deploy_dir"
+mkdir -p "$deploy_dir"
+
+mv appspec-temp.yaml "$deploy_dir/appspec.yaml.gotmpl"
+
+echo "environments:
+  dev: {}
+  uat: {}
+  prod: {}
+---
+releases:
+- name: $app_name
+  namespace: \$namespace\$
+  createNamespace: false
+  chart: ./charts/$chart
+  wait: true
+  values:
+  - ./appspec.yaml.gotmpl" > $deploy_dir/helmfile.yaml
+
+# copy helm chart
+echo "Copying helm chart"
+cp "$repo/$chart" "$deploy_dir/charts/" -r
+
+# update appVersion value in helm chart
+sed -i -E 's/^(appVersion\:)(.*$)/\1 "'$tag'"/g' "$deploy_dir/charts/$chart/Chart.yaml"
+
+echo "Done."

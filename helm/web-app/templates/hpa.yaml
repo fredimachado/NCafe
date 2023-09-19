@@ -1,0 +1,43 @@
+{{- if .Values.autoscaling.enabled }}
+{{ $replicaCount := $.Values.replicaCount | default 1.0 -}}
+{{ $minReplicas := .Values.autoscaling.minReplicas | default $replicaCount -}}
+{{ $maxReplicas := .Values.autoscaling.maxReplicas | default 2.0 -}}
+{{- if eq $minReplicas $maxReplicas }}
+    # Don't render HPA if min and max replicas are equal
+{{- else }}
+{{- if ge $minReplicas $maxReplicas }}
+{{- fail "minReplicas can not be greater than maxReplicas when autoscaling" }}
+{{- else }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "web-app.fullname" . }}
+  labels:
+    {{- include "web-app.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "web-app.fullname" . }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

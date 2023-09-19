@@ -1,0 +1,76 @@
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: latest
+
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: "nginx"
+  # annotations: {}
+  # hosts:
+  #   - host: example.local
+  #     paths:
+  #       - path: /
+  #         pathType: ImplementationSpecific
+
+healthCheck:
+  enabled: true
+  path: /healthz
+  initialDelaySeconds: 15
+  periodSeconds: 15
+  timeoutSeconds: 1
+
+livenessProbe: {}
+
+readinessProbe:
+  path: ""
+  initialDelaySeconds: 0
+  periodSeconds: 0
+  timeoutSeconds: 0
+
+startupProbe: {}
+# startup probe can be specified by the client via values/appspec file
+#startupProbe:
+#  httpGet:
+#    path: /healthz/startup
+#    port: http
+#  periodSeconds: 10
+#  timeoutSeconds: 1
+#  failureThreshold: 3
+
+resources:
+  requests:
+    cpu: 150m
+    memory: 256Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+podDisruptionBudget: {}
+  # minAvailable: 1
+  # maxUnavailable: 1
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+environment: []
+  # - name: Database__DatabaseName
+  #   value: MyDatabase
+  # - name: Database__ConnectionString
+  #   valueFromSecret: DatabaseConnectionString
+
+secrets: {}
+  # DatabaseConnectionString: "{{DATABASE_CONNECTION_STRING}}"
