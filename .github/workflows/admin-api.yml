@@ -31,7 +31,7 @@ jobs:
       run: dotnet restore
 
     - name: Test
-      run: dotnet test --no-restore --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/ ../**.Tests/**.csproj
+      run: dotnet test --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/ ../**.Tests/**.csproj
 
     - name: Build
       run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
