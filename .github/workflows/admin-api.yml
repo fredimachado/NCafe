@@ -31,22 +31,22 @@ jobs:
       run: dotnet restore
 
     - name: Test
-      run: dotnet test --no-restore --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/ ../**.Tests/**.csproj
+      run: dotnet test --no-restore --results-directory /artifacts/testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=/artifacts/testresults/coverage/ ../**.Tests/**.csproj
 
     - name: Build
       run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
 
     - name: Publish
-      run: dotnet publish -c Release --no-restore --no-build -o ./output
+      run: dotnet publish -c Release --no-restore --no-build -o /artifacts/output
 
     - name: Archive publish artifacts
       uses: actions/upload-artifact@v3
       with:
         name: publish-output
-        path: ./output
+        path: /artifacts/output
 
     - name: Archive test results
       uses: actions/upload-artifact@v3
       with:
         name: test-report
-        path: ./testresults
+        path: /artifacts/testresults
