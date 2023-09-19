@@ -43,10 +43,10 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: publish-output
-        path: src/Admin/NCafe.Admin.Api/output
+        path: src/Admin/NCafe.Admin.Api/output/
 
     - name: Archive test results
       uses: actions/upload-artifact@v3
       with:
         name: test-report
-        path: src/Admin/NCafe.Admin.Api/testresults
+        path: src/Admin/NCafe.Admin.Api/testresults/
