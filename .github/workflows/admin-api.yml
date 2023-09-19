@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'src/Admin/**'
+  workflow_dispatch:
 
 env:
   PROJECT_NAME: NCafe.Admin.Api
