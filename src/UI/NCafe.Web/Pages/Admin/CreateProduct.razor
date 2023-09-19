@@ -55,7 +55,7 @@
                 {
                     Message = "Error",
                     Duration = 0,
-                    Description = $"There was an error while attempting to save the product.",
+                    Description = $"There was an error while attempting to save the product: {ex.Message}.",
                     NotificationType = NotificationType.Error
                 });
         }
