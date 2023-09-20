@@ -106,9 +106,9 @@ jobs:
         helmfile init --force
         sed -i "s/[$]namespace[$]/${{ env.ENVIRONMENT }}/g" deploy/helmfile.yaml
         echo -e "\e[92mConfiguring kubernetes access in pipeline...\e[0m"
-        mkdir .kube
-        echo ${{ secrets.KUBE_CONFIG }} | base64 -d > .kube/config
-        export KUBECONFIG=.kube/config
+        mkdir -p $(pwd)/.kube
+        echo ${{ secrets.KUBE_CONFIG }} | base64 -d > $(pwd)/.kube/config
+        export KUBECONFIG=$(pwd)/.kube/config
         echo -e "\e[92mDeploying to ${{ env.ENVIRONMENT }} environment...\e[0m"
         cd deploy
         helmfile --color -e ${{ env.ENVIRONMENT }} apply --set image.imagePullPolicy=Always
