@@ -83,6 +83,7 @@ jobs:
 
     env:
       ENVIRONMENT: dev
+      CONNECTIONSTRINGS__EVENTSTORE: ${{ secrets.CONNECTIONSTRINGS__EVENTSTORE }}
       
     environment: dev
 
