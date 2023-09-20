@@ -52,6 +52,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{F28F0BC8-4EA1-
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NCafe.Web", "src\UI\NCafe.Web\NCafe.Web.csproj", "{25EC5820-391C-43AB-A750-D73346C30897}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{A86CCFC2-A4C3-489D-8F9E-1E182DF1B4AF}"
+	ProjectSection(SolutionItems) = preProject
+		scripts\generate-artifacts = scripts\generate-artifacts
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -126,6 +131,7 @@ Global
 		{13022A59-EDA3-409C-AB1E-0C74BF557DBC} = {A650B4F4-E754-46C8-B48C-1C1277078D1E}
 		{23A26860-042D-4E27-8D3D-FDAFEF231C42} = {2694AE6D-E1BB-49F4-B8F6-D023610909BC}
 		{25EC5820-391C-43AB-A750-D73346C30897} = {F28F0BC8-4EA1-4980-B721-ED47D569343B}
+		{A86CCFC2-A4C3-489D-8F9E-1E182DF1B4AF} = {38B2A41D-2CD0-48A4-8B0E-8380E6C20FAB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0136BF1-D5F3-4E83-8D23-E3F43534FBB5}
