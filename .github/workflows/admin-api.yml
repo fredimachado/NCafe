@@ -84,6 +84,8 @@ jobs:
     env:
       ENVIRONMENT: dev
       CONNECTIONSTRINGS__EVENTSTORE: ${{ secrets.CONNECTIONSTRINGS__EVENTSTORE }}
+      NGINX_USER: ${{ secrets.NGINX_USER }}
+      NGINX_PASSWORD: ${{ secrets.NGINX_PASSWORD }}
       
     environment: dev
 
