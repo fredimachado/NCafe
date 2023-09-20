@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
     paths:
       - 'src/Admin/**'
+      - '.github/workflows/admin-api.yml'
   workflow_dispatch:
 
 env:
