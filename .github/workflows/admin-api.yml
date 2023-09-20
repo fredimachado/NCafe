@@ -100,6 +100,7 @@ jobs:
 
     - name: Deploy to Kubernetes
       run: |
+        helmfile init --force
         sed -i "s/[$]namespace[$]/${{ env.ENVIRONMENT }}/g" deploy/helmfile.yaml
         echo -e "\e[92mConfiguring kubernetes access in pipeline...\e[0m"
         mkdir .kube
