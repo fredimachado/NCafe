@@ -55,6 +55,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{A86CCFC2-A4C3-489D-8F9E-1E182DF1B4AF}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\generate-artifacts = scripts\generate-artifacts
+		scripts\update-nginx = scripts\update-nginx
 	EndProjectSection
 EndProject
 Global

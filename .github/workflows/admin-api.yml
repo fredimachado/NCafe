@@ -112,3 +112,9 @@ jobs:
         echo -e "\e[92mDeploying to ${{ env.ENVIRONMENT }} environment...\e[0m"
         cd deploy
         helmfile --color -e ${{ env.ENVIRONMENT }} apply --set image.imagePullPolicy=Always
+
+    - name: Update NGINX Proxy Manager
+      run: |
+        chmod +x $GITHUB_WORKSPACE/scripts/update-nginx
+        app_name=$(sed -nr 's/^name: (.*)\s*/\1/p' appspec.yaml)
+        $GITHUB_WORKSPACE/scripts/update-nginx $app_name ${{ env.ENVIRONMENT }} https://proxymanager.fredi.au/api 80 2

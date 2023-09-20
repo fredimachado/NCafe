@@ -1,0 +1,75 @@
+#!/bin/bash
+# Update NGINX Proxy Manager.
+# It adds a new proxy host, or updates the existing one if IP address has changed.
+#
+# Example:
+#	update-nginx app-name default https://proxymanager.fredi.au/api 80 2
+set -e
+
+if [[ "$#" -ne 5 ]]; then
+    echo "Usage: $0 <app_name> <namespace> <proxymanager_api_url> <forward_port> <certificate_id>"
+    exit 1
+fi
+
+readonly app_name="$1"
+readonly namespace="$2"
+readonly api_url="$3"
+readonly forward_port="$4"
+readonly certificate_id="$5"
+
+echo "----------------------------------------"
+echo "- app_name: '$app_name'"
+echo "- namespace: '$namespace'"
+echo "- api_url: '$api_url'"
+echo "- forward_port: '$forward_port'"
+echo "- certificate_id: '$certificate_id'"
+echo "----------------------------------------"
+
+echo "Waiting for ingress to be ready..."
+endtime=$(date -d@"$((`date +%s`+120))" +%s) # 120 seconds timeout
+while [[ $(date -u +%s) -le $endtime ]]
+do
+    # Get ingress host and IP of the app
+    kubectl get ingress -n $namespace -o json | jq -r ".items[] | (select(.metadata.name | test(\"$app_name\"))) | {INGRESS_HOST: .spec.rules[0].host, INGRESS_IP: .status.loadBalancer.ingress[0].ip} | to_entries | map(\"\(.key)=\(.value|tostring)\") | .[]" > envvars.txt
+    if [[ -s envvars.txt ]]; then
+        source envvars.txt
+        export INGRESS_HOST INGRESS_IP
+        if [[ "$INGRESS_IP" != "null" ]]; then
+            break
+        fi
+    fi
+    echo "Waiting for 10 seconds..."
+    sleep 10
+done
+
+if [[ -z "$INGRESS_HOST" ]] || [[ -z "$INGRESS_IP" ]]; then
+    echo -e "\e[31mNo host or IP. (INGRESS_HOST '$INGRESS_HOST', INGRESS_IP '$INGRESS_IP')\e[0m"
+    exit 137
+fi
+
+echo -e "INGRESS_HOST '\e[92m$INGRESS_HOST\e[0m', INGRESS_IP '\e[92m$INGRESS_IP\e[0m'"
+
+NGINX_PM_TOKEN=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data "{\"identity\": \"$NGINX_USER\",\"secret\": \"$NGINX_PASSWORD\"}" $api_url/tokens | jq -r '.token')
+NGINX_HOST=$(curl -s -H 'Accept: application/json' -H "Authorization: Bearer ${NGINX_PM_TOKEN}" $api_url/nginx/proxy-hosts | jq -c ".[] | select( .domain_names[] | contains(\"$INGRESS_HOST\")) | {id:.id,host:.domain_names[0],ip:.forward_host}")
+echo "NGINX_HOST: $NGINX_HOST"
+
+EXISTING_HOST=$(echo "$NGINX_HOST" | jq "select(.host == \"$INGRESS_HOST\" and .ip == \"$INGRESS_IP\")")
+echo "EXISTING_HOST: $EXISTING_HOST"
+if [[ ! -z "$EXISTING_HOST" ]]; then
+    echo -e "\e[92mhttps://$INGRESS_HOST is already configured in NGINX Proxy Manager. Skipping...\e[0m"
+    exit 0
+fi
+
+EXISTING_HOST=$(echo "$NGINX_HOST" | jq "select(.host == \"$INGRESS_HOST\")")
+echo "EXISTING_HOST: $EXISTING_HOST"
+if [[ ! -z "$EXISTING_HOST" ]]; then
+    echo -e "\e[93mHost $INGRESS_HOST already exists, but with different IP. Updating...\e[0m"
+    HOST_ID=$(echo $EXISTING_HOST | jq -r '.id')
+    curl -s -X PUT -H 'Accept: application/json' -H "Authorization: Bearer ${NGINX_PM_TOKEN}" -H 'Content-Type: application/json' --data "{\"forward_host\": \"$INGRESS_IP\"}" $api_url/nginx/proxy-hosts/$HOST_ID
+    echo -e "\n\e[92mhttps://$INGRESS_HOST updated successfully.\e[0m"
+    exit 0
+fi
+
+echo "Creating new host $INGRESS_HOST in NGINX Proxy Manager..."
+curl -s -X POST -H 'Accept: application/json' -H "Authorization: Bearer ${NGINX_PM_TOKEN}" -H 'Content-Type: application/json' --data "{\"domain_names\": [ \"$INGRESS_HOST\"], \"forward_scheme\": \"http\", \"forward_host\": \"$INGRESS_IP\", \"forward_port\": $forward_port, \"allow_websocket_upgrade\": true, \"access_list_id\": \"0\", \"certificate_id\": $certificate_id, \"ssl_forced\": true, \"http2_support\": true, \"meta\": { \"letsencrypt_agree\": false, \"dns_challenge\": false }, \"advanced_config\": \"\", \"locations\": [], \"block_exploits\": false, \"caching_enabled\": false, \"hsts_enabled\": false, \"hsts_subdomains\": false }" $api_url/nginx/proxy-hosts
+echo -e "\n\e[92mhttps://$INGRESS_HOST created successfully.\e[0m"
