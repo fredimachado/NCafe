@@ -119,4 +119,5 @@ jobs:
       run: |
         chmod +x $GITHUB_WORKSPACE/scripts/update-nginx
         app_name=$(sed -nr 's/^name: (.*)\s*/\1/p' appspec.yaml)
+        export KUBECONFIG=$(pwd)/.kube/config
         $GITHUB_WORKSPACE/scripts/update-nginx $app_name ${{ env.ENVIRONMENT }} https://proxymanager.fredi.au/api 80 2
