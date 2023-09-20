@@ -66,10 +66,15 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
+    - name: Install Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.11.1
+
     - name: Generate release artifacts
       run: |
         chmod +x $GITHUB_WORKSPACE/scripts/generate-artifacts
-        $GITHUB_WORKSPACE/scripts/generate-artifacts -a appspec.yaml -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -t ${{ steps.meta.outputs.version }} -r $GITHUB_WORKSPACE/helm
+        $GITHUB_WORKSPACE/scripts/generate-artifacts -a appspec.yaml -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -t ${{ steps.meta.outputs.version }} -r https://fredimachado.github.io/helm-charts
 
     - name: Archive release artifacts
       uses: actions/upload-artifact@v3

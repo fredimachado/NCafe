@@ -4,11 +4,11 @@ set -e
 helpFunction()
 {
    echo ""
-   echo "Usage: $0 -a /path/to/appspec.yaml -i repository/image -t latest -r ../helm -c chart-name"
+   echo "Usage: $0 -a /path/to/appspec.yaml -i repository/image -t latest -r https://helm.repo/charts -c chart-name"
    echo -e "\t-a Path to appspec.yaml"
    echo -e "\t-i Docker image"
    echo -e "\t-t Docker image tag"
-   echo -e "\t-r Helm chart repository path"
+   echo -e "\t-r Helm chart repository URL"
    echo -e "\t-c Helm chart name"
    exit 1 # Exit script after printing help
 }
@@ -26,10 +26,16 @@ do
 done
 
 # Print helpFunction in case required parameters are empty
-if [ -z "$appspec" ] || [ -z "$image" ] || [ -z "$tag" ] || [ -z "$repo" ]
+if [ -z "$appspec" ] || [ -z "$image" ] || [ -z "$tag" ]
 then
    echo "Some or all of the parameters are empty";
    helpFunction
+fi
+
+# Set default values for $repo and $chart if not provided
+if [ -z "$repo" ]
+then
+   repo="https://fredimachado.github.io/helm-charts"
 fi
 
 if [ -z "$chart" ]
@@ -91,9 +97,10 @@ releases:
   values:
   - ./appspec.yaml.gotmpl" > $deploy_dir/helmfile.yaml
 
-# copy helm chart
-echo "Copying helm chart"
-cp -r "$repo/$chart" "$deploy_dir/charts/"
+# download helm chart
+echo "Pulling helm chart"
+helm repo add chartrepo $repo
+helm pull chartrepo/$chart -d "$deploy_dir/charts/" --untar
 
 # update appVersion value in helm chart
 sed -i -E 's/^(appVersion\:)(.*$)/\1 "'$tag'"/g' "$deploy_dir/charts/$chart/Chart.yaml"
