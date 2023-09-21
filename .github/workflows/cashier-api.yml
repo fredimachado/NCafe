@@ -83,48 +83,15 @@ jobs:
         name: release-artifacts
         path: src/Cashier/NCafe.Cashier.Api/deploy/
   
-  release:
-    runs-on: self-hosted
+  release-dev:
     needs: build
-
-    env:
-      ENVIRONMENT: dev
+    uses: ./.github/workflows/deploy_template.yml
+    with:
+      environment: dev
+      project_folder: src/Cashier/NCafe.Cashier.Api
+    secrets:
       CONNECTIONSTRINGS__EVENTSTORE: ${{ secrets.CONNECTIONSTRINGS__EVENTSTORE }}
       CONNECTIONSTRINGS__RABBITMQ: ${{ secrets.CONNECTIONSTRINGS__RABBITMQ }}
       NGINX_USER: ${{ secrets.NGINX_USER }}
       NGINX_PASSWORD: ${{ secrets.NGINX_PASSWORD }}
-      
-    environment: dev
-
-    steps:
-
-    - uses: actions/checkout@v3
-
-    - name: Download release artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: release-artifacts
-        path: src/Cashier/NCafe.Cashier.Api/deploy/
-
-    - uses: jkroepke/setup-helmfile@v1
-      with:
-        version: '0.156.0'
-
-    - name: Deploy to Kubernetes
-      run: |
-        helmfile init --force
-        sed -i "s/[$]namespace[$]/${{ env.ENVIRONMENT }}/g" deploy/helmfile.yaml
-        echo -e "\e[92mConfiguring kubernetes access in pipeline...\e[0m"
-        mkdir -p $(pwd)/.kube
-        echo ${{ secrets.KUBE_CONFIG }} | base64 -d > $(pwd)/.kube/config
-        export KUBECONFIG=$(pwd)/.kube/config
-        echo -e "\e[92mDeploying to ${{ env.ENVIRONMENT }} environment...\e[0m"
-        cd deploy
-        helmfile --color -e ${{ env.ENVIRONMENT }} apply --set image.imagePullPolicy=Always
-
-    - name: Update NGINX Proxy Manager
-      run: |
-        chmod +x $GITHUB_WORKSPACE/scripts/update-nginx
-        app_name=$(sed -nr 's/^name: (.*)\s*/\1/p' appspec.yaml)
-        export KUBECONFIG=$(pwd)/.kube/config
-        $GITHUB_WORKSPACE/scripts/update-nginx $app_name ${{ env.ENVIRONMENT }} https://proxymanager.fredi.au/api 80 2
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}

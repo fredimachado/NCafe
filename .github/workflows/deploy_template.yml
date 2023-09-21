@@ -21,7 +21,7 @@ on:
         required: true
 
 jobs:
-  release:
+  deploy:
     runs-on: self-hosted
 
     environment: ${{ inputs.environment }}
