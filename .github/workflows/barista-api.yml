@@ -88,7 +88,7 @@ jobs:
     uses: ./.github/workflows/deploy_template.yml
     with:
       environment: dev
-      artifacts_folder: src/Barista/NCafe.Barista.Api/deploy/
+      project_folder: src/Barista/NCafe.Barista.Api
     secrets:
       CONNECTIONSTRINGS__EVENTSTORE: ${{ secrets.CONNECTIONSTRINGS__EVENTSTORE }}
       CONNECTIONSTRINGS__RABBITMQ: ${{ secrets.CONNECTIONSTRINGS__RABBITMQ }}

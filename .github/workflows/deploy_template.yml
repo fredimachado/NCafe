@@ -5,7 +5,7 @@ on:
       environment:
         required: true
         type: string
-      artifacts_folder:
+      project_folder:
         required: true
         type: string
     secrets:
@@ -41,13 +41,14 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: release-artifacts
-        path: ${{ inputs.artifacts_folder }}
+        path: ${{ inputs.project_folder }}/deploy/
 
     - uses: jkroepke/setup-helmfile@v1
       with:
         version: '0.156.0'
 
     - name: Deploy to Kubernetes
+      working-directory: ${{ inputs.project_folder }}
       run: |
         helmfile init --force
         sed -i "s/[$]namespace[$]/${{ env.ENVIRONMENT }}/g" deploy/helmfile.yaml
@@ -60,6 +61,7 @@ jobs:
         helmfile --color -e ${{ env.ENVIRONMENT }} apply --set image.imagePullPolicy=Always
 
     - name: Update NGINX Proxy Manager
+      working-directory: ${{ inputs.project_folder }}
       run: |
         chmod +x $GITHUB_WORKSPACE/scripts/update-nginx
         app_name=$(sed -nr 's/^name: (.*)\s*/\1/p' appspec.yaml)
