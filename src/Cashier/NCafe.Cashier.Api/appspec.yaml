@@ -1,0 +1,29 @@
+name: ncafe-cashier-api
+
+ingress:
+  enabled: true
+  hosts:
+    - host: ncafe-cashier-api-dev.fredi.au
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 350m
+    memory: 512Mi
+
+environment:
+  - name: ConnectionStrings__EventStore
+    valueFromSecret: EventStoreConnectionString
+  - name: ConnectionStrings__RabbitMq
+    valueFromSecret: RabbitMqConnectionString
+
+secrets:
+  EventStoreConnectionString: "{{CONNECTIONSTRINGS__EVENTSTORE}}"
+  RabbitMqConnectionString: "{{CONNECTIONSTRINGS__RABBITMQ}}"
+
+replicaCount: 1
