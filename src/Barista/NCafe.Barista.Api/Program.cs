@@ -74,4 +74,6 @@ app.MapPost("/orders/{id:guid}/prepared", async (ICommandDispatcher commandDispa
 
 app.MapHub<OrderHub>("/orderHub");
 
+app.MapGet("/healthz", () => "OK");
+
 app.Run();
