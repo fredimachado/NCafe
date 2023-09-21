@@ -60,4 +60,6 @@ app.MapPost("/orders", async (ICommandDispatcher commandDispatcher, PlaceOrder c
 })
 .WithName("PlaceOrder");
 
+app.MapGet("/healthz", () => "OK");
+
 app.Run();
