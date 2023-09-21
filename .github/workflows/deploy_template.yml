@@ -1,0 +1,67 @@
+name: Deploy to Kubernetes
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      artifacts_folder:
+        required: true
+        type: string
+    secrets:
+      CONNECTIONSTRINGS__EVENTSTORE:
+        required: true
+      CONNECTIONSTRINGS__RABBITMQ:
+        required: true
+      NGINX_USER:
+        required: true
+      NGINX_PASSWORD:
+        required: true
+      KUBE_CONFIG:
+        required: true
+
+jobs:
+  release:
+    runs-on: self-hosted
+
+    environment: ${{ inputs.environment }}
+
+    env:
+      ENVIRONMENT: ${{ inputs.environment }}
+      CONNECTIONSTRINGS__EVENTSTORE: ${{ secrets.CONNECTIONSTRINGS__EVENTSTORE }}
+      CONNECTIONSTRINGS__RABBITMQ: ${{ secrets.CONNECTIONSTRINGS__RABBITMQ }}
+      NGINX_USER: ${{ secrets.NGINX_USER }}
+      NGINX_PASSWORD: ${{ secrets.NGINX_PASSWORD }}
+
+    steps:
+
+    - uses: actions/checkout@v3
+
+    - name: Download release artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: release-artifacts
+        path: ${{ inputs.artifacts_folder }}
+
+    - uses: jkroepke/setup-helmfile@v1
+      with:
+        version: '0.156.0'
+
+    - name: Deploy to Kubernetes
+      run: |
+        helmfile init --force
+        sed -i "s/[$]namespace[$]/${{ env.ENVIRONMENT }}/g" deploy/helmfile.yaml
+        echo -e "\e[92mConfiguring kubernetes access in pipeline...\e[0m"
+        mkdir -p $(pwd)/.kube
+        echo ${{ secrets.KUBE_CONFIG }} | base64 -d > $(pwd)/.kube/config
+        export KUBECONFIG=$(pwd)/.kube/config
+        echo -e "\e[92mDeploying to ${{ env.ENVIRONMENT }} environment...\e[0m"
+        cd deploy
+        helmfile --color -e ${{ env.ENVIRONMENT }} apply --set image.imagePullPolicy=Always
+
+    - name: Update NGINX Proxy Manager
+      run: |
+        chmod +x $GITHUB_WORKSPACE/scripts/update-nginx
+        app_name=$(sed -nr 's/^name: (.*)\s*/\1/p' appspec.yaml)
+        export KUBECONFIG=$(pwd)/.kube/config
+        $GITHUB_WORKSPACE/scripts/update-nginx $app_name ${{ env.ENVIRONMENT }} https://proxymanager.fredi.au/api 80 2
