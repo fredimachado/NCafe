@@ -1,0 +1,8 @@
+<Project>
+  <ItemGroup Condition="$(ProjectName.EndsWith('.Api')) Or $(ProjectName.EndsWith('.Web'))">
+    <PackageReference Include="MinVer" Version="4.3.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>

@@ -35,6 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.env-local = .env-local
+		Directory.Build.props = Directory.Build.props
 		infrastructure-compose.yaml = infrastructure-compose.yaml
 		README.md = README.md
 		services-compose.yaml = services-compose.yaml
@@ -56,6 +57,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{A86C
 	ProjectSection(SolutionItems) = preProject
 		scripts\generate-artifacts = scripts\generate-artifacts
 		scripts\update-nginx = scripts\update-nginx
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{965A2803-CEAE-4A99-A6ED-087A2E30DBC8}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\admin-api.yml = .github\workflows\admin-api.yml
+		.github\workflows\barista-api.yml = .github\workflows\barista-api.yml
+		.github\workflows\cashier-api.yml = .github\workflows\cashier-api.yml
+		.github\workflows\deploy_template.yml = .github\workflows\deploy_template.yml
 	EndProjectSection
 EndProject
 Global
@@ -133,6 +142,7 @@ Global
 		{23A26860-042D-4E27-8D3D-FDAFEF231C42} = {2694AE6D-E1BB-49F4-B8F6-D023610909BC}
 		{25EC5820-391C-43AB-A750-D73346C30897} = {F28F0BC8-4EA1-4980-B721-ED47D569343B}
 		{A86CCFC2-A4C3-489D-8F9E-1E182DF1B4AF} = {38B2A41D-2CD0-48A4-8B0E-8380E6C20FAB}
+		{965A2803-CEAE-4A99-A6ED-087A2E30DBC8} = {38B2A41D-2CD0-48A4-8B0E-8380E6C20FAB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0136BF1-D5F3-4E83-8D23-E3F43534FBB5}
