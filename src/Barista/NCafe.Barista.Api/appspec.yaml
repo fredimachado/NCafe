@@ -2,11 +2,9 @@ name: ncafe-barista-api
 
 ingress:
   enabled: true
+  path: /barista
   hosts:
-    - host: ncafe-barista-api-dev.fredi.au
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
+    - ncafe-dev.fredi.au
 
 resources:
   requests:
