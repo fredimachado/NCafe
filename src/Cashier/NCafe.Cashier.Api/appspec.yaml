@@ -2,11 +2,9 @@ name: ncafe-cashier-api
 
 ingress:
   enabled: true
+  path: /cashier
   hosts:
-    - host: ncafe-cashier-api-dev.fredi.au
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
+    - ncafe-dev.fredi.au
 
 resources:
   requests:

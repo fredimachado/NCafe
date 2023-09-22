@@ -2,11 +2,9 @@ name: ncafe-admin-api
 
 ingress:
   enabled: true
+  path: /admin
   hosts:
-    - host: ncafe-admin-api-dev.fredi.au
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
+    - ncafe-dev.fredi.au
 
 resources:
   requests:
