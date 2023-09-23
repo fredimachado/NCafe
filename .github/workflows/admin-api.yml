@@ -102,7 +102,8 @@ jobs:
     needs: build
     uses: ./.github/workflows/deploy_template.yml
     with:
-      environment: dev
+      environment: admin-dev
+      namespace: dev
       project_folder: src/Admin/NCafe.Admin.Api
     secrets:
       CONNECTIONSTRINGS__EVENTSTORE: ${{ secrets.CONNECTIONSTRINGS__EVENTSTORE }}

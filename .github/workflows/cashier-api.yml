@@ -102,7 +102,8 @@ jobs:
     needs: build
     uses: ./.github/workflows/deploy_template.yml
     with:
-      environment: dev
+      environment: cashier-dev
+      namespace: dev
       project_folder: src/Cashier/NCafe.Cashier.Api
     secrets:
       CONNECTIONSTRINGS__EVENTSTORE: ${{ secrets.CONNECTIONSTRINGS__EVENTSTORE }}
