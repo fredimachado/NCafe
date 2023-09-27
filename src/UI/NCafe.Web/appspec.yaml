@@ -1,0 +1,25 @@
+name: ncafe-web-ui
+
+ingress:
+  enabled: true
+  path: /web
+  hosts:
+    - ncafe-dev.fredi.au
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 256Mi
+  limits:
+    cpu: 350m
+    memory: 512Mi
+
+environment:
+  - name: AdminBaseAddress
+    value: "https://ncafe-dev.fredi.au/admin"
+  - name: CashierBaseAddress
+    value: "https://ncafe-dev.fredi.au/cashier"
+  - name: BaristaBaseAddress
+    value: "https://ncafe-dev.fredi.au/barista"
+
+replicaCount: 1

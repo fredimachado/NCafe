@@ -1,0 +1,106 @@
+name: Web UI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'src/UI/**'
+      - '.github/workflows/web-ui.yml'
+  workflow_dispatch:
+
+env:
+  PROJECT_NAME: NCafe.UI
+  REGISTRY: ghcr.io
+  IMAGE_NAME: fredimachado/ncafe-web-ui
+  MINVERTAGPREFIX: ui-
+
+defaults:
+  run:
+    working-directory: src/UI/NCafe.Web
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Install minver cli
+      run: dotnet tool install --tool-path ./minver minver-cli --version 4.3.0
+
+    - name: Calculate version
+      run: |
+        MINVERVERSION=$(./minver/minver -p alpha -t ${{ env.MINVERTAGPREFIX }})
+        echo "VERSION=$MINVERVERSION" >> "$GITHUB_ENV"
+        echo "MINVERVERSIONOVERRIDE=$MINVERVERSION" >> "$GITHUB_ENV"
+        echo "VERSION: $MINVERVERSION"
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
+
+    - name: Publish
+      run: dotnet publish -c Release --no-restore --no-build -o ./output
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@9ec57ed1fcdbf14dcef7dfbe97b2010124a938b7
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=semver,pattern={{version}},value=${{ env.VERSION }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@f2a1d5e99d037542a71f64918e516c093c6f3fc4
+      with:
+        context: src/UI/NCafe.Web
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+
+    - name: Install Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: v3.11.1
+
+    - name: Generate release artifacts
+      run: |
+        chmod +x $GITHUB_WORKSPACE/scripts/generate-artifacts
+        $GITHUB_WORKSPACE/scripts/generate-artifacts -a appspec.yaml -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -t ${{ steps.meta.outputs.version }} -r https://fredimachado.github.io/helm-charts
+
+    - name: Archive release artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: release-artifacts
+        path: src/UI/NCafe.Web/deploy/
+  
+  release-dev:
+    needs: build
+    uses: ./.github/workflows/deploy_template.yml
+    with:
+      environment: ui-dev
+      namespace: dev
+      project_folder: src/UI/NCafe.Web
+    secrets:
+      KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
