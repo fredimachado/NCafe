@@ -103,4 +103,6 @@ jobs:
       namespace: dev
       project_folder: src/UI/NCafe.Web
     secrets:
+      CONNECTIONSTRINGS__EVENTSTORE: ""
+      CONNECTIONSTRINGS__RABBITMQ: ""
       KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
