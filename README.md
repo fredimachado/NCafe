@@ -11,28 +11,30 @@ https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html
 
 ### Tech stack:
 
-- **C# 10/.NET 6**
+- **C# 11/.NET 7**
 - **ASP.NET Core minimal APIs**
 - **Docker**
+- **Kubernetes**
 - **EventStore**: Database for Event Sourcing where we store events as the source of truth instead of current state
 - **RabbitMQ**: Message broker used for asynchronous messaging
 
 ### Warning
 
-This code should be treated as sample code and is the fruit of my studies on microservices,
-CQRS and Event Sourcing. I wrote some documentation below for those who are starting
+This code should be treated as sample code and is my sandbox for practicing microservices,
+CQRS, Event Sourcing and Kubernetes/helm deployment. I wrote some documentation below for those who are starting
 on this journey. I hope it helps! :smile:
 
 ### TODO
 
 - [x] Use SignalR to update the Barista page in real time as new orders are placed
+- [x] Kubernetes/helm/helmfile deployment to my internal K3S cluster
 - [ ] Use a database for the read models (projections)
 - [ ] Move projection services to their own microservice so reads and writes are separate
-- [ ] Add option for cashier to mark order as paid or cancel it
+- [ ] Add option for cashier to mark order as paid (only then ready for barista) or cancel it
 - [ ] Cashier should be able to add the customer name to the order
 - [ ] Cashier should be able to add multiple products to the same order
-- [ ] Add timestamp to orders so we can show the "oldest" first
 - [ ] Barista should be able to see the name of the customer and products/quantities
+- [ ] Add timestamp to orders so we can show the "oldest" first
 - [ ] Admin should be able to edit products
 - [ ] Admin should be able to delete products
 
@@ -167,7 +169,7 @@ that we only care about events from a specific position in the stream. Saving th
 
 In order to run the solution, you need the following:
 
-- .NET 6 SDK
+- .NET 7 SDK
 - Docker
 
 In case you want to run the microservices using docker (except the infrastructure ones), we need to generate a certificate,
