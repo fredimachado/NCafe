@@ -10,9 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
-                .AddCommandHandlers(typeof(PlaceOrder).Assembly)
+                .AddCommandHandlers<PlaceOrder>()
                 .AddCommandHandlerLogger()
-                .AddQueryHandlers(typeof(PlaceOrder).Assembly);
+                .AddQueryHandlers<PlaceOrder>();
 
 builder.Services.AddInMemoryReadModelRepository<Product>()
                 .AddEventStoreProjectionService<Product>()

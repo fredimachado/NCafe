@@ -41,11 +41,11 @@ public static class DependencyRegistration
         return services;
     }
 
-    public static IServiceCollection AddCommandHandlers(this IServiceCollection services, Assembly assembly)
+    public static IServiceCollection AddCommandHandlers<T>(this IServiceCollection services)
     {
         services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
 
-        services.Scan(s => s.FromAssemblies(assembly)
+        services.Scan(s => s.FromAssemblies(typeof(T).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(ICommandHandler<>)))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
@@ -53,11 +53,11 @@ public static class DependencyRegistration
         return services;
     }
 
-    public static IServiceCollection AddQueryHandlers(this IServiceCollection services, Assembly assembly)
+    public static IServiceCollection AddQueryHandlers<T>(this IServiceCollection services)
     {
         services.AddSingleton<IQueryDispatcher, QueryDispatcher>();
 
-        services.Scan(s => s.FromAssemblies(assembly)
+        services.Scan(s => s.FromAssemblies(typeof(T).Assembly)
             .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)))
             .AsImplementedInterfaces()
             .WithScopedLifetime());
