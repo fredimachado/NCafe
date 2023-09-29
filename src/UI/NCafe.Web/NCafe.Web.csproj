@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\NCafe.Core\NCafe.Core.csproj" />
+    <ProjectReference Include="..\..\Common\NCafe.Shared\NCafe.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

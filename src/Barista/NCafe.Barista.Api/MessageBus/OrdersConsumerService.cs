@@ -48,7 +48,7 @@ public class OrdersConsumerService : IHostedService
     {
         await commandDispatcher.DispatchAsync(new PlaceOrder(orderPlaced.Id, orderPlaced.ProductId, orderPlaced.Quantity));
 
-        await hubContext.Clients.All.SendAsync("ReceiveOrder", new Core.Hubs.Order(orderPlaced.Id, orderPlaced.ProductId, orderPlaced.Quantity));
+        await hubContext.Clients.All.SendAsync("ReceiveOrder", new Shared.Hubs.Order(orderPlaced.Id, orderPlaced.ProductId, orderPlaced.Quantity));
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

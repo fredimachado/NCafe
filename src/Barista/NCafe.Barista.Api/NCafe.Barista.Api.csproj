@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\NCafe.Infrastructure\NCafe.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Common\NCafe.Shared\NCafe.Shared.csproj" />
     <ProjectReference Include="..\NCafe.Barista.Domain\NCafe.Barista.Domain.csproj" />
   </ItemGroup>
 

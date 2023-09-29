@@ -86,7 +86,7 @@ else
             .WithUrl($"{Configuration["BaristaBaseAddress"]}/orderHub")
             .Build();
 
-        hubConnection.On<NCafe.Core.Hubs.Order>("ReceiveOrder", order =>
+        hubConnection.On<NCafe.Shared.Hubs.Order>("ReceiveOrder", order =>
         {
             orders?.Add(new BaristaOrder { Id = order.Id, ProductId = order.ProductId, Quantity = order.Quantity });
             StateHasChanged();

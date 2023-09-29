@@ -68,6 +68,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 		.github\workflows\web-ui.yml = .github\workflows\web-ui.yml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NCafe.Shared", "src\Common\NCafe.Shared\NCafe.Shared.csproj", "{98734B27-556B-40FB-8E1F-86FDCC4DA1A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -122,6 +124,10 @@ Global
 		{25EC5820-391C-43AB-A750-D73346C30897}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25EC5820-391C-43AB-A750-D73346C30897}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25EC5820-391C-43AB-A750-D73346C30897}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98734B27-556B-40FB-8E1F-86FDCC4DA1A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98734B27-556B-40FB-8E1F-86FDCC4DA1A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98734B27-556B-40FB-8E1F-86FDCC4DA1A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98734B27-556B-40FB-8E1F-86FDCC4DA1A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,6 +150,7 @@ Global
 		{25EC5820-391C-43AB-A750-D73346C30897} = {F28F0BC8-4EA1-4980-B721-ED47D569343B}
 		{A86CCFC2-A4C3-489D-8F9E-1E182DF1B4AF} = {38B2A41D-2CD0-48A4-8B0E-8380E6C20FAB}
 		{965A2803-CEAE-4A99-A6ED-087A2E30DBC8} = {38B2A41D-2CD0-48A4-8B0E-8380E6C20FAB}
+		{98734B27-556B-40FB-8E1F-86FDCC4DA1A1} = {728C5CE5-C0F8-45B9-B9ED-E6AA7C219095}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0136BF1-D5F3-4E83-8D23-E3F43534FBB5}
