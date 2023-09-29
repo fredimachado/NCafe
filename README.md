@@ -20,14 +20,16 @@ https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html
 
 ### Warning
 
-This code should be treated as sample code and is my sandbox for practicing microservices,
-CQRS, Event Sourcing and Kubernetes/helm deployment. I wrote some documentation below for those who are starting
-on this journey. I hope it helps! :smile:
+This code should be treated as sample code. It's a sandbox for practicing microservice ideas,
+CQRS, Event Sourcing, Kubernetes/helm deployment and related things.
+
+I wrote some documentation below for those who are starting on this journey. I hope it helps! :smile:
 
 ### TODO
 
 - [x] Use SignalR to update the Barista page in real time as new orders are placed
 - [x] Kubernetes/helm/helmfile deployment to my internal K3S cluster
+- [ ] Add observability with OpenTelemetry
 - [ ] Use a database for the read models (projections)
 - [ ] Move projection services to their own microservice so reads and writes are separate
 - [ ] Add option for cashier to mark order as paid (only then ready for barista) or cancel it
@@ -79,6 +81,13 @@ All common interfaces and abstractions are here. For example:
 
 So, basically, this project is the core of our solution and will only contain the
 abstractions used by other layers. This project doesn't have any microservice specific code.
+
+#### Shared
+
+There is a shared project (`NCafe.Shared`), that contains code that doesn't require any core
+abstraction or logic. For example, types that define SignalR object for real-time functionality.
+
+The Web UI project doesn't really need a reference to `NCafe.Core` (`NCafe.Shared` is enough).
 
 ### Application Domain
 
