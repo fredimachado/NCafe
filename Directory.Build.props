@@ -1,6 +1,11 @@
 <Project>
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup Condition="$(ProjectName.EndsWith('.Api')) Or $(ProjectName.EndsWith('.Web'))">
-    <PackageReference Include="MinVer" Version="4.3.0">
+    <PackageReference Include="MinVer">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -84,8 +84,8 @@ abstractions used by other layers. This project doesn't have any microservice sp
 
 #### Shared
 
-There is a shared project (`NCafe.Shared`), that contains code that doesn't require any core
-abstraction or logic. For example, types that define SignalR object for real-time functionality.
+There is a shared project (`NCafe.Shared`), that contains code that don't require any core
+abstraction or logic. For example, types that define SignalR objects for real-time functionality.
 
 The Web UI project doesn't really need a reference to `NCafe.Core` (`NCafe.Shared` is enough).
 
