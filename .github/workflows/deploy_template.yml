@@ -39,7 +39,7 @@ jobs:
         name: release-artifacts
         path: ${{ inputs.project_folder }}/deploy/
 
-    - uses: helmfile/helmfile-action@v1
+    - uses: helmfile/helmfile-action@v1.0.0
       with:
         helmfile-version: 'v0.156.0'
 
