@@ -39,9 +39,9 @@ jobs:
         name: release-artifacts
         path: ${{ inputs.project_folder }}/deploy/
 
-    - uses: jkroepke/setup-helmfile@v1
+    - uses: helmfile/helmfile-action@v1
       with:
-        version: '0.156.0'
+        helmfile-version: 'v0.156.0'
 
     - name: Deploy to Kubernetes
       working-directory: ${{ inputs.project_folder }}
