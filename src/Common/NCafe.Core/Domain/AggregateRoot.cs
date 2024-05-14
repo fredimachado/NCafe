@@ -28,7 +28,7 @@ public abstract class AggregateRoot
         _pendingEvents.Clear();
     }
 
-    internal void ApplyEvent(IEvent @event)
+    internal void ApplyEvent(Event @event)
     {
         if (@event.Version != Version + 1)
         {

@@ -4,7 +4,7 @@ namespace NCafe.Core.Exceptions;
 
 public class InvalidVersionException : DomainException
 {
-    public InvalidVersionException(IEvent @event, AggregateRoot aggregateRoot)
+    public InvalidVersionException(Event @event, AggregateRoot aggregateRoot)
         : base($"{@event.GetType().Name} Event v{@event.Version} cannot be applied to Aggregate {aggregateRoot.GetType().Name} : {aggregateRoot.Id} v{aggregateRoot.Version}")
     {
     }
