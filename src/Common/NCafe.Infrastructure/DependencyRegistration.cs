@@ -1,9 +1,9 @@
 ﻿using EventStore.Client;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using NCafe.Core.Commands;
 using NCafe.Core.MessageBus;
+using NCafe.Core.Projections;
 using NCafe.Core.Queries;
 using NCafe.Core.ReadModels;
 using NCafe.Core.Repositories;
@@ -13,7 +13,6 @@ using NCafe.Infrastructure.Logging;
 using NCafe.Infrastructure.MessageBus;
 using NCafe.Infrastructure.Queries;
 using NCafe.Infrastructure.ReadModels;
-using System.Reflection;
 
 namespace NCafe.Infrastructure;
 
@@ -36,7 +35,7 @@ public static class DependencyRegistration
     public static IServiceCollection AddEventStoreProjectionService<TModel>(this IServiceCollection services)
         where TModel : ReadModel
     {
-        services.AddSingleton<EventStoreProjectionService<TModel>>();
+        services.AddSingleton<IProjectionService<TModel>, EventStoreProjectionService<TModel>>();
 
         return services;
     }

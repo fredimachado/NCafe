@@ -1,3 +1,9 @@
-﻿namespace NCafe.Cashier.Api.Projections;
+﻿using NCafe.Core.Domain;
 
-public record ProductCreated(Guid Id, string Name, decimal Price);
+namespace NCafe.Cashier.Api.Projections;
+
+public class ProductCreated : Event
+{
+    public string Name { get; init; }
+    public decimal Price { get; init; }
+}

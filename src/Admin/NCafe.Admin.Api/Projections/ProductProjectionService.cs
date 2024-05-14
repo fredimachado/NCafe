@@ -1,16 +1,14 @@
 ﻿using NCafe.Admin.Domain.Events;
 using NCafe.Admin.Domain.ReadModels;
-using NCafe.Infrastructure.EventStore;
+using NCafe.Core.Projections;
 
 namespace NCafe.Admin.Api.Projections;
 
 public class ProductProjectionService : BackgroundService
 {
-    private readonly EventStoreProjectionService<Product> projectionService;
+    private readonly IProjectionService<Product> projectionService;
 
-    private const string streamName = "product";
-
-    public ProductProjectionService(EventStoreProjectionService<Product> projectionService)
+    public ProductProjectionService(IProjectionService<Product> projectionService)
     {
         this.projectionService = projectionService;
 
@@ -24,7 +22,7 @@ public class ProductProjectionService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await projectionService.Start(streamName, stoppingToken);
+        await projectionService.Start(stoppingToken);
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }

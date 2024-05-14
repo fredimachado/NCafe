@@ -1,16 +1,15 @@
 ﻿using EventStore.Client;
 using Microsoft.Extensions.Logging;
+using NCafe.Core.Domain;
+using NCafe.Core.Projections;
 using NCafe.Core.ReadModels;
 using System.Text.Json;
 
 namespace NCafe.Infrastructure.EventStore;
 
-internal delegate T TypedEventHandler<T, TEvent>(ResolvedEvent resolvedEvent) where T : class where TEvent : class;
+internal delegate T TypedEventHandler<T, TEvent>(ResolvedEvent resolvedEvent) where T : class where TEvent : class, IEvent;
 
-public delegate Guid GetModelId<in TEvent>(TEvent @event);
-public delegate void ModelUpdate<in TEvent, T>(TEvent @event, T model);
-
-public sealed class EventStoreProjectionService<T> where T : ReadModel
+internal sealed class EventStoreProjectionService<T> : IProjectionService<T> where T : ReadModel
 {
     private readonly EventStoreClient eventStoreClient;
     private readonly IReadModelRepository<T> repository;
@@ -28,8 +27,10 @@ public sealed class EventStoreProjectionService<T> where T : ReadModel
         this.logger = logger;
     }
 
-    public async Task Start(string streamName, CancellationToken cancellationToken)
+    public async Task Start(CancellationToken cancellationToken)
     {
+        var streamName = JsonNamingPolicy.CamelCase.ConvertName(typeof(T).Name);
+
         if (string.IsNullOrWhiteSpace(streamName))
         {
             throw new ArgumentException($"Invalid stream name.", nameof(streamName));
@@ -66,7 +67,7 @@ public sealed class EventStoreProjectionService<T> where T : ReadModel
         logger.LogError("Subscription Dropped.");
     }
 
-    public void OnCreate<TEvent>(Func<TEvent, T> handler) where TEvent : class
+    public void OnCreate<TEvent>(Func<TEvent, T> handler) where TEvent : class, IEvent
     {
         MapEventHandler<TEvent>(resolvedEvent =>
         {
@@ -79,7 +80,7 @@ public sealed class EventStoreProjectionService<T> where T : ReadModel
         });
     }
 
-    public void OnUpdate<TEvent>(GetModelId<TEvent> getId, ModelUpdate<TEvent, T> update) where TEvent : class
+    public void OnUpdate<TEvent>(GetModelId<TEvent> getId, ModelUpdate<TEvent, T> update) where TEvent : class, IEvent
     {
         MapEventHandler<TEvent>(resolvedEvent =>
         {
@@ -94,7 +95,7 @@ public sealed class EventStoreProjectionService<T> where T : ReadModel
         });
     }
 
-    private void MapEventHandler<TEvent>(TypedEventHandler<T, TEvent> typedEvent) where TEvent : class
+    private void MapEventHandler<TEvent>(TypedEventHandler<T, TEvent> typedEvent) where TEvent : class, IEvent
     {
         if (!handlersMap.TryAdd(typeof(TEvent).Name, resolvedEvent => typedEvent(resolvedEvent)))
         {

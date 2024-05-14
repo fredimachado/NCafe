@@ -1,16 +1,14 @@
 ﻿using NCafe.Barista.Domain.Events;
 using NCafe.Barista.Domain.ReadModels;
-using NCafe.Infrastructure.EventStore;
+using NCafe.Core.Projections;
 
 namespace NCafe.Barista.Api.Projections;
 
 public class BaristaOrderProjectionService : BackgroundService
 {
-    private readonly EventStoreProjectionService<BaristaOrder> projectionService;
+    private readonly IProjectionService<BaristaOrder> projectionService;
 
-    private const string streamName = "baristaOrder";
-
-    public BaristaOrderProjectionService(EventStoreProjectionService<BaristaOrder> projectionService)
+    public BaristaOrderProjectionService(IProjectionService<BaristaOrder> projectionService)
     {
         this.projectionService = projectionService;
 
@@ -28,7 +26,7 @@ public class BaristaOrderProjectionService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await projectionService.Start(streamName, stoppingToken);
+        await projectionService.Start(stoppingToken);
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }
