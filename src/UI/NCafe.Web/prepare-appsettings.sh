@@ -5,8 +5,8 @@ set -e
 APPSETTINGS=/user/share/nginx/html/appsettings.json
 
 # delete compressed (brotli/gzip) appsettings files
-rm "$APPSETTINGS.br"
-rm "$APPSETTINGS.gz"
+rm -rf "$APPSETTINGS.br"
+rm -rf "$APPSETTINGS.gz"
 
 # update base address value using environment variables
 sed -i -E "s|(\"AdminBaseAddress\"\:) \"(.*)\"(,)?|\1 \"$ADMIN_BASE_ADDRESS\"\3|g" $APPSETTINGS

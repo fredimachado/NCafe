@@ -1,36 +1,45 @@
-version: '3.4'
-
 services:
   admin:
     build:
-      dockerfile: src/Admin/NCafe.Admin.Api/Dockerfile
+      context: src/Admin/NCafe.Admin.Api/
     container_name: ncafe-admin
     restart: unless-stopped
     env_file: .env-local
     ports:
-      - 5010:80
+      - 5010:8080
     networks:
       - ncafe
 
   cashier:
     build:
-      dockerfile: src/Cashier/NCafe.Cashier.Api/Dockerfile
+      context: src/Cashier/NCafe.Cashier.Api/
     container_name: ncafe-cashier
     restart: unless-stopped
     env_file: .env-local
     ports:
-      - 5020:80
+      - 5020:8080
     networks:
       - ncafe
 
   barista:
     build:
-      dockerfile: src/Barista/NCafe.Barista.Api/Dockerfile
+      context: src/Barista/NCafe.Barista.Api/
     container_name: ncafe-barista
     restart: unless-stopped
     env_file: .env-local
     ports:
-      - 5030:80
+      - 5030:8080
+    networks:
+      - ncafe
+
+  web-ui:
+    build:
+      context: src/UI/NCafe.Web/
+    container_name: ncafe-ui
+    restart: unless-stopped
+    env_file: .env-local
+    ports:
+      - 5000:80
     networks:
       - ncafe
 
