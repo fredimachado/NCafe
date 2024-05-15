@@ -11,8 +11,8 @@ https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html
 
 ### Tech stack:
 
-- **C# 11/.NET 7**
-- **ASP.NET Core minimal APIs**
+- **C# 12/.NET 8**
+- **ASP.NET Core Minimal APIs**
 - **Docker**
 - **Kubernetes**
 - **EventStore**: Database for Event Sourcing where we store events as the source of truth instead of current state
@@ -71,11 +71,12 @@ The NCafe Solution is based on Clean Architecture, so dependencies only point to
 All common interfaces and abstractions are here. For example:
 
 - **AggregateRoot**: Abstract base class for our domain entities
-- **IEvent and Event**: Base for events that represent state changes of entities
-- **IRepository**: Interface used to fetch and save domain entities
-- **IPublisher**: Interface for publishing integration events
-- **Shared events**: Events that will be published with IPublisher
-- **Read Model**: Interface used to fetch and save read models (projections)
+- **IEvent and Event**: Base for events that represent domain entity state changes
+- **IRepository**: Contract used to fetch and save domain entities
+- **IPublisher**: Contract used for publishing integration events
+- **MessageBus Events**: Integration events used to communicate between microservices
+- **IProjectionService**: Contract used for building projections based on domain entity events
+- **Read Model**: Contract used to fetch and save read models (projections)
 - **Command, Query, Dispatchers and Handlers interfaces**
 - **Basic exceptions**
 
@@ -109,10 +110,11 @@ abstractions/interfaces (ex.: `IRepository`) instead of implementations
 
 ### Web API
 
-The Web API projects simply register the required dependencies using methods from the Infrastructure project and map the
-endpoints, which use `ICommandDispatcher` or `IQueryDispatcher` (see `Program.cs`).
+The entry points (runners) of our microservices. They simply register the required dependencies using methods
+from the Infrastructure project and map endpoints, which use `ICommandDispatcher` or `IQueryDispatcher` (see `Program.cs`).
 
-These projects have a reference to its Application Domain project and the Infrastructure Project.
+These projects have a reference to its Domain, which should actually be called Application, to conform with Clean Architecture
+since it contains use cases. The APIs also have a reference to the Infrastructure project.
 
 Projection services can also be in the Web API project (Find more about projections below).
 
@@ -123,7 +125,7 @@ dispatch a command to the domain.
 
 ### Infrastructure
 
-Implementations for external dependencies are defined in this project. Like:
+Implementations for all external dependencies are defined in this project. Like:
 
 - EventStore Repository and Projection Service
 - RabbitMQ publisher
@@ -133,6 +135,9 @@ read model repositories (only in-memory for now).
 
 This project also contains methods for registering all the implementations for interfaces defined
 in the Core project.
+
+All the implementation types should be marked as internal, because our Application/Domain should only depend on abstractions.
+The Application/Domain has no idea about the actual implementations. This is the Dependency Inversion Principle in action.
 
 ## NCafe's CQRS + Event Sourcing implementation
 
@@ -178,15 +183,12 @@ that we only care about events from a specific position in the stream. Saving th
 
 In order to run the solution, you need the following:
 
-- .NET 7 SDK
+- .NET 8 SDK
 - Docker
-
-In case you want to run the microservices using docker (except the infrastructure ones), we need to generate a certificate,
-but we only need to do this once though.
 
 ### Starting the infrastructure containers
 
-Run the following command:
+Run the following command (repo's root folder):
 
     docker compose -f infrastructure-compose.yaml up -d
 
@@ -195,7 +197,16 @@ Run the following command:
 You can start the microservices via the dotnet CLI or your favorite IDE/code editor.
 If you're using Visual Studio you can also set multiple startup projects by going to solution properties.
 
-If you prefer docker, run the following command to build and start all microservices containers (certificate required):
+If you prefer docker, run the build script in the root folder:
+
+    chmod +x build.sh
+    ./build.sh
+
+If you're on Windows:
+
+    .\Build.ps1 
+
+Run the following command to build and start all microservices containers:
 
     docker compose -f services-compose.yaml up -d
 
