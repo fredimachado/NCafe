@@ -7,15 +7,13 @@ namespace NCafe.Admin.Domain.Tests.Commands;
 
 public class CreateProductTests
 {
-    private readonly CreateProductHandler sut;
-
-    private readonly IRepository repository;
+    private readonly CreateProductHandler _sut;
+    private readonly IRepository _repository;
 
     public CreateProductTests()
     {
-        repository = A.Fake<IRepository>();
-
-        sut = new CreateProductHandler(repository);
+        _repository = A.Fake<IRepository>();
+        _sut = new CreateProductHandler(_repository);
     }
 
     [Theory]
@@ -28,7 +26,7 @@ public class CreateProductTests
         var command = new CreateProduct(name, 3);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeOfType<InvalidProductNameException>();
@@ -43,7 +41,7 @@ public class CreateProductTests
         var command = new CreateProduct("Flat White", price);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeOfType<InvalidProductPriceException>();
@@ -56,11 +54,11 @@ public class CreateProductTests
         var command = new CreateProduct("Flat White", 3.5m);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeNull();
-        A.CallTo(() => repository.Save(A<Product>.That.Matches(p => p.Name == command.Name && p.Price == command.Price)))
+        A.CallTo(() => _repository.Save(A<Product>.That.Matches(p => p.Name == command.Name && p.Price == command.Price)))
             .MustHaveHappenedOnceExactly(); ;
     }
 }

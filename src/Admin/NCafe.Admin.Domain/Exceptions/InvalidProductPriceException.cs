@@ -2,9 +2,7 @@
 
 namespace NCafe.Admin.Domain.Exceptions;
 
-public class InvalidProductPriceException : DomainException
+public class InvalidProductPriceException(decimal price)
+    : DomainException($"The price '{price}' must be greater than zero.")
 {
-    public InvalidProductPriceException(decimal price) : base($"The price '{price}' must be greater than zero.")
-    {
-    }
 }

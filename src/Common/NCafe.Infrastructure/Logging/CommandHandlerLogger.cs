@@ -3,16 +3,11 @@ using NCafe.Core.Commands;
 
 namespace NCafe.Infrastructure.Logging;
 
-internal sealed class CommandHandlerLogger<TCommand> : ICommandHandler<TCommand> where TCommand : class, ICommand
+internal sealed class CommandHandlerLogger<TCommand>(ICommandHandler<TCommand> handler, ILogger<CommandHandlerLogger<TCommand>> logger)
+    : ICommandHandler<TCommand> where TCommand : class, ICommand
 {
-    private readonly ICommandHandler<TCommand> handler;
-    private readonly ILogger logger;
-
-    public CommandHandlerLogger(ICommandHandler<TCommand> handler, ILogger<CommandHandlerLogger<TCommand>> logger)
-    {
-        this.handler = handler;
-        this.logger = logger;
-    }
+    private readonly ICommandHandler<TCommand> _handler = handler;
+    private readonly ILogger _logger = logger;
 
     public async Task HandleAsync(TCommand command)
     {
@@ -20,14 +15,14 @@ internal sealed class CommandHandlerLogger<TCommand> : ICommandHandler<TCommand>
 
         try
         {
-            logger.LogInformation("Started processing {commandType} command.", commandType);
-            await handler.HandleAsync(command);
-            logger.LogInformation("Finished processing {commandType} command.", commandType);
+            _logger.LogInformation("Started processing {commandType} command.", commandType);
+            await _handler.HandleAsync(command);
+            _logger.LogInformation("Finished processing {commandType} command.", commandType);
 
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to process {commandType} command.", commandType);
+            _logger.LogError(ex, "Failed to process {commandType} command.", commandType);
             throw;
         }
     }

@@ -42,7 +42,7 @@ builder.Services.AddSignalR();
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-        new[] { "application/octet-stream" });
+        ["application/octet-stream"]);
 });
 
 var app = builder.Build();

@@ -6,18 +6,14 @@ namespace NCafe.Barista.Domain.Queries;
 
 public record GetOrders : IQuery<BaristaOrder[]>;
 
-internal sealed class GetOrdersHandler : IQueryHandler<GetOrders, BaristaOrder[]>
+internal sealed class GetOrdersHandler(IReadModelRepository<BaristaOrder> orderRepository)
+    : IQueryHandler<GetOrders, BaristaOrder[]>
 {
-    private readonly IReadModelRepository<BaristaOrder> orderRepository;
-
-    public GetOrdersHandler(IReadModelRepository<BaristaOrder> orderRepository)
-    {
-        this.orderRepository = orderRepository;
-    }
+    private readonly IReadModelRepository<BaristaOrder> _orderRepository = orderRepository;
 
     public Task<BaristaOrder[]> HandleAsync(GetOrders query)
     {
-        var products = orderRepository.GetAll()
+        var products = _orderRepository.GetAll()
             .ToArray();
         return Task.FromResult(products);
     }

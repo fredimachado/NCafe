@@ -5,20 +5,20 @@ namespace NCafe.Infrastructure.ReadModels;
 
 internal class InMemoryReadModelRepository<T> : IReadModelRepository<T> where T : ReadModel
 {
-    private static readonly ConcurrentDictionary<Guid, T> items = new();
+    private readonly static ConcurrentDictionary<Guid, T> _items = new();
 
     public void Add(T model)
     {
-        items[model.Id] = model;
+        _items[model.Id] = model;
     }
 
     public IEnumerable<T> GetAll()
     {
-        return items.Values.ToList();
+        return [.. _items.Values];
     }
 
     public T GetById(Guid id)
     {
-        return items.TryGetValue(id, out var result) ? result : null;
+        return _items.TryGetValue(id, out var result) ? result : null;
     }
 }

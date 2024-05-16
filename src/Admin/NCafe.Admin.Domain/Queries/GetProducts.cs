@@ -6,18 +6,13 @@ namespace NCafe.Admin.Domain.Queries;
 
 public record GetProducts : IQuery<Product[]>;
 
-internal sealed class GetProductsHandler : IQueryHandler<GetProducts, Product[]>
+internal sealed class GetProductsHandler(IReadModelRepository<Product> productRepository) : IQueryHandler<GetProducts, Product[]>
 {
-    private readonly IReadModelRepository<Product> productRepository;
-
-    public GetProductsHandler(IReadModelRepository<Product> productRepository)
-    {
-        this.productRepository = productRepository;
-    }
+    private readonly IReadModelRepository<Product> _productRepository = productRepository;
 
     public Task<Product[]> HandleAsync(GetProducts query)
     {
-        var products = productRepository.GetAll()
+        var products = _productRepository.GetAll()
             .ToArray();
         return Task.FromResult(products);
     }

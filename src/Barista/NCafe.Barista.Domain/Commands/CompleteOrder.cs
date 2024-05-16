@@ -7,26 +7,16 @@ namespace NCafe.Barista.Domain.Commands;
 
 public record CompleteOrder(Guid Id) : ICommand;
 
-internal sealed class CompleteOrderHandler : ICommandHandler<CompleteOrder>
+internal sealed class CompleteOrderHandler(IRepository repository) : ICommandHandler<CompleteOrder>
 {
-    private readonly IRepository repository;
-
-    public CompleteOrderHandler(IRepository repository)
-    {
-        this.repository = repository;
-    }
+    private readonly IRepository _repository = repository;
 
     public async Task HandleAsync(CompleteOrder command)
     {
-        var order = await repository.GetById<BaristaOrder>(command.Id);
-
-        if (order == null)
-        {
-            throw new OrderNotFoundException(command.Id);
-        }
+        var order = await _repository.GetById<BaristaOrder>(command.Id) ?? throw new OrderNotFoundException(command.Id);
 
         order.CompletePreparation();
 
-        await repository.Save(order);
+        await _repository.Save(order);
     }
 }

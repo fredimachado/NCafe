@@ -7,15 +7,13 @@ namespace NCafe.Barista.Domain.Tests.Commands;
 
 public class CompleteOrderTests
 {
-    private readonly CompleteOrderHandler sut;
-
-    private readonly IRepository repository;
+    private readonly CompleteOrderHandler _sut;
+    private readonly IRepository _repository;
 
     public CompleteOrderTests()
     {
-        repository = A.Fake<IRepository>();
-
-        sut = new CompleteOrderHandler(repository);
+        _repository = A.Fake<IRepository>();
+        _sut = new CompleteOrderHandler(_repository);
     }
 
     [Fact]
@@ -23,13 +21,13 @@ public class CompleteOrderTests
     {
         // Arrange
         var orderId = Guid.NewGuid();
-        A.CallTo(() => repository.GetById<BaristaOrder>(orderId))
+        A.CallTo(() => _repository.GetById<BaristaOrder>(orderId))
             .Returns((BaristaOrder)null);
 
         var command = new CompleteOrder(orderId);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeOfType<OrderNotFoundException>();
@@ -40,16 +38,16 @@ public class CompleteOrderTests
     {
         // Arrange
         var orderId = Guid.NewGuid();
-        A.CallTo(() => repository.GetById<BaristaOrder>(orderId))
+        A.CallTo(() => _repository.GetById<BaristaOrder>(orderId))
             .Returns(new BaristaOrder(orderId, Guid.NewGuid(), 1));
         var command = new CompleteOrder(orderId);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeNull();
-        A.CallTo(() => repository.Save(A<BaristaOrder>.That.Matches(o => o.Id == orderId && o.IsCompleted == true)))
+        A.CallTo(() => _repository.Save(A<BaristaOrder>.That.Matches(o => o.Id == orderId && o.IsCompleted == true)))
             .MustHaveHappenedOnceExactly();
     }
 }

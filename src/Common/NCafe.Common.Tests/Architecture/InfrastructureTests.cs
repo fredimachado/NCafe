@@ -7,6 +7,7 @@ using static ArchUnitNET.Fluent.ArchRuleDefinition;
 namespace NCafe.Common.Tests.Architecture;
 public class InfrastructureTests
 {
+#pragma warning disable IDE1006 // Naming Styles
     private readonly static System.Reflection.Assembly InfrastructureAssembly =
         System.Reflection.Assembly.Load("NCafe.Infrastructure");
 
@@ -32,4 +33,5 @@ public class InfrastructureTests
 
         typesShouldBeInternal.Check(Architecture);
     }
+#pragma warning restore IDE1006 // Naming Styles
 }

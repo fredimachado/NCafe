@@ -7,14 +7,9 @@ namespace NCafe.Admin.Domain.Commands;
 
 public record CreateProduct(string Name, decimal Price) : ICommand;
 
-internal sealed class CreateProductHandler : ICommandHandler<CreateProduct>
+internal sealed class CreateProductHandler(IRepository repository) : ICommandHandler<CreateProduct>
 {
-    private readonly IRepository repository;
-
-    public CreateProductHandler(IRepository repository)
-    {
-        this.repository = repository;
-    }
+    private readonly IRepository _repository = repository;
 
     public async Task HandleAsync(CreateProduct command)
     {
@@ -30,6 +25,6 @@ internal sealed class CreateProductHandler : ICommandHandler<CreateProduct>
 
         var product = new Product(Guid.NewGuid(), command.Name, command.Price);
 
-        await repository.Save(product);
+        await _repository.Save(product);
     }
 }

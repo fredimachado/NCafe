@@ -6,11 +6,11 @@ namespace NCafe.Barista.Api.Projections;
 
 public class BaristaOrderProjectionService : BackgroundService
 {
-    private readonly IProjectionService<BaristaOrder> projectionService;
+    private readonly IProjectionService<BaristaOrder> _projectionService;
 
     public BaristaOrderProjectionService(IProjectionService<BaristaOrder> projectionService)
     {
-        this.projectionService = projectionService;
+        _projectionService = projectionService;
 
         projectionService.OnCreate<OrderPlaced>(@event => new BaristaOrder
         {
@@ -24,9 +24,9 @@ public class BaristaOrderProjectionService : BackgroundService
             (@event, order) => order.IsCompleted = true);
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await projectionService.Start(stoppingToken);
+        await _projectionService.Start(stoppingToken);
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }

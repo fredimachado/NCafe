@@ -2,12 +2,8 @@
 
 namespace NCafe.Cashier.Domain.Exceptions;
 
-public class OrderNotFoundException : DomainException
+public class OrderNotFoundException(Guid orderId)
+    : DomainException($"Order '{orderId}' was not found.")
 {
-    public OrderNotFoundException(Guid orderId) : base($"Order '{orderId}' was not found.")
-    {
-        OrderId = orderId;
-    }
-
-    public Guid OrderId { get; }
+    public Guid OrderId { get; } = orderId;
 }

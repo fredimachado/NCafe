@@ -7,7 +7,7 @@ public abstract class AggregateRoot
     public Guid Id { get; protected set; }
     public long Version { get; protected set; } = -1;
 
-    private readonly List<IEvent> _pendingEvents = new();
+    private readonly List<IEvent> _pendingEvents = [];
 
     protected void RaiseEvent(Event @event)
     {
@@ -20,7 +20,7 @@ public abstract class AggregateRoot
 
     public IEnumerable<IEvent> GetPendingEvents()
     {
-        return _pendingEvents.ToArray();
+        return [.. _pendingEvents];
     }
 
     internal void ClearPendingEvents()

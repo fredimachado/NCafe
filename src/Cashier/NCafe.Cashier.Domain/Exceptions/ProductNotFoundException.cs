@@ -2,12 +2,8 @@
 
 namespace NCafe.Cashier.Domain.Exceptions;
 
-public class ProductNotFoundException : DomainException
+public class ProductNotFoundException(Guid productId)
+    : DomainException($"Product '{productId}' was not found.")
 {
-    public ProductNotFoundException(Guid productId) : base($"Product '{productId}' was not found.")
-    {
-        ProductId = productId;
-    }
-
-    public Guid ProductId { get; }
+    public Guid ProductId { get; } = productId;
 }

@@ -5,11 +5,11 @@ namespace NCafe.Cashier.Api.Projections;
 
 public class ProductProjectionService : BackgroundService
 {
-    private readonly IProjectionService<Product> projectionService;
+    private readonly IProjectionService<Product> _projectionService;
 
     public ProductProjectionService(IProjectionService<Product> projectionService)
     {
-        this.projectionService = projectionService;
+        _projectionService = projectionService;
 
         projectionService.OnCreate<ProductCreated>(@event => new Product
         {
@@ -21,7 +21,7 @@ public class ProductProjectionService : BackgroundService
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await projectionService.Start(stoppingToken);
+        await _projectionService.Start(stoppingToken);
 
         await Task.Delay(Timeout.Infinite, stoppingToken);
     }

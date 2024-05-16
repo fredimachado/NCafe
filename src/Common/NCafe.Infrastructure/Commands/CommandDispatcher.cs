@@ -3,18 +3,13 @@ using NCafe.Core.Commands;
 
 namespace NCafe.Infrastructure.Commands;
 
-internal sealed class CommandDispatcher : ICommandDispatcher
+internal sealed class CommandDispatcher(IServiceProvider serviceProvider) : ICommandDispatcher
 {
-    private readonly IServiceProvider serviceProvider;
-
-    public CommandDispatcher(IServiceProvider serviceProvider)
-    {
-        this.serviceProvider = serviceProvider;
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public async Task DispatchAsync<TCommand>(TCommand command) where TCommand : class, ICommand
     {
-        using var scope = serviceProvider.CreateScope();
+        using var scope = _serviceProvider.CreateScope();
         var handler = scope.ServiceProvider.GetRequiredService<ICommandHandler<TCommand>>();
 
         await handler.HandleAsync(command);

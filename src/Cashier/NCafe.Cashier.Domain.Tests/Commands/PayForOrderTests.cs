@@ -8,15 +8,13 @@ namespace NCafe.Cashier.Domain.Tests.Commands;
 
 public class PayForOrderTests
 {
-    private readonly PayForOrderHandler sut;
-
-    private readonly IRepository repository;
+    private readonly PayForOrderHandler _sut;
+    private readonly IRepository _repository;
 
     public PayForOrderTests()
     {
-        repository = A.Fake<IRepository>();
-
-        sut = new PayForOrderHandler(repository);
+        _repository = A.Fake<IRepository>();
+        _sut = new PayForOrderHandler(_repository);
     }
 
     [Fact]
@@ -26,7 +24,7 @@ public class PayForOrderTests
         var command = new PayForOrder(Guid.Empty);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeOfType<InvalidIdException>();
@@ -36,12 +34,12 @@ public class PayForOrderTests
     public async Task GivenOrderNotFound_ShouldThrowException()
     {
         // Arrange
-        A.CallTo(() => repository.GetById<Order>(A<Guid>._))
+        A.CallTo(() => _repository.GetById<Order>(A<Guid>._))
             .Returns((Order)null);
         var command = new PayForOrder(Guid.NewGuid());
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeOfType<OrderNotFoundException>();
@@ -52,17 +50,17 @@ public class PayForOrderTests
     {
         // Arrange
         var orderId = Guid.NewGuid();
-        A.CallTo(() => repository.GetById<Order>(orderId))
+        A.CallTo(() => _repository.GetById<Order>(orderId))
             .Returns(new Order(orderId, Guid.NewGuid(), 1));
 
         var command = new PayForOrder(orderId);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeNull();
-        A.CallTo(() => repository.Save(A<Order>.That.Matches(o => o.Id == orderId && o.HasBeenPaid == true)))
+        A.CallTo(() => _repository.Save(A<Order>.That.Matches(o => o.Id == orderId && o.HasBeenPaid == true)))
             .MustHaveHappenedOnceExactly();
     }
 }

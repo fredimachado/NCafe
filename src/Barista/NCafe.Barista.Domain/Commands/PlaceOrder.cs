@@ -6,19 +6,14 @@ namespace NCafe.Barista.Domain.Commands;
 
 public record PlaceOrder(Guid Id, Guid ProductId, int Quantity) : ICommand;
 
-internal sealed class PlaceOrderHandler : ICommandHandler<PlaceOrder>
+internal sealed class PlaceOrderHandler(IRepository repository) : ICommandHandler<PlaceOrder>
 {
-    private readonly IRepository repository;
-
-    public PlaceOrderHandler(IRepository repository)
-    {
-        this.repository = repository;
-    }
+    private readonly IRepository _repository = repository;
 
     public async Task HandleAsync(PlaceOrder command)
     {
         var order = new BaristaOrder(command.Id, command.ProductId, command.Quantity);
 
-        await repository.Save(order);
+        await _repository.Save(order);
     }
 }

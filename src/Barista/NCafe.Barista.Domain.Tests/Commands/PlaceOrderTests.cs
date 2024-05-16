@@ -6,15 +6,13 @@ namespace NCafe.Barista.Domain.Tests.Commands;
 
 public class PlaceOrderTests
 {
-    private readonly PlaceOrderHandler sut;
-
-    private readonly IRepository repository;
+    private readonly PlaceOrderHandler _sut;
+    private readonly IRepository _repository;
 
     public PlaceOrderTests()
     {
-        repository = A.Fake<IRepository>();
-
-        sut = new PlaceOrderHandler(repository);
+        _repository = A.Fake<IRepository>();
+        _sut = new PlaceOrderHandler(_repository);
     }
 
     [Fact]
@@ -26,11 +24,11 @@ public class PlaceOrderTests
         var command = new PlaceOrder(orderId, productId, 1);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeNull();
-        A.CallTo(() => repository.Save(A<BaristaOrder>.That.Matches(o => o.Id == orderId && o.ProductId == productId && o.Quantity == 1)))
+        A.CallTo(() => _repository.Save(A<BaristaOrder>.That.Matches(o => o.Id == orderId && o.ProductId == productId && o.Quantity == 1)))
             .MustHaveHappenedOnceExactly();
     }
 }
