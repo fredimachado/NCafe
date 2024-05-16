@@ -11,6 +11,8 @@ using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddCommandHandlers<PlaceOrder>()
@@ -46,6 +48,8 @@ builder.Services.AddResponseCompression(opts =>
 });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 app.UseResponseCompression();
 

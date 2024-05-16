@@ -9,6 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Aspire\NCafe.ServiceDefaults\NCafe.ServiceDefaults.csproj" />
     <ProjectReference Include="..\..\Common\NCafe.Infrastructure\NCafe.Infrastructure.csproj" />
     <ProjectReference Include="..\NCafe.Admin.Domain\NCafe.Admin.Domain.csproj" />
   </ItemGroup>

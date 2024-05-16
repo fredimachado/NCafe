@@ -8,6 +8,8 @@ using NCafe.Core.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.AddServiceDefaults();
+
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddCommandHandlers<PlaceOrder>()
@@ -36,6 +38,8 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

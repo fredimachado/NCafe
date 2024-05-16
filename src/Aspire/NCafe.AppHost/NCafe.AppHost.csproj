@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>6e4e7f77-0985-41fb-8ac7-7a26000ea41d</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Admin\NCafe.Admin.Api\NCafe.Admin.Api.csproj" />
+    <ProjectReference Include="..\..\Barista\NCafe.Barista.Api\NCafe.Barista.Api.csproj" />
+    <ProjectReference Include="..\..\Cashier\NCafe.Cashier.Api\NCafe.Cashier.Api.csproj" />
+    <ProjectReference Include="..\..\UI\NCafe.Web\NCafe.Web.csproj" />
+    <ProjectReference Include="..\Aspire.Hosting.EventStore\Aspire.Hosting.EventStore.csproj" IsAspireProjectResource="false" />
+  </ItemGroup>
+
+</Project>
