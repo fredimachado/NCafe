@@ -9,51 +9,38 @@ namespace NCafe.Infrastructure.EventStore;
 
 internal delegate T TypedEventHandler<T, TEvent>(ResolvedEvent resolvedEvent) where T : class where TEvent : class, IEvent;
 
-internal sealed class EventStoreProjectionService<T> : IProjectionService<T> where T : ReadModel
+internal sealed class EventStoreProjectionService<T>(
+    EventStoreClient eventStoreClient,
+    IReadModelRepository<T> repository,
+    ILogger<EventStoreProjectionService<T>> logger) : IProjectionService<T> where T : ReadModel
 {
-    private readonly EventStoreClient eventStoreClient;
-    private readonly IReadModelRepository<T> repository;
-    private readonly ILogger logger;
+    private readonly EventStoreClient _eventStoreClient = eventStoreClient;
+    private readonly IReadModelRepository<T> _repository = repository;
+    private readonly ILogger _logger = logger;
 
-    private readonly Dictionary<string, Func<ResolvedEvent, T>> handlersMap = new();
-
-    public EventStoreProjectionService(
-        EventStoreClient eventStoreClient,
-        IReadModelRepository<T> repository,
-        ILogger<EventStoreProjectionService<T>> logger)
-    {
-        this.eventStoreClient = eventStoreClient;
-        this.repository = repository;
-        this.logger = logger;
-    }
+    private readonly Dictionary<string, Func<ResolvedEvent, T>> _handlersMap = [];
 
     public async Task Start(CancellationToken cancellationToken)
     {
-        var streamName = JsonNamingPolicy.CamelCase.ConvertName(typeof(T).Name);
+        var streamName = $"$ce-{JsonNamingPolicy.CamelCase.ConvertName(typeof(T).Name)}";
 
-        if (string.IsNullOrWhiteSpace(streamName))
-        {
-            throw new ArgumentException($"Invalid stream name.", nameof(streamName));
-        }
-        streamName = $"$ce-{streamName}";
+        _logger.LogInformation("Subscribing to EventStore Stream '{EventStoreStream}'.", streamName);
 
-        logger.LogInformation("Subscribing to EventStore Stream '{EventStoreStream}'.", streamName);
-
-        await eventStoreClient.SubscribeToStreamAsync(
+        await _eventStoreClient.SubscribeToStreamAsync(
             streamName,
             EventAppeared,
             resolveLinkTos: true,
             SubscriptionDropped,
             cancellationToken: cancellationToken);
 
-        logger.LogInformation("Subscribed to EventStore Stream '{EventStoreStream}'.", streamName);
+        _logger.LogInformation("Subscribed to EventStore Stream '{EventStoreStream}'.", streamName);
     }
 
     private Task EventAppeared(StreamSubscription subscription, ResolvedEvent @event, CancellationToken cancellationToken)
     {
-        if (!handlersMap.TryGetValue(@event.Event.EventType, out var handler))
+        if (!_handlersMap.TryGetValue(@event.Event.EventType, out var handler))
         {
-            logger.LogInformation($"Skipping event '{@event.Event.EventType}' because it is not mapped.");
+            _logger.LogInformation("Skipping event '{EventType}' because it is not mapped.", @event.Event.EventType);
             return Task.CompletedTask;
         }
 
@@ -64,7 +51,7 @@ internal sealed class EventStoreProjectionService<T> : IProjectionService<T> whe
 
     private void SubscriptionDropped(StreamSubscription subscription, SubscriptionDroppedReason reason, Exception exception)
     {
-        logger.LogError("Subscription Dropped.");
+        _logger.LogError("Subscription Dropped.");
     }
 
     public void OnCreate<TEvent>(Func<TEvent, T> handler) where TEvent : class, IEvent
@@ -74,7 +61,7 @@ internal sealed class EventStoreProjectionService<T> : IProjectionService<T> whe
             var @event = GetEvent<TEvent>(resolvedEvent);
             var model = handler(@event);
 
-            repository.Add(model);
+            _repository.Add(model);
 
             return model;
         });
@@ -85,11 +72,11 @@ internal sealed class EventStoreProjectionService<T> : IProjectionService<T> whe
         MapEventHandler<TEvent>(resolvedEvent =>
         {
             var @event = GetEvent<TEvent>(resolvedEvent);
-            var model = repository.GetById(getId(@event));
+            var model = _repository.GetById(getId(@event));
 
             update(@event, model);
 
-            repository.Add(model);
+            _repository.Add(model);
 
             return model;
         });
@@ -97,7 +84,7 @@ internal sealed class EventStoreProjectionService<T> : IProjectionService<T> whe
 
     private void MapEventHandler<TEvent>(TypedEventHandler<T, TEvent> typedEvent) where TEvent : class, IEvent
     {
-        if (!handlersMap.TryAdd(typeof(TEvent).Name, resolvedEvent => typedEvent(resolvedEvent)))
+        if (!_handlersMap.TryAdd(typeof(TEvent).Name, resolvedEvent => typedEvent(resolvedEvent)))
         {
             throw new ArgumentException($"Event type {typeof(TEvent).Name} already has a handler.");
         }

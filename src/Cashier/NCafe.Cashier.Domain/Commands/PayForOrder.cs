@@ -8,14 +8,9 @@ namespace NCafe.Cashier.Domain.Commands;
 
 public record PayForOrder(Guid Id) : ICommand;
 
-internal sealed class PayForOrderHandler : ICommandHandler<PayForOrder>
+internal sealed class PayForOrderHandler(IRepository repository) : ICommandHandler<PayForOrder>
 {
-    private readonly IRepository repository;
-
-    public PayForOrderHandler(IRepository repository)
-    {
-        this.repository = repository;
-    }
+    private readonly IRepository _repository = repository;
 
     public async Task HandleAsync(PayForOrder command)
     {
@@ -24,15 +19,10 @@ internal sealed class PayForOrderHandler : ICommandHandler<PayForOrder>
             throw new InvalidIdException();
         }
 
-        var order = await repository.GetById<Order>(command.Id);
-
-        if (order is null)
-        {
-            throw new OrderNotFoundException(command.Id);
-        }
+        var order = await _repository.GetById<Order>(command.Id) ?? throw new OrderNotFoundException(command.Id);
 
         order.PayForOrder();
 
-        await repository.Save(order);
+        await _repository.Save(order);
     }
 }

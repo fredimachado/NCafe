@@ -11,36 +11,24 @@ namespace NCafe.Cashier.Domain.Commands;
 
 public record PlaceOrder(Guid ProductId, int Quantity) : ICommand;
 
-internal sealed class PlaceOrderHandler : ICommandHandler<PlaceOrder>
+internal sealed class PlaceOrderHandler(
+    IRepository repository,
+    IReadModelRepository<Product> productReadRepository,
+    IPublisher publisher) : ICommandHandler<PlaceOrder>
 {
-    private readonly IRepository repository;
-    private readonly IReadModelRepository<Product> productReadRepository;
-    private readonly IPublisher publisher;
+    private readonly IRepository _repository = repository;
+    private readonly IReadModelRepository<Product> _productReadRepository = productReadRepository;
+    private readonly IPublisher _publisher = publisher;
 
     private const string Topic = "orders";
 
-    public PlaceOrderHandler(
-        IRepository repository,
-        IReadModelRepository<Product> productReadRepository,
-        IPublisher publisher)
-    {
-        this.repository = repository;
-        this.productReadRepository = productReadRepository;
-        this.publisher = publisher;
-    }
-
     public async Task HandleAsync(PlaceOrder command)
     {
-        var product = productReadRepository.GetById(command.ProductId);
-        if (product is null)
-        {
-            throw new ProductNotFoundException(command.ProductId);
-        }
+        var product = _productReadRepository.GetById(command.ProductId) ?? throw new ProductNotFoundException(command.ProductId);
+        var order = new Order(Guid.NewGuid(), product.Id, command.Quantity);
 
-        var order = new Order(Guid.NewGuid(), command.ProductId, command.Quantity);
+        await _repository.Save(order);
 
-        await repository.Save(order);
-
-        await publisher.Publish(Topic, new OrderPlaced(order.Id, order.ProductId, order.Quantity));
+        await _publisher.Publish(Topic, new OrderPlaced(order.Id, order.ProductId, order.Quantity));
     }
 }

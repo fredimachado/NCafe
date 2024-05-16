@@ -4,14 +4,9 @@ using NCafe.Core.Repositories;
 
 namespace NCafe.Infrastructure.EventStore;
 
-internal class EventStoreRepository : IRepository
+internal class EventStoreRepository(EventStoreClient eventStoreClient) : IRepository
 {
-    private readonly EventStoreClient eventStoreClient;
-
-    public EventStoreRepository(EventStoreClient eventStoreClient)
-    {
-        this.eventStoreClient = eventStoreClient;
-    }
+    private readonly EventStoreClient _eventStoreClient = eventStoreClient;
 
     public async Task<TAggregate> GetById<TAggregate>(Guid id) where TAggregate : AggregateRoot
     {
@@ -19,7 +14,7 @@ internal class EventStoreRepository : IRepository
 
         var aggregate = (TAggregate)Activator.CreateInstance(typeof(TAggregate), nonPublic: true);
 
-        var result = eventStoreClient.ReadStreamAsync(
+        var result = _eventStoreClient.ReadStreamAsync(
             Direction.Forwards,
             streamName,
             StreamPosition.Start);
@@ -48,7 +43,7 @@ internal class EventStoreRepository : IRepository
             .Select(e => e.AsEventData())
             .ToArray();
 
-        var result = await eventStoreClient.AppendToStreamAsync(
+        var result = await _eventStoreClient.AppendToStreamAsync(
             streamName,
             StreamRevision.FromInt64(expectedVersion),
             eventsToAppend);
@@ -58,6 +53,6 @@ internal class EventStoreRepository : IRepository
 
     private static string ToStreamName(Guid id, Type type)
     {
-        return $"{char.ToLower(type.Name[0])}{type.Name.Substring(1)}-{id:N}";
+        return $"{char.ToLower(type.Name[0])}{type.Name.AsSpan()[1..]}-{id:N}";
     }
 }
