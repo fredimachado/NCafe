@@ -47,16 +47,18 @@ I wrote some documentation below for those who are starting on this journey. I h
   - [Core (Shared Abstractions)](#core-shared-abstractions)
   - [Application Domain](#application-domain)
   - [Web API](#web-api)
+  - [Web UI](#web-ui)
   - [Infrastructure](#infrastructure)
 - [NCafe's CQRS + Event Sourcing implementation](#ncafes-cqrs-event-sourcing-implementation)
   - [Command](#command)
   - [Query](#query)
   - [Projections](#projections)
-- [How to run](#how-to-run)
+- [Run with .NET Aspire](#run-with-net-aspire)
+- [Run with docker](#run-with-docker)
   - [Starting the infrastructure containers](#starting-the-infrastructure-containers)
   - [Starting the microservices](#starting-the-microservices)
   - [Swagger](#swagger)
-  - [NCafe in action](#ncafe-in-action)
+- [NCafe in action](#ncafe-in-action)
   - [EventStore](#eventstore)
   - [RabbitMQ](#rabbitmq)
   - [Stopping everything](#stopping-everything)
@@ -126,7 +128,20 @@ dispatch a command to the domain.
 
 ### Web UI
 
+The Web UI project is a Blazor WebAssembly project that interacts with the Admin, Barista and Cashier microservices.
+It stores the base address of each microservice in `wwwroot/appsettings.json`.
 
+It should work out of the box locally when running with .NET Aspire and docker compose, due to the port configuration
+in `services-compose.yaml` and `applicationUrl` (inside each microservice's `launchSettings.json`).
+
+For production, the base address should be set in `wwwroot/appsettings.json`. Since the Web UI project is a static site,
+I decided to deploy it inside a container running `nginx`. In the Dockerfile, I added a step to copy `prepare-appsettings.sh` to
+the `/docker-entrypoint.d/` folder. When nginx starts, it will run scripts inside this folder. The `prepare-appsettings.sh` script
+will replace the base addresses in `wwwroot/appsettings.json` with values from environment variables (`ADMIN_BASE_ADDRESS`,
+`CASHIER_BASE_ADDRESS` and `BARISTA_BASE_ADDRESS`).
+
+For my deployment, since I'm using a local Kubernetes cluster and Nginx Proxy Manager, I hardcoded the base addresses in the
+`appspec.yaml`.
 
 ### Infrastructure
 
@@ -184,7 +199,7 @@ database. So they would all try to do the same inserts/updates. It looks like tr
 Also, when we move to a database, we'll need to save checkpoints, so when we restart the projection service we can tell EventStore
 that we only care about events from a specific position in the stream. Saving the version should be enough.
 
-## .NET Aspire
+## Run with .NET Aspire
 
 .NET Aspire is an opinionated, cloud ready stack for building observable, production ready, distributed applications.
 
@@ -193,7 +208,7 @@ If you run through the CLI, you will see a link to the dashboard.
 
 ![image](https://github.com/fredimachado/NCafe/assets/29800/a2899e7d-b52f-4e93-ae91-e6c2215cce51)
 
-## How to run with docker compose and/or multiple startup projects
+## Run with docker
 
 In order to run the solution, you need the following:
 
@@ -230,7 +245,7 @@ Run the following command to build and start all microservices containers:
 - **Cashier**: [http://localhost:5020/swagger/index.html](http://localhost:5020/swagger/index.html)
 - **Barista**: [http://localhost:5030/swagger/index.html](http://localhost:5030/swagger/index.html)
 
-### NCafe in action
+## NCafe in action
 
 1. Start the NCafe.Web project (Blazor WebAssembly)
 2. Create a new product in the Admin page
