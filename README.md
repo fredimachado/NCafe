@@ -13,6 +13,7 @@ https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html
 
 - **C# 12/.NET 8**
 - **ASP.NET Core Minimal APIs**
+- .NET Aspire
 - **Docker**
 - **Kubernetes**
 - **EventStore**: Database for Event Sourcing where we store events as the source of truth instead of current state
@@ -123,6 +124,10 @@ In case the microservice needs to consume integration events, a Consumer service
 to a RabbitMQ stream specifying a queue, a topic and a callback, which in case will use `ICommandDispatcher` to, you guessed it,
 dispatch a command to the domain.
 
+### Web UI
+
+
+
 ### Infrastructure
 
 Implementations for all external dependencies are defined in this project. Like:
@@ -179,7 +184,16 @@ database. So they would all try to do the same inserts/updates. It looks like tr
 Also, when we move to a database, we'll need to save checkpoints, so when we restart the projection service we can tell EventStore
 that we only care about events from a specific position in the stream. Saving the version should be enough.
 
-## How to run
+## .NET Aspire
+
+.NET Aspire is an opinionated, cloud ready stack for building observable, production ready, distributed applications.
+
+Make sure to set `NCafe.AppHost` as Startup Project in the IDE and run. If you prefer CLI, just run the `NCafe.AppHost` project.
+If you run through the CLI, you will see a link to the dashboard.
+
+![image](https://github.com/fredimachado/NCafe/assets/29800/a2899e7d-b52f-4e93-ae91-e6c2215cce51)
+
+## How to run with docker compose and/or multiple startup projects
 
 In order to run the solution, you need the following:
 
