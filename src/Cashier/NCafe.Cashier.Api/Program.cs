@@ -10,6 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
+builder.AddRabbitMQClient("rabbitmq");
+
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddCommandHandlers<PlaceOrder>()

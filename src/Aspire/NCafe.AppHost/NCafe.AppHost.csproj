@@ -11,6 +11,8 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.RabbitMQ" />
+    <PackageReference Include="AspNetCore.HealthChecks.EventStore.gRPC" />
+    <PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" />
   </ItemGroup>
 
   <ItemGroup>
