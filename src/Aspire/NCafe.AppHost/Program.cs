@@ -1,7 +1,8 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var eventStore = builder.AddEventStore("eventstore");
 var rabbitMq = builder.AddRabbitMQ("rabbitmq");
+var eventStore = builder.AddEventStore("eventstore")
+    .WithDataVolume();
 
 var adminProject = builder.AddProject<Projects.NCafe_Admin_Api>("admin-api")
     .WithReference(eventStore);

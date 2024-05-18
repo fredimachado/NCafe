@@ -28,6 +28,15 @@ public static class EventStoreBuilderExtensions
             .WithEnvironment(context => ConfigureEventStoreContainer(context, eventStoreContainer));
     }
 
+    /// <summary>
+    /// Adds a named volume for the data folder to an EventStore container resource.
+    /// </summary>
+    /// <param name="builder">The resource builder.</param>
+    /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
+    /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
+    public static IResourceBuilder<EventStoreResource> WithDataVolume(this IResourceBuilder<EventStoreResource> builder, string? name = null)
+        => builder.WithVolume(name ?? "eventstore-volume-data", "/var/lib/eventstore");
+
     private static void ConfigureEventStoreContainer(EnvironmentCallbackContext context, EventStoreResource resource)
     {
         context.EnvironmentVariables.Add("EVENTSTORE_CLUSTER_SIZE", "1");
