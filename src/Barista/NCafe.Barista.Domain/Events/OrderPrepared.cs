@@ -2,7 +2,7 @@
 
 namespace NCafe.Barista.Domain.Events;
 
-public sealed class OrderPrepared : Event
+public sealed record OrderPrepared : Event
 {
     public OrderPrepared(Guid id)
     {

@@ -2,7 +2,7 @@
 
 namespace NCafe.Admin.Domain.Events;
 
-public sealed class ProductCreated : Event
+public sealed record ProductCreated : Event
 {
     public ProductCreated(Guid id, string name, decimal price)
     {
