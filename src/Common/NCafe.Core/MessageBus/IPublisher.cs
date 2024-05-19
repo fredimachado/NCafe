@@ -2,5 +2,5 @@
 
 public interface IPublisher
 {
-    Task Publish<T>(string topicName, T message) where T : class, IBusMessage;
+    Task Publish<T>(T message) where T : class, IBusMessage;
 }

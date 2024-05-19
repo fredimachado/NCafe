@@ -1,19 +1,24 @@
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.AspNetCore.SignalR;
 using NCafe.Barista.Api.Hubs;
-using NCafe.Barista.Api.MessageBus;
 using NCafe.Barista.Api.Projections;
 using NCafe.Barista.Domain.Commands;
 using NCafe.Barista.Domain.Queries;
 using NCafe.Barista.Domain.ReadModels;
 using NCafe.Core.Commands;
+using NCafe.Core.MessageBus.Events;
 using NCafe.Core.Queries;
 using NCafe.Infrastructure;
+using NCafe.Shared.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 
-builder.AddRabbitMQClient("rabbitmq");
+builder.AddRabbitMQClient("rabbitmq", configureConnectionFactory: config =>
+{
+    config.DispatchConsumersAsync = true;
+});
 
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
@@ -25,7 +30,7 @@ builder.Services.AddInMemoryReadModelRepository<BaristaOrder>()
                 .AddEventStoreProjectionService<BaristaOrder>()
                 .AddHostedService<BaristaOrderProjectionService>();
 
-builder.Services.AddHostedService<OrdersConsumerService>();
+builder.Services.AddRabbitMqConsumerService(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
@@ -50,6 +55,21 @@ builder.Services.AddResponseCompression(opts =>
 });
 
 var app = builder.Build();
+
+app.UseMessageSubscriber()
+   .Subscribe<OrderPlaced>(async (serviceProvider, message) =>
+   {
+       var commandDispatcher = serviceProvider.GetRequiredService<ICommandDispatcher>();
+       var hubContext = serviceProvider.GetRequiredService<IHubContext<OrderHub>>();
+
+       // Dispatch domain command
+       await commandDispatcher.DispatchAsync(new PlaceOrder(message.Id, message.ProductId, message.Quantity));
+
+       // Notify clients
+       await hubContext.Clients.All.SendAsync(
+           "ReceiveOrder",
+           new Order(message.Id, message.ProductId, message.Quantity));
+   });
 
 app.MapDefaultEndpoints();
 
