@@ -1,15 +1,31 @@
-﻿using EasyNetQ;
-using Microsoft.Extensions.Configuration;
-using NCafe.Core.MessageBus;
+﻿using NCafe.Core.MessageBus;
+using RabbitMQ.Client;
+using System.Diagnostics;
+using System.Text.Json;
+using Microsoft.Extensions.Logging;
 
 namespace NCafe.Infrastructure.MessageBus;
 
-internal class RabbitMqPublisher(IConfiguration configuration) : IPublisher
+internal class RabbitMqPublisher(IConnection connection, ILogger<RabbitMqPublisher> logger) : IPublisher
 {
-    private readonly IBus _bus = RabbitHutch.CreateBus(configuration.GetConnectionString("RabbitMq"));
+    private readonly IConnection _connection = connection;
+    private readonly ILogger _logger = logger;
 
-    public async Task Publish<T>(string topicName, T message) where T : class, IBusMessage
+    public Task Publish<T>(string queueName, T message) where T : class, IBusMessage
     {
-        await _bus.PubSub.PublishAsync(message, topicName);
+        using var channel = RabbitMqHelper.CreateModelAndDeclareTestQueue(_connection, queueName);
+
+        RabbitMqHelper.AddMessagingTags(Activity.Current, string.Empty, queueName);
+
+        var body = JsonSerializer.SerializeToUtf8Bytes(message);
+
+        channel.BasicPublish(exchange: string.Empty,
+                             routingKey: queueName,
+                             basicProperties: null,
+                             body: body);
+
+        _logger.LogInformation("Published {MessageType} Message: {@Message}", message.GetType().Name, message);
+
+        return Task.CompletedTask;
     }
 }

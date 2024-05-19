@@ -75,7 +75,7 @@ public class PlaceOrderTests
 
         // Assert
         exception.ShouldBeNull();
-        A.CallTo(() => _publisher.Publish("orders", A<OrderPlaced>.That.Matches(o => o.ProductId == productId && o.Quantity == 1)))
+        A.CallTo(() => _publisher.Publish("orders_queue", A<OrderPlaced>.That.Matches(o => o.ProductId == productId && o.Quantity == 1)))
             .MustHaveHappenedOnceExactly();
     }
 }

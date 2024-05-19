@@ -20,7 +20,7 @@ internal sealed class PlaceOrderHandler(
     private readonly IReadModelRepository<Product> _productReadRepository = productReadRepository;
     private readonly IPublisher _publisher = publisher;
 
-    private const string Topic = "orders";
+    private const string Queue = "orders_queue";
 
     public async Task HandleAsync(PlaceOrder command)
     {
@@ -29,6 +29,6 @@ internal sealed class PlaceOrderHandler(
 
         await _repository.Save(order);
 
-        await _publisher.Publish(Topic, new OrderPlaced(order.Id, order.ProductId, order.Quantity));
+        await _publisher.Publish(Queue, new OrderPlaced(order.Id, order.ProductId, order.Quantity));
     }
 }

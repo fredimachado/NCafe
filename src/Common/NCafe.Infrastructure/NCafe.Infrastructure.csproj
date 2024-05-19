@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyNetQ" />
     <PackageReference Include="Aspire.RabbitMQ.Client" />
     <PackageReference Include="EventStore.Client.Grpc.Streams" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
