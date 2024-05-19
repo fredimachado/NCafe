@@ -1,4 +1,5 @@
-﻿namespace NCafe.Core.MessageBus.Events;
+﻿using NCafe.Core.MessageBus;
 
-[Message("cashier")]
+namespace NCafe.Cashier.Domain.Messages;
+
 public sealed record OrderPlaced(Guid Id, Guid ProductId, int Quantity) : IBusMessage;

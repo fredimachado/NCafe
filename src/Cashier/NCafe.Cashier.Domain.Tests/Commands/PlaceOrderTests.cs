@@ -1,9 +1,9 @@
 ﻿using NCafe.Cashier.Domain.Commands;
 using NCafe.Cashier.Domain.Entities;
 using NCafe.Cashier.Domain.Exceptions;
+using NCafe.Cashier.Domain.Messages;
 using NCafe.Cashier.Domain.ReadModels;
 using NCafe.Core.MessageBus;
-using NCafe.Core.MessageBus.Events;
 using NCafe.Core.ReadModels;
 using NCafe.Core.Repositories;
 
