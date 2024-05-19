@@ -15,6 +15,6 @@ internal sealed class QueryDispatcher(IServiceScopeFactory serviceScopeFactory) 
         var handler = scope.ServiceProvider.GetRequiredService(handlerType);
 
         return await (Task<TResult>)handlerType.GetMethod(nameof(IQueryHandler<IQuery<TResult>, TResult>.HandleAsync))
-            ?.Invoke(handler, new[] { query });
+            ?.Invoke(handler, [query]);
     }
 }

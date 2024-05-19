@@ -25,7 +25,7 @@ public static class EventStoreBuilderExtensions
             .WithHttpEndpoint(port: httpPort, targetPort: EventStoreResource.DefaultHttpPort, name: EventStoreResource.HttpEndpointName)
             .WithImage(EventStoreContainerImageTags.Image, EventStoreContainerImageTags.Tag)
             .WithImageRegistry(EventStoreContainerImageTags.Registry)
-            .WithEnvironment(context => ConfigureEventStoreContainer(context, eventStoreContainer));
+            .WithEnvironment(ConfigureEventStoreContainer);
     }
 
     /// <summary>
@@ -37,7 +37,7 @@ public static class EventStoreBuilderExtensions
     public static IResourceBuilder<EventStoreResource> WithDataVolume(this IResourceBuilder<EventStoreResource> builder, string? name = null)
         => builder.WithVolume(name ?? "eventstore-volume-data", "/var/lib/eventstore");
 
-    private static void ConfigureEventStoreContainer(EnvironmentCallbackContext context, EventStoreResource resource)
+    private static void ConfigureEventStoreContainer(EnvironmentCallbackContext context)
     {
         context.EnvironmentVariables.Add("EVENTSTORE_CLUSTER_SIZE", "1");
         context.EnvironmentVariables.Add("EVENTSTORE_RUN_PROJECTIONS", "All");

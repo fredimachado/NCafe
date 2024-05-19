@@ -187,7 +187,7 @@ public static class WaitForDependenciesExtensions
             return Task.CompletedTask;
         }
 
-        private async Task DoTheHealthCheck(ResourceEvent resourceEvent, TaskCompletionSource tcs)
+        private async static Task DoTheHealthCheck(ResourceEvent resourceEvent, TaskCompletionSource tcs)
         {
             var resource = resourceEvent.Resource;
 
