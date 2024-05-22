@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/Cashier/**'
       - '.github/workflows/cashier-api.yml'
+      - 'Directory.*.props'
   workflow_dispatch:
 
 env:

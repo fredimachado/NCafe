@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/UI/**'
       - '.github/workflows/web-ui.yml'
+      - 'Directory.*.props'
   workflow_dispatch:
 
 env:

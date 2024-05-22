@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/Barista/**'
       - '.github/workflows/barista-api.yml'
+      - 'Directory.*.props'
   workflow_dispatch:
 
 env:

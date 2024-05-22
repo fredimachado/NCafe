@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/Admin/**'
       - '.github/workflows/admin-api.yml'
+      - 'Directory.*.props'
   workflow_dispatch:
 
 env:
