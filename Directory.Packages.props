@@ -4,14 +4,14 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Aspire.Hosting" Version="8.0.0-preview.7.24251.11" />
-    <PackageVersion Include="Aspire.Hosting.AppHost" Version="8.0.0-preview.7.24251.11" />
-    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="8.0.0-preview.7.24251.11" />
-    <PackageVersion Include="Aspire.RabbitMQ.Client" Version="8.0.0-preview.7.24251.11" />
+    <PackageVersion Include="Aspire.Hosting" Version="8.0.1" />
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="8.0.1" />
+    <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="8.0.1" />
+    <PackageVersion Include="Aspire.RabbitMQ.Client" Version="8.0.1" />
     <PackageVersion Include="AspNetCore.HealthChecks.EventStore.gRPC" Version="6.0.1" />
     <PackageVersion Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="8.5.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.0-preview.7.24251.11" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="8.0.1" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.8.1" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.8.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.8.1" />
