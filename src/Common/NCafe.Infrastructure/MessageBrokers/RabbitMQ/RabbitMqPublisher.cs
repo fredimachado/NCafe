@@ -1,9 +1,9 @@
-﻿using NCafe.Core.MessageBus;
+﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using NCafe.Core.MessageBus;
 using RabbitMQ.Client;
 using System.Diagnostics;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace NCafe.Infrastructure.MessageBrokers.RabbitMQ;
 

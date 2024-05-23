@@ -116,7 +116,7 @@ public static class DependencyRegistration
         var scope = services.BuildServiceProvider().CreateScope();
         var connection = scope.ServiceProvider.GetRequiredService<IConnection>();
         var settings = scope.ServiceProvider.GetRequiredService<IOptions<RabbitMqSettings>>();
-        
+
         var channel = connection.CreateModel();
         channel.ExchangeDeclare(exchange: ExchangeNameProvider.Get(settings.Value.ExchangeName),
                                 type: ExchangeType.Topic,

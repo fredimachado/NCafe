@@ -1,10 +1,10 @@
-using NCafe.Cashier.Domain.Queries;
-using NCafe.Cashier.Domain.Commands;
-using NCafe.Cashier.Domain.ReadModels;
-using NCafe.Infrastructure;
 using NCafe.Cashier.Api.Projections;
-using NCafe.Core.Queries;
+using NCafe.Cashier.Domain.Commands;
+using NCafe.Cashier.Domain.Queries;
+using NCafe.Cashier.Domain.ReadModels;
 using NCafe.Core.Commands;
+using NCafe.Core.Queries;
+using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,10 +59,24 @@ app.MapGet("/products", async (IQueryDispatcher queryDispatcher) =>
 })
 .WithName("GetProducts");
 
-app.MapPost("/orders", async (ICommandDispatcher commandDispatcher, PlaceOrder command) =>
+app.MapPost("/orders", async (ICommandDispatcher commandDispatcher, CreateOrder command) =>
 {
     await commandDispatcher.DispatchAsync(command);
     return Results.Created("/orders", null);
+})
+.WithName("CreateOrder");
+
+app.MapPost("/orders/{id:guid}/item", async (ICommandDispatcher commandDispatcher, Guid id, AddItemToOrder command) =>
+{
+    await commandDispatcher.DispatchAsync(command);
+    return Results.Accepted();
+})
+.WithName("AddItemToOrder");
+
+app.MapPost("/orders/{id:guid}/place", async (ICommandDispatcher commandDispatcher, Guid id, PlaceOrder command) =>
+{
+    await commandDispatcher.DispatchAsync(command);
+    return Results.Accepted();
 })
 .WithName("PlaceOrder");
 

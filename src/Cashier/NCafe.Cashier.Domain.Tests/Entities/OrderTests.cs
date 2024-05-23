@@ -6,39 +6,22 @@ namespace NCafe.Cashier.Domain.Tests.Entities;
 public class OrderTests
 {
     [Fact]
-    public void GivenNewOrder_ShouldHaveAppliedOrderPlacedEvent()
+    public void GivenNewOrder_ShouldHaveAppliedOrderCreatedEvent()
     {
         // Arrange
         var id = Guid.NewGuid();
-        var productId = Guid.NewGuid();
-        var quantity = 1;
+        var createdBy = "cashier-1";
+        var createdAt = DateTimeOffset.UtcNow;
 
         // Act
-        var order = new Order(id, productId, quantity);
+        var order = new Order(id, createdBy, createdAt);
 
         // Assert
         var @event = order.GetPendingEvents().ShouldHaveSingleItem();
-        @event.ShouldBeOfType<OrderPlaced>();
+        @event.ShouldBeOfType<OrderCreated>();
 
         order.Id.ShouldBe(id);
-        order.ProductId.ShouldBe(productId);
-        order.Quantity.ShouldBe(quantity);
-    }
-
-    [Fact]
-    public void GivenOrder_WhenPaidFor_ShouldHaveAppliedOrderPaidForEvent()
-    {
-        // Arrange
-        var id = Guid.NewGuid();
-        var order = new Order(id, Guid.NewGuid(), 1);
-
-        // Act
-        order.PayForOrder();
-
-        // Assert
-        var @event = order.GetPendingEvents().Last();
-        @event.ShouldBeOfType<OrderPaidFor>();
-
-        order.HasBeenPaid.ShouldBeTrue();
+        order.CreatedBy.ShouldBe(createdBy);
+        order.CreatedAt.ShouldBe(createdAt);
     }
 }

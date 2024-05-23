@@ -1,14 +1,17 @@
-﻿using NCafe.Core.Domain;
+﻿using NCafe.Cashier.Domain.ValueObjects;
+using NCafe.Core.Domain;
 
 namespace NCafe.Cashier.Domain.Events;
 
-public sealed record OrderPlaced : Event
+internal sealed record OrderPlaced : Event
 {
-    public OrderPlaced(Guid id)
+    public OrderPlaced(Guid id, Customer customer, DateTimeOffset placedAt)
     {
         Id = id;
+        Customer = customer;
+        PlacedAt = placedAt;
     }
 
-    public Guid ProductId { get; init; }
-    public int Quantity { get; init; }
+    public Customer Customer { get; }
+    public DateTimeOffset PlacedAt { get; }
 }

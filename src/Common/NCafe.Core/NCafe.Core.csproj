@@ -10,4 +10,8 @@
         </AssemblyAttribute>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="ReflectionMagic" />
+    </ItemGroup>
+
 </Project>

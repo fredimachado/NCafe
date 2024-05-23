@@ -1,10 +1,9 @@
-﻿using NCafe.Cashier.Domain.Commands;
+﻿using Microsoft.Extensions.Time.Testing;
+using NCafe.Cashier.Domain.Commands;
 using NCafe.Cashier.Domain.Entities;
 using NCafe.Cashier.Domain.Exceptions;
-using NCafe.Cashier.Domain.Messages;
-using NCafe.Cashier.Domain.ReadModels;
+using NCafe.Cashier.Domain.ValueObjects;
 using NCafe.Core.MessageBus;
-using NCafe.Core.ReadModels;
 using NCafe.Core.Repositories;
 
 namespace NCafe.Cashier.Domain.Tests.Commands;
@@ -13,69 +12,83 @@ public class PlaceOrderTests
 {
     private readonly PlaceOrderHandler _sut;
     private readonly IRepository _repository;
-    private readonly IReadModelRepository<Product> _productRepository;
     private readonly IPublisher _publisher;
+    private readonly FakeTimeProvider _timeProvider;
 
     public PlaceOrderTests()
     {
         _repository = A.Fake<IRepository>();
-        _productRepository = A.Fake<IReadModelRepository<Product>>();
         _publisher = A.Fake<IPublisher>();
-        _sut = new PlaceOrderHandler(_repository, _productRepository, _publisher);
+        _timeProvider = new FakeTimeProvider();
+        _sut = new PlaceOrderHandler(_repository, _publisher, _timeProvider);
     }
 
     [Fact]
-    public async Task GivenProductNotFound_ShouldThrowException()
+    public async Task PlaceOrder_ShouldSaveOrder()
     {
         // Arrange
-        var productId = Guid.NewGuid();
-        A.CallTo(() => _productRepository.GetById(productId))
-            .Returns(null);
+        var orderId = Guid.NewGuid();
+        var order = new Order(orderId, "cashier-1", DateTimeOffset.UtcNow);
+        var placedAt = DateTimeOffset.UtcNow;
+        var customer = new Customer("John Doe");
+        var command = new PlaceOrder(orderId, customer);
 
-        var command = new PlaceOrder(productId, 1);
+        _timeProvider.SetUtcNow(placedAt);
 
-        // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        A.CallTo(() => _repository.GetById<Order>(orderId))
+            .Returns(Task.FromResult(order));
 
-        // Assert
-        exception.ShouldBeOfType<ProductNotFoundException>();
-    }
-
-    [Fact]
-    public async Task GivenProductExists_ShouldSaveOrder()
-    {
-        // Arrange
-        var productId = Guid.NewGuid();
-        A.CallTo(() => _productRepository.GetById(productId))
-            .Returns(new Product { Id = productId });
-
-        var command = new PlaceOrder(productId, 1);
+        order.AddItem(new OrderItem(Guid.NewGuid(), 1, "Latte", 5));
 
         // Act
         var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
         exception.ShouldBeNull();
-        A.CallTo(() => _repository.Save(A<Order>.That.Matches(o => o.ProductId == productId && o.Quantity == 1)))
+        A.CallTo(() => _repository.Save(A<Order>.That.Matches(o => o.Status == OrderStatus.Placed &&
+                                                                   o.Customer == customer &&
+                                                                   o.PlacedAt == placedAt)))
             .MustHaveHappenedOnceExactly();
     }
 
     [Fact]
-    public async Task GivenOrderSaved_ShouldPublishToMessageBus()
+    public async Task GivenNotNewOrder_ShouldThrow()
     {
         // Arrange
-        var productId = Guid.NewGuid();
-        A.CallTo(() => _productRepository.GetById(productId))
-            .Returns(new Product { Id = productId });
+        var orderId = Guid.NewGuid();
+        var order = new Order(orderId, "cashier-1", DateTimeOffset.UtcNow);
+        var customer = new Customer("John Doe");
+        var command = new PlaceOrder(orderId, customer);
 
-        var command = new PlaceOrder(productId, 1);
+        order.AddItem(new OrderItem(Guid.NewGuid(), 1, "Latte", 5));
+        order.PlaceOrder(new Customer("John Doe"), DateTimeOffset.UtcNow);
+
+        A.CallTo(() => _repository.GetById<Order>(orderId))
+            .Returns(Task.FromResult(order));
 
         // Act
         var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
 
         // Assert
-        exception.ShouldBeNull();
-        A.CallTo(() => _publisher.Publish(A<OrderPlaced>.That.Matches(o => o.ProductId == productId && o.Quantity == 1)))
-            .MustHaveHappenedOnceExactly();
+        exception.ShouldBeOfType<CannotPlaceOrderException>();
+    }
+
+    [Fact]
+    public async Task GivenNoItemAdded_ShouldThrow()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var order = new Order(orderId, "cashier-1", DateTimeOffset.UtcNow);
+        var customer = new Customer("John Doe");
+        var command = new PlaceOrder(orderId, customer);
+
+        A.CallTo(() => _repository.GetById<Order>(orderId))
+            .Returns(Task.FromResult(order));
+
+        // Act
+        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+
+        // Assert
+        exception.ShouldBeOfType<CannotPlaceEmptyOrderException>();
     }
 }

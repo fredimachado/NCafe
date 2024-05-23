@@ -1,7 +1,7 @@
 ﻿using ArchUnitNET.Domain;
+using ArchUnitNET.Fluent;
 using ArchUnitNET.Loader;
 using ArchUnitNET.xUnit;
-using ArchUnitNET.Fluent;
 using static ArchUnitNET.Fluent.ArchRuleDefinition;
 
 namespace NCafe.Common.Tests.Architecture;
