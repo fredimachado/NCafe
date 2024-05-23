@@ -5,6 +5,7 @@ var eventStore = builder.AddEventStore("eventstore")
     .WithDataVolume();
 
 var rabbitMq = builder.AddRabbitMQ("rabbitmq")
+    .WithDataVolume()
     .WithHealthCheck()
     .WithManagementPlugin();
 
