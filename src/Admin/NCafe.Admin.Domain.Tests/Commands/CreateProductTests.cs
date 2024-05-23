@@ -1,6 +1,6 @@
 ﻿using NCafe.Admin.Domain.Commands;
-using NCafe.Admin.Domain.Exceptions;
 using NCafe.Admin.Domain.Entities;
+using NCafe.Admin.Domain.Exceptions;
 using NCafe.Core.Repositories;
 
 namespace NCafe.Admin.Domain.Tests.Commands;

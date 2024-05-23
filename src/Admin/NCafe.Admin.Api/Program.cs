@@ -1,9 +1,9 @@
-using NCafe.Core.Commands;
-using NCafe.Core.Queries;
 using NCafe.Admin.Api.Projections;
 using NCafe.Admin.Domain.Commands;
 using NCafe.Admin.Domain.Queries;
 using NCafe.Admin.Domain.ReadModels;
+using NCafe.Core.Commands;
+using NCafe.Core.Queries;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);

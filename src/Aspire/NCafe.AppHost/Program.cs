@@ -8,7 +8,7 @@ var rabbitMq = builder.AddRabbitMQ("rabbitmq")
     .WithHealthCheck()
     .WithManagementPlugin();
 
-var adminProject = builder.AddProject<Projects.NCafe_Admin_Api>("admin-api")
+builder.AddProject<Projects.NCafe_Admin_Api>("admin-api")
     .WithReference(eventStore)
     .WaitFor(eventStore);
 
@@ -18,12 +18,12 @@ var cashierProject = builder.AddProject<Projects.NCafe_Cashier_Api>("cashier-api
     .WaitFor(eventStore)
     .WaitFor(rabbitMq);
 
-var baristaProject = builder.AddProject<Projects.NCafe_Barista_Api>("barista-api")
+builder.AddProject<Projects.NCafe_Barista_Api>("barista-api")
     .WithReference(eventStore)
     .WithReference(rabbitMq)
     .WaitFor(cashierProject);
 
-var webUiProject = builder.AddProject<Projects.NCafe_Web>("web-ui")
+builder.AddProject<Projects.NCafe_Web>("web-ui")
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();

@@ -1,10 +1,10 @@
-﻿using System.Collections.Concurrent;
-using System.Runtime.ExceptionServices;
-using Aspire.Hosting.Lifecycle;
+﻿using Aspire.Hosting.Lifecycle;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Retry;
+using System.Collections.Concurrent;
+using System.Runtime.ExceptionServices;
 
 namespace Aspire.Hosting;
 

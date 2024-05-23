@@ -35,15 +35,17 @@ public static class EventStoreBuilderExtensions
     /// <param name="name">The name of the volume. Defaults to an auto-generated name based on the application and resource names.</param>
     /// <returns>The <see cref="IResourceBuilder{T}"/>.</returns>
     public static IResourceBuilder<EventStoreResource> WithDataVolume(this IResourceBuilder<EventStoreResource> builder, string? name = null)
-        => builder.WithVolume(name ?? "eventstore-volume-data", "/var/lib/eventstore");
+    {
+        return builder.WithVolume(name ?? "eventstore-volume-data", "/var/lib/eventstore");
+    }
 
     private static void ConfigureEventStoreContainer(EnvironmentCallbackContext context)
     {
         context.EnvironmentVariables.Add("EVENTSTORE_CLUSTER_SIZE", "1");
         context.EnvironmentVariables.Add("EVENTSTORE_RUN_PROJECTIONS", "All");
         context.EnvironmentVariables.Add("EVENTSTORE_START_STANDARD_PROJECTIONS", "true");
-        context.EnvironmentVariables.Add("EVENTSTORE_EXT_TCP_PORT", EventStoreResource.DefaultTcpPort.ToString());
-        context.EnvironmentVariables.Add("EVENTSTORE_HTTP_PORT", EventStoreResource.DefaultHttpPort.ToString());
+        context.EnvironmentVariables.Add("EVENTSTORE_EXT_TCP_PORT", $"{EventStoreResource.DefaultTcpPort}");
+        context.EnvironmentVariables.Add("EVENTSTORE_HTTP_PORT", $"{EventStoreResource.DefaultHttpPort}");
         context.EnvironmentVariables.Add("EVENTSTORE_INSECURE", "true");
         context.EnvironmentVariables.Add("EVENTSTORE_DEV", "true");
         context.EnvironmentVariables.Add("EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP", "true");
