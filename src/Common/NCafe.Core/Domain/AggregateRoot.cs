@@ -1,4 +1,5 @@
 ﻿using NCafe.Core.Exceptions;
+using ReflectionMagic;
 
 namespace NCafe.Core.Domain;
 
@@ -35,7 +36,7 @@ public abstract class AggregateRoot
             throw new InvalidVersionException(@event, this);
         }
 
-        ((dynamic)this).Apply((dynamic)@event);
+        this.AsDynamic().Apply(@event);
         Version++;
     }
 }

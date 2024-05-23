@@ -32,7 +32,7 @@ public sealed class BaristaOrder : AggregateRoot
         RaiseEvent(new OrderPrepared(Id));
     }
 
-    public void Apply(OrderPlaced @event)
+    private void Apply(OrderPlaced @event)
     {
         Id = @event.Id;
         ProductId = @event.ProductId;
@@ -40,7 +40,7 @@ public sealed class BaristaOrder : AggregateRoot
         IsCompleted = false;
     }
 
-    public void Apply(OrderPrepared @event)
+    private void Apply(OrderPrepared @event)
     {
         IsCompleted = true;
     }

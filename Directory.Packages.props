@@ -33,6 +33,7 @@
     <PackageVersion Include="MinVer" Version="4.3.0" />
     <PackageVersion Include="NetArchTest.Rules" Version="1.3.2" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="ReflectionMagic" Version="5.0.1" />
     <PackageVersion Include="Scrutor" Version="4.2.2" />
     <PackageVersion Include="Shouldly" Version="4.2.1" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.1" />

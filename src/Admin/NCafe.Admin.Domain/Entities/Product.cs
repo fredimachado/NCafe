@@ -22,7 +22,7 @@ public sealed class Product : AggregateRoot
     public string Name { get; private set; }
     public decimal Price { get; private set; }
 
-    public void Apply(ProductCreated @event)
+    private void Apply(ProductCreated @event)
     {
         Id = @event.Id;
         Name = @event.Name;
