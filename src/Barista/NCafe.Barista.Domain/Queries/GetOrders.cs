@@ -1,17 +1,17 @@
-﻿using NCafe.Barista.Domain.ReadModels;
-using NCafe.Core.Queries;
+﻿using MediatR;
+using NCafe.Barista.Domain.ReadModels;
 using NCafe.Core.ReadModels;
 
 namespace NCafe.Barista.Domain.Queries;
 
-public record GetOrders : IQuery<BaristaOrder[]>;
+public record GetOrders : IRequest<BaristaOrder[]>;
 
 internal sealed class GetOrdersHandler(IReadModelRepository<BaristaOrder> orderRepository)
-    : IQueryHandler<GetOrders, BaristaOrder[]>
+    : IRequestHandler<GetOrders, BaristaOrder[]>
 {
     private readonly IReadModelRepository<BaristaOrder> _orderRepository = orderRepository;
 
-    public Task<BaristaOrder[]> HandleAsync(GetOrders query)
+    public Task<BaristaOrder[]> Handle(GetOrders query, CancellationToken cancellationToken)
     {
         var products = _orderRepository.GetAll()
             .ToArray();

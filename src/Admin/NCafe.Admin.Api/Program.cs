@@ -1,9 +1,8 @@
+using MediatR;
 using NCafe.Admin.Api.Projections;
 using NCafe.Admin.Domain.Commands;
 using NCafe.Admin.Domain.Queries;
 using NCafe.Admin.Domain.ReadModels;
-using NCafe.Core.Commands;
-using NCafe.Core.Queries;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,13 +11,11 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
-                .AddCommandHandlers<CreateProduct>()
-                .AddCommandHandlerLogger()
-                .AddQueryHandlers<CreateProduct>();
-
-builder.Services.AddInMemoryReadModelRepository<Product>()
                 .AddEventStoreProjectionService<Product>()
+                .AddInMemoryReadModelRepository<Product>()
                 .AddHostedService<ProductProjectionService>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateProduct>());
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -48,16 +45,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(corsPolicyName);
 
-app.MapGet("/products", async (IQueryDispatcher queryDispatcher) =>
+app.MapGet("/products", async (IMediator mediator) =>
 {
-    var result = await queryDispatcher.QueryAsync(new GetProducts());
+    var result = await mediator.Send(new GetProducts());
     return Results.Ok(result);
 })
 .WithName("GetProducts");
 
-app.MapPost("/products", async (ICommandDispatcher commandDispatcher, CreateProduct command) =>
+app.MapPost("/products", async (IMediator mediator, CreateProduct command) =>
 {
-    await commandDispatcher.DispatchAsync(command);
+    await mediator.Send(command);
     return Results.Created("/products", null);
 })
 .WithName("CreateProduct");

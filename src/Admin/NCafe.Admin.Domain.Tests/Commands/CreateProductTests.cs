@@ -2,6 +2,7 @@
 using NCafe.Admin.Domain.Entities;
 using NCafe.Admin.Domain.Exceptions;
 using NCafe.Core.Repositories;
+using System.Threading;
 
 namespace NCafe.Admin.Domain.Tests.Commands;
 
@@ -26,7 +27,7 @@ public class CreateProductTests
         var command = new CreateProduct(name, 3);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.Handle(command, CancellationToken.None));
 
         // Assert
         exception.ShouldBeOfType<InvalidProductNameException>();
@@ -41,7 +42,7 @@ public class CreateProductTests
         var command = new CreateProduct("Flat White", price);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.Handle(command, CancellationToken.None));
 
         // Assert
         exception.ShouldBeOfType<InvalidProductPriceException>();
@@ -54,10 +55,9 @@ public class CreateProductTests
         var command = new CreateProduct("Flat White", 3.5m);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        await _sut.Handle(command, CancellationToken.None);
 
         // Assert
-        exception.ShouldBeNull();
         A.CallTo(() => _repository.Save(A<Product>.That.Matches(p => p.Name == command.Name && p.Price == command.Price)))
             .MustHaveHappenedOnceExactly(); ;
     }

@@ -6,8 +6,8 @@ public record Customer
 {
     public Customer(string name)
     {
-        Guard.Against.NullOrEmpty(name, nameof(name));
-        Guard.Against.StringTooShort(name, 2, nameof(name));
+        Guard.Against.NullOrEmpty(name);
+        Guard.Against.StringTooShort(name, 2);
 
         Name = name;
     }

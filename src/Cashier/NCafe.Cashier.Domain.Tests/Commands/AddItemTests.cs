@@ -5,6 +5,7 @@ using NCafe.Cashier.Domain.ReadModels;
 using NCafe.Cashier.Domain.ValueObjects;
 using NCafe.Core.ReadModels;
 using NCafe.Core.Repositories;
+using System.Threading;
 
 namespace NCafe.Cashier.Domain.Tests.Commands;
 
@@ -37,10 +38,9 @@ public class AddItemTests
             .Returns(new Product { Name = "Latte", Price = 5 });
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        await _sut.Handle(command, CancellationToken.None);
 
         // Assert
-        exception.ShouldBeNull();
         A.CallTo(() => _repository.Save(A<Order>.That.Matches(o => o.Id == orderId &&
                                                                    o.Items.Any(i => i.ProductId == productId && i.Quantity == quantity))))
             .MustHaveHappenedOnceExactly();
@@ -56,7 +56,7 @@ public class AddItemTests
         var command = new AddItemToOrder(orderId, productId, quantity);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.Handle(command, CancellationToken.None));
 
         // Assert
         exception.ShouldBeOfType<OrderNotFoundException>();
@@ -78,7 +78,7 @@ public class AddItemTests
             .Returns(null);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.Handle(command, CancellationToken.None));
 
         // Assert
         exception.ShouldBeOfType<ProductNotFoundException>();
@@ -94,7 +94,7 @@ public class AddItemTests
         var quantity = 1;
         var command = new AddItemToOrder(orderId, productId, quantity);
 
-        order.AddItem(new OrderItem(Guid.NewGuid(), 1, "Latte", 5));
+        order.AddItem(new OrderItem(Guid.NewGuid(), "Latte", 1, 5));
         order.PlaceOrder(new Customer("John Doe"), DateTimeOffset.UtcNow);
 
         A.CallTo(() => _repository.GetById<Order>(orderId))
@@ -104,7 +104,7 @@ public class AddItemTests
             .Returns(new Product { Name = "Latte", Price = 5 });
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.Handle(command, CancellationToken.None));
 
         // Assert
         exception.ShouldBeOfType<CannotAddItemToOrderException>();

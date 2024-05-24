@@ -2,6 +2,7 @@
 using NCafe.Cashier.Domain.Commands;
 using NCafe.Cashier.Domain.Entities;
 using NCafe.Core.Repositories;
+using System.Threading;
 
 namespace NCafe.Cashier.Domain.Tests.Commands;
 
@@ -28,10 +29,9 @@ public class CreateOrderTests
         var command = new CreateOrder(createdBy);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        var orderId = await _sut.Handle(command, CancellationToken.None);
 
         // Assert
-        exception.ShouldBeNull();
         A.CallTo(() => _repository.Save(A<Order>.That.Matches(o => o.Status == OrderStatus.New &&
                                                                    o.CreatedBy == createdBy &&
                                                                    o.CreatedAt == createdAt)))

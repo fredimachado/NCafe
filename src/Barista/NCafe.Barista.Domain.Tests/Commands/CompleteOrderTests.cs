@@ -2,6 +2,7 @@
 using NCafe.Barista.Domain.Entities;
 using NCafe.Barista.Domain.Exceptions;
 using NCafe.Core.Repositories;
+using System.Threading;
 
 namespace NCafe.Barista.Domain.Tests.Commands;
 
@@ -27,7 +28,7 @@ public class CompleteOrderTests
         var command = new CompleteOrder(orderId);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        var exception = await Record.ExceptionAsync(() => _sut.Handle(command, CancellationToken.None));
 
         // Assert
         exception.ShouldBeOfType<OrderNotFoundException>();
@@ -39,14 +40,13 @@ public class CompleteOrderTests
         // Arrange
         var orderId = Guid.NewGuid();
         A.CallTo(() => _repository.GetById<BaristaOrder>(orderId))
-            .Returns(new BaristaOrder(orderId, Guid.NewGuid(), 1));
+            .Returns(new BaristaOrder(orderId, [new(Guid.NewGuid(), "Latte", 1, 4)], "John Doe"));
         var command = new CompleteOrder(orderId);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        await _sut.Handle(command, CancellationToken.None);
 
         // Assert
-        exception.ShouldBeNull();
         A.CallTo(() => _repository.Save(A<BaristaOrder>.That.Matches(o => o.Id == orderId && o.IsCompleted == true)))
             .MustHaveHappenedOnceExactly();
     }

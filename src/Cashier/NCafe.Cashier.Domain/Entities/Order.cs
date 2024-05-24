@@ -21,7 +21,7 @@ internal sealed class Order : AggregateRoot
     {
     }
 
-    private List<OrderItem> _items = [];
+    private readonly List<OrderItem> _items = [];
 
     public Order(Guid id, string createdBy, DateTimeOffset createdAt)
     {
@@ -56,6 +56,16 @@ internal sealed class Order : AggregateRoot
     {
         Guard.Against.Null(customer);
 
+        if (Status != OrderStatus.New)
+        {
+            throw new CannotPlaceOrderException(Id);
+        }
+
+        if (Items.Count == 0)
+        {
+            throw new CannotPlaceEmptyOrderException(Id);
+        }
+
         RaiseEvent(new OrderPlaced(Id, customer, placedAt));
     }
 
@@ -69,7 +79,7 @@ internal sealed class Order : AggregateRoot
 
     private void Apply(OrderItemAdded @event)
     {
-        _items.Add(new OrderItem(@event.ProductId, @event.Quantity, @event.Name, @event.Price));
+        _items.Add(new OrderItem(@event.ProductId, @event.Name, @event.Quantity, @event.Price));
         Total = Items.Sum(i => i.Price);
     }
 

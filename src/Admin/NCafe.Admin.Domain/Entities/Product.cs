@@ -1,5 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 using NCafe.Admin.Domain.Events;
+using NCafe.Admin.Domain.Exceptions;
 using NCafe.Core.Domain;
 
 namespace NCafe.Admin.Domain.Entities;
@@ -12,9 +13,19 @@ public sealed class Product : AggregateRoot
 
     public Product(Guid id, string name, decimal price)
     {
-        Id = Guard.Against.Default(id, nameof(id));
-        Name = Guard.Against.NullOrWhiteSpace(name, nameof(name));
-        Price = Guard.Against.NegativeOrZero(price, nameof(price));
+        Id = Guard.Against.Default(id);
+        Name = name;
+        Price = price;
+
+        if (string.IsNullOrWhiteSpace(Name))
+        {
+            throw new InvalidProductNameException();
+        }
+
+        if (Price <= 0)
+        {
+            throw new InvalidProductPriceException(Price);
+        }
 
         RaiseEvent(new ProductCreated(id, name, price));
     }

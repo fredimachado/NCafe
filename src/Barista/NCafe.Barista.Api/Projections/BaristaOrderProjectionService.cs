@@ -15,8 +15,12 @@ public class BaristaOrderProjectionService : BackgroundService
         projectionService.OnCreate<OrderPlaced>(@event => new BaristaOrder
         {
             Id = @event.Id,
-            ProductId = @event.ProductId,
-            Quantity = @event.Quantity
+            CustomerName = @event.Customer,
+            Items = @event.OrderItems.Select(item => new BaristaOrderItem
+            {
+                Name = item.Name,
+                Quantity = item.Quantity
+            }).ToArray()
         });
 
         projectionService.OnUpdate<OrderPrepared>(

@@ -15,4 +15,11 @@
     <ProjectReference Include="..\NCafe.Barista.Domain\NCafe.Barista.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Update="MinVer">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
 </Project>

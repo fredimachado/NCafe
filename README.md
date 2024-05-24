@@ -76,11 +76,10 @@ All common interfaces and abstractions are here. For example:
 - **AggregateRoot**: Abstract base class for our domain entities
 - **IEvent and Event**: Base for events that represent domain entity state changes
 - **IRepository**: Contract used to fetch and save domain entities
-- **IPublisher**: Contract used for publishing integration events
+- **IBusPublisher**: Contract used for publishing integration events
 - **MessageBus Events**: Integration events used to communicate between microservices
 - **IProjectionService**: Contract used for building projections based on domain entity events
 - **Read Model**: Contract used to fetch and save read models (projections)
-- **Command, Query, Dispatchers and Handlers interfaces**
 - **Basic exceptions**
 
 So, basically, this project is the core of our solution and will only contain the
@@ -114,7 +113,7 @@ abstractions/interfaces (ex.: `IRepository`) instead of implementations
 ### Web API
 
 The entry points (runners) of our microservices. They simply register the required dependencies using methods
-from the Infrastructure project and map endpoints, which use `ICommandDispatcher` or `IQueryDispatcher` (see `Program.cs`).
+from the Infrastructure project and map endpoints, which use `MediatR` to invoke a handler (see `Program.cs`).
 
 These projects have a reference to its Domain, which should actually be called Application, to conform with Clean Architecture
 since it contains use cases. The APIs also have a reference to the Infrastructure project.
@@ -123,8 +122,7 @@ Projection services can also be in the Web API project (Find more about projecti
 
 In case the microservice needs to consume integration events, a Consumer service can be created
 (see `OrdersConsumerService` in `Barista.Api`). Basically, this service implements .NET's `IHostedService`, subscribes
-to a RabbitMQ stream specifying a queue, a topic and a callback, which in case will use `ICommandDispatcher` to, you guessed it,
-dispatch a command to the domain.
+to a RabbitMQ stream specifying a queue, a topic and a callback, which in case will use `MediatR` to invoke a domain command.
 
 ### Web UI
 
@@ -150,7 +148,7 @@ Implementations for all external dependencies are defined in this project. Like:
 - EventStore Repository and Projection Service
 - RabbitMQ publisher
 
-There are some other implementations in here as well, like Command and Query dispatchers, a Logging decorator and
+There are some other implementations in here as well, like a Logging decorator and
 read model repositories (only in-memory for now).
 
 This project also contains methods for registering all the implementations for interfaces defined

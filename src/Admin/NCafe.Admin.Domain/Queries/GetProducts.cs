@@ -1,16 +1,16 @@
-﻿using NCafe.Admin.Domain.ReadModels;
-using NCafe.Core.Queries;
+﻿using MediatR;
+using NCafe.Admin.Domain.ReadModels;
 using NCafe.Core.ReadModels;
 
 namespace NCafe.Admin.Domain.Queries;
 
-public record GetProducts : IQuery<Product[]>;
+public record GetProducts : IRequest<Product[]>;
 
-internal sealed class GetProductsHandler(IReadModelRepository<Product> productRepository) : IQueryHandler<GetProducts, Product[]>
+internal sealed class GetProductsHandler(IReadModelRepository<Product> productRepository) : IRequestHandler<GetProducts, Product[]>
 {
     private readonly IReadModelRepository<Product> _productRepository = productRepository;
 
-    public Task<Product[]> HandleAsync(GetProducts query)
+    public Task<Product[]> Handle(GetProducts query, CancellationToken cancellation)
     {
         var products = _productRepository.GetAll()
             .ToArray();

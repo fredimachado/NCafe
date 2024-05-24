@@ -10,33 +10,38 @@ public sealed class BaristaOrder : AggregateRoot
     {
     }
 
-    public BaristaOrder(Guid id, Guid productId, int quantity)
+    public BaristaOrder(Guid id, ValueObjects.OrderItem[] orderItems, string customer)
     {
-        Guard.Against.Default(id, nameof(id));
-        Guard.Against.Default(productId, nameof(productId));
-        Guard.Against.Negative(quantity, nameof(quantity));
+        Guard.Against.Default(id);
+        Guard.Against.NullOrEmpty(orderItems);
+        Guard.Against.NullOrEmpty(customer);
 
         RaiseEvent(new OrderPlaced(id)
         {
-            ProductId = productId,
-            Quantity = quantity
+            OrderItems = orderItems,
+            Customer = customer
         });
     }
 
-    public Guid ProductId { get; private set; }
-    public int Quantity { get; private set; }
+    public IReadOnlyCollection<ValueObjects.OrderItem> Items { get; private set; }
+    public string Customer { get; private set; }
     public bool IsCompleted { get; private set; }
 
     public void CompletePreparation()
     {
+        if (IsCompleted)
+        {
+            return;
+        }
+
         RaiseEvent(new OrderPrepared(Id));
     }
 
     private void Apply(OrderPlaced @event)
     {
         Id = @event.Id;
-        ProductId = @event.ProductId;
-        Quantity = @event.Quantity;
+        Items = @event.OrderItems;
+        Customer = @event.Customer;
         IsCompleted = false;
     }
 

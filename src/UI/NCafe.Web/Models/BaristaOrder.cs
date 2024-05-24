@@ -1,9 +1,5 @@
 ﻿namespace NCafe.Web.Models;
 
-public class BaristaOrder
-{
-    public Guid Id { get; set; }
-    public Guid ProductId { get; set; }
-    public int Quantity { get; set; }
-    public bool IsCompleted { get; set; }
-}
+public record BaristaOrder(Guid Id, string CustomerName, BaristaOrderItem[] Items, bool IsCompleted);
+
+public record BaristaOrderItem(string Name, int Quantity);

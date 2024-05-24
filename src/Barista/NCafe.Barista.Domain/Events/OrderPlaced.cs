@@ -1,4 +1,5 @@
-﻿using NCafe.Core.Domain;
+﻿using NCafe.Barista.Domain.ValueObjects;
+using NCafe.Core.Domain;
 
 namespace NCafe.Barista.Domain.Events;
 
@@ -9,6 +10,6 @@ public sealed record OrderPlaced : Event
         Id = id;
     }
 
-    public Guid ProductId { get; init; }
-    public int Quantity { get; init; }
+    public OrderItem[] OrderItems { get; init; }
+    public string Customer { get; init; }
 }

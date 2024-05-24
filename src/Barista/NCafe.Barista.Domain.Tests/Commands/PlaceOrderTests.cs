@@ -1,6 +1,7 @@
 ﻿using NCafe.Barista.Domain.Commands;
 using NCafe.Barista.Domain.Entities;
 using NCafe.Core.Repositories;
+using System.Threading;
 
 namespace NCafe.Barista.Domain.Tests.Commands;
 
@@ -21,14 +22,15 @@ public class PlaceOrderTests
         // Arrange
         var orderId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var command = new PlaceOrder(orderId, productId, 1);
+        var orderItem = new OrderItem(productId, "Cappuccino", 1, 3.99m);
+        var customer = "John Doe";
+        var command = new PlaceOrder(orderId, [orderItem], customer);
 
         // Act
-        var exception = await Record.ExceptionAsync(() => _sut.HandleAsync(command));
+        await _sut.Handle(command, CancellationToken.None);
 
         // Assert
-        exception.ShouldBeNull();
-        A.CallTo(() => _repository.Save(A<BaristaOrder>.That.Matches(o => o.Id == orderId && o.ProductId == productId && o.Quantity == 1)))
+        A.CallTo(() => _repository.Save(A<BaristaOrder>.That.Matches(o => o.Id == orderId && o.Customer == customer)))
             .MustHaveHappenedOnceExactly();
     }
 }

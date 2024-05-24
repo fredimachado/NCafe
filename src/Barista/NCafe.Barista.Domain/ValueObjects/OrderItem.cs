@@ -1,6 +1,6 @@
 ﻿using Ardalis.GuardClauses;
 
-namespace NCafe.Cashier.Domain.ValueObjects;
+namespace NCafe.Barista.Domain.ValueObjects;
 
 public record OrderItem
 {

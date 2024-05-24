@@ -3,17 +3,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using NCafe.Core.Commands;
 using NCafe.Core.MessageBus;
 using NCafe.Core.Projections;
-using NCafe.Core.Queries;
 using NCafe.Core.ReadModels;
 using NCafe.Core.Repositories;
-using NCafe.Infrastructure.Commands;
 using NCafe.Infrastructure.EventStore;
-using NCafe.Infrastructure.Logging;
 using NCafe.Infrastructure.MessageBrokers.RabbitMQ;
-using NCafe.Infrastructure.Queries;
 using NCafe.Infrastructure.ReadModels;
 using RabbitMQ.Client;
 
@@ -41,37 +36,6 @@ public static class DependencyRegistration
         return services.AddSingleton<IProjectionService<TModel>, EventStoreProjectionService<TModel>>();
     }
 
-    public static IServiceCollection AddCommandHandlers<T>(this IServiceCollection services)
-    {
-        services.AddSingleton<ICommandDispatcher, CommandDispatcher>();
-
-        services.Scan(s => s.FromAssemblies(typeof(T).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(ICommandHandler<>)))
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-
-        return services;
-    }
-
-    public static IServiceCollection AddQueryHandlers<T>(this IServiceCollection services)
-    {
-        services.AddSingleton<IQueryDispatcher, QueryDispatcher>();
-
-        services.Scan(s => s.FromAssemblies(typeof(T).Assembly)
-            .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)))
-            .AsImplementedInterfaces()
-            .WithScopedLifetime());
-
-        return services;
-    }
-
-    public static IServiceCollection AddCommandHandlerLogger(this IServiceCollection services)
-    {
-        services.TryDecorate(typeof(ICommandHandler<>), typeof(CommandHandlerLogger<>));
-
-        return services;
-    }
-
     public static IServiceCollection AddRabbitMqPublisher(this IServiceCollection services, IConfiguration configuration)
     {
         if (string.IsNullOrWhiteSpace(configuration.GetConnectionString("RabbitMq")))
@@ -83,9 +47,12 @@ public static class DependencyRegistration
         services.AddOptions<RabbitMqSettings>()
                 .Bind(configuration.GetSection(RabbitMqSettings.SectionName));
 
-        services.AddSingleton<IPublisher, RabbitMqPublisher>();
+        services.AddSingleton<IBusPublisher, RabbitMqPublisher>();
 
-        InitializeRabbitMqExchange(services);
+        if (configuration.GetValue("RabbitMq:InitializeExchange", false))
+        {
+            InitializeRabbitMqExchange(services);
+        }
 
         return services;
     }

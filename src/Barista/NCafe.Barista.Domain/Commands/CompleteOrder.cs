@@ -1,19 +1,19 @@
-﻿using NCafe.Barista.Domain.Entities;
+﻿using MediatR;
+using NCafe.Barista.Domain.Entities;
 using NCafe.Barista.Domain.Exceptions;
-using NCafe.Core.Commands;
 using NCafe.Core.Repositories;
 
 namespace NCafe.Barista.Domain.Commands;
 
-public record CompleteOrder(Guid Id) : ICommand;
+public record CompleteOrder(Guid OrderId) : IRequest;
 
-internal sealed class CompleteOrderHandler(IRepository repository) : ICommandHandler<CompleteOrder>
+internal sealed class CompleteOrderHandler(IRepository repository) : IRequestHandler<CompleteOrder>
 {
     private readonly IRepository _repository = repository;
 
-    public async Task HandleAsync(CompleteOrder command)
+    public async Task Handle(CompleteOrder command, CancellationToken cancellationToken)
     {
-        var order = await _repository.GetById<BaristaOrder>(command.Id) ?? throw new OrderNotFoundException(command.Id);
+        var order = await _repository.GetById<BaristaOrder>(command.OrderId) ?? throw new OrderNotFoundException(command.OrderId);
 
         order.CompletePreparation();
 

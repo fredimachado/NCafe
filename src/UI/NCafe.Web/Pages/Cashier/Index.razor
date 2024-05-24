@@ -23,38 +23,57 @@ else if (!products.Any())
 }
 else
 {
-    <Form Loading="isLoading"
-        Model="@order"
-        OnFinish="PlaceOrder"
-        LabelColSpan="8"
-        WrapperColSpan="16">
-        <FormItem Label="Product">
-            <AutoComplete @ref="productAutoComplete"
-                TOption="Product"
-                @bind-Value="@value"
-                OnSelectionChange="OnSelectionChange"
-                Options="products"
-                Placeholder="Product..." />
-        </FormItem>
-        <FormItem Label="Quantity">
-            <AntDesign.InputNumber @bind-Value="@context.Quantity" />
-        </FormItem>
-        <FormItem WrapperColOffset="8" WrapperColSpan="16">
-            <Button Type="@ButtonType.Primary" HtmlType="submit">
+    if (cashierState == CashierState.Idle)
+    {
+        <Button Type="@ButtonType.Primary" OnClick="CreateOrder">Create Order</Button>
+    }
+    else if (cashierState == CashierState.OrderCreated)
+    {
+        <Form Loading="isLoading"
+              Model="@orderItem"
+              OnFinish="AddOrderItem"
+              LabelColSpan="8"
+              WrapperColSpan="16">
+            <FormItem Label="Product">
+                <AutoComplete @ref="productAutoComplete"
+                              TOption="Product"
+                              @bind-Value="@value"
+                              OnSelectionChange="OnSelectionChange"
+                              Options="products"
+                              Placeholder="Product..." />
+            </FormItem>
+            <FormItem Label="Quantity">
+                <AntDesign.InputNumber @bind-Value="@context.Quantity" />
+            </FormItem>
+            <FormItem WrapperColOffset="8" WrapperColSpan="16">
+                <Button Type="@ButtonType.Primary" HtmlType="submit">
+                    Add Item
+                </Button>
+            </FormItem>
+        </Form>
+
+        <Card>
+            <Input Placeholder="Customer Name" @bind-Value="@customer" />
+            <Button Type="@ButtonType.Primary" HtmlType="submit" OnClick="PlaceOrder">
                 Place Order
             </Button>
-        </FormItem>
-    </Form>
+        </Card>
+    }
 }
 
 @code {
     private bool isLoading;
 
+    private CashierState cashierState = CashierState.Idle;
+
     private Product[] products;
 
     private AutoComplete<Product> productAutoComplete;
     private string value;
-    private Order order = new Order { Quantity = 1 };
+
+    private Guid orderId;
+    private string customer = string.Empty;
+    private OrderItem orderItem = new OrderItem { Quantity = 1 };
 
     private string baseAddress;
 
@@ -69,31 +88,22 @@ else
     {
         if (item.Value is Product product)
         {
-            order.ProductId = product.Id;
+            orderItem.ProductId = product.Id;
         }
     }
 
-    async Task PlaceOrder()
+    async Task CreateOrder()
     {
         isLoading = true;
 
         try
         {
-            var response = await Http.PostAsJsonAsync($"{baseAddress}/orders", order);
+            var response = await Http.PostAsJsonAsync($"{baseAddress}/orders", new { CreatedBy = "cashier-1" });
             response.EnsureSuccessStatusCode();
 
-            _ = NotificationService.Open(new NotificationConfig
-                {
-                    Message = "Order Created",
-                    Description = $"Order created successfuly.",
-                    NotificationType = NotificationType.Success
-                });
-            
-            order.Quantity = 1;
+            orderId = await response.Content.ReadFromJsonAsync<Guid>();
 
-            // The next 2 lines will reset the product selection
-            value = "";
-            productAutoComplete.SelectedValue = null;
+            cashierState = CashierState.OrderCreated;
         }
         catch (Exception ex)
         {
@@ -111,8 +121,91 @@ else
         }
     }
 
+    async Task AddOrderItem()
+    {
+        isLoading = true;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"{baseAddress}/orders/add-item", new { OrderId = orderId, orderItem.ProductId, orderItem.Quantity });
+            response.EnsureSuccessStatusCode();
+
+            _ = NotificationService.Open(new NotificationConfig
+                {
+                    Message = "Item Added",
+                    Description = $"{orderItem.Quantity}x {productAutoComplete.SelectedValue} was added.",
+                    NotificationType = NotificationType.Success
+                });
+
+            orderItem.Quantity = 1;
+
+            // The next 2 lines will reset the product selection
+            value = "";
+            productAutoComplete.SelectedValue = null;
+        }
+        catch (Exception ex)
+        {
+            _ = NotificationService.Open(new NotificationConfig
+                {
+                    Message = "Error",
+                    Duration = 0,
+                    Description = $"There was an error while attempting to add item: {ex.Message}.",
+                    NotificationType = NotificationType.Error
+                });
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    async Task PlaceOrder()
+    {
+        isLoading = true;
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync($"{baseAddress}/orders/place", new { OrderId = orderId, Customer = new { Name = customer } });
+            response.EnsureSuccessStatusCode();
+
+            _ = NotificationService.Open(new NotificationConfig
+                {
+                    Message = "Order Created",
+                    Description = $"Order created successfully.",
+                    NotificationType = NotificationType.Success
+                });
+
+            orderId = Guid.Empty;
+            customer = string.Empty;
+
+            // The next 2 lines will reset the product selection
+            value = "";
+            productAutoComplete.SelectedValue = null;
+        }
+        catch (Exception ex)
+        {
+            _ = NotificationService.Open(new NotificationConfig
+                {
+                    Message = "Error",
+                    Duration = 0,
+                    Description = $"There was an error while attempting to place order: {ex.Message}.",
+                    NotificationType = NotificationType.Error
+                });
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
     void GoAdmin()
     {
         NavigationManager.NavigateTo("admin");
+    }
+
+    public enum CashierState
+    {
+        Idle,
+        OrderCreated
     }
 }

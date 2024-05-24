@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SignalR;
 using NCafe.Barista.Api.Hubs;
@@ -6,8 +7,6 @@ using NCafe.Barista.Domain.Commands;
 using NCafe.Barista.Domain.Messages;
 using NCafe.Barista.Domain.Queries;
 using NCafe.Barista.Domain.ReadModels;
-using NCafe.Core.Commands;
-using NCafe.Core.Queries;
 using NCafe.Infrastructure;
 using NCafe.Shared.Hubs;
 
@@ -22,15 +21,13 @@ builder.AddRabbitMQClient("rabbitmq", configureConnectionFactory: config =>
 
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
-                .AddCommandHandlers<PlaceOrder>()
-                .AddCommandHandlerLogger()
-                .AddQueryHandlers<PlaceOrder>();
-
-builder.Services.AddInMemoryReadModelRepository<BaristaOrder>()
                 .AddEventStoreProjectionService<BaristaOrder>()
+                .AddInMemoryReadModelRepository<BaristaOrder>()
                 .AddHostedService<BaristaOrderProjectionService>();
 
 builder.Services.AddRabbitMqConsumerService(builder.Configuration);
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<PlaceOrder>());
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
@@ -57,18 +54,21 @@ builder.Services.AddResponseCompression(opts =>
 var app = builder.Build();
 
 app.UseMessageSubscriber()
-   .Subscribe<OrderPlaced>(async (serviceProvider, message) =>
+   .Subscribe<OrderPlacedMessage>(async (serviceProvider, message) =>
    {
-       var commandDispatcher = serviceProvider.GetRequiredService<ICommandDispatcher>();
+       var mediator = serviceProvider.GetRequiredService<IMediator>();
        var hubContext = serviceProvider.GetRequiredService<IHubContext<OrderHub>>();
 
        // Dispatch domain command
-       await commandDispatcher.DispatchAsync(new PlaceOrder(message.Id, message.ProductId, message.Quantity));
+       await mediator.Send(new PlaceOrder(
+           message.Id,
+           message.OrderItems.Select(i => new NCafe.Barista.Domain.Commands.OrderItem(i.ProductId, i.Name, i.Quantity, i.Price)).ToArray(),
+           message.CustomerName));
 
        // Notify clients
        await hubContext.Clients.All.SendAsync(
            "ReceiveOrder",
-           new Order(message.Id, message.ProductId, message.Quantity));
+           new Order(message.Id, message.OrderItems.Select(i => new NCafe.Shared.Hubs.OrderItem(i.Name, i.Quantity)).ToArray(), message.CustomerName));
    });
 
 app.MapDefaultEndpoints();
@@ -84,16 +84,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(corsPolicyName);
 
-app.MapGet("/orders", async (IQueryDispatcher queryDispatcher) =>
+app.MapGet("/orders", async (IMediator mediator) =>
 {
-    var result = await queryDispatcher.QueryAsync(new GetOrders());
+    var result = await mediator.Send(new GetOrders());
     return Results.Ok(result);
 })
 .WithName("GetOrders");
 
-app.MapPost("/orders/{id:guid}/prepared", async (ICommandDispatcher commandDispatcher, Guid id) =>
+app.MapPost("/orders/prepared", async (IMediator mediator, CompleteOrder command) =>
 {
-    await commandDispatcher.DispatchAsync(new CompleteOrder(id));
+    await mediator.Send(command);
     return Results.Created("/orders", null);
 })
 .WithName("CompletePreparation");

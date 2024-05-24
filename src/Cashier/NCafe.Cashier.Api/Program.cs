@@ -1,9 +1,8 @@
+using MediatR;
 using NCafe.Cashier.Api.Projections;
 using NCafe.Cashier.Domain.Commands;
 using NCafe.Cashier.Domain.Queries;
 using NCafe.Cashier.Domain.ReadModels;
-using NCafe.Core.Commands;
-using NCafe.Core.Queries;
 using NCafe.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,15 +13,13 @@ builder.AddRabbitMQClient("rabbitmq");
 
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
-                .AddCommandHandlers<PlaceOrder>()
-                .AddCommandHandlerLogger()
-                .AddQueryHandlers<PlaceOrder>();
-
-builder.Services.AddInMemoryReadModelRepository<Product>()
                 .AddEventStoreProjectionService<Product>()
+                .AddInMemoryReadModelRepository<Product>()
                 .AddHostedService<ProductProjectionService>();
 
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateOrder>());
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();
@@ -52,30 +49,30 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(corsPolicyName);
 
-app.MapGet("/products", async (IQueryDispatcher queryDispatcher) =>
+app.MapGet("/products", async (IMediator mediator) =>
 {
-    var result = await queryDispatcher.QueryAsync(new GetProducts());
+    var result = await mediator.Send(new GetProducts());
     return Results.Ok(result);
 })
 .WithName("GetProducts");
 
-app.MapPost("/orders", async (ICommandDispatcher commandDispatcher, CreateOrder command) =>
+app.MapPost("/orders", async (IMediator mediator, CreateOrder command) =>
 {
-    await commandDispatcher.DispatchAsync(command);
-    return Results.Created("/orders", null);
+    var orderId = await mediator.Send(command);
+    return Results.Created("/orders", orderId);
 })
 .WithName("CreateOrder");
 
-app.MapPost("/orders/{id:guid}/item", async (ICommandDispatcher commandDispatcher, Guid id, AddItemToOrder command) =>
+app.MapPost("/orders/add-item", async (IMediator mediator, AddItemToOrder command) =>
 {
-    await commandDispatcher.DispatchAsync(command);
+    await mediator.Send(command);
     return Results.Accepted();
 })
 .WithName("AddItemToOrder");
 
-app.MapPost("/orders/{id:guid}/place", async (ICommandDispatcher commandDispatcher, Guid id, PlaceOrder command) =>
+app.MapPost("/orders/place", async (IMediator mediator, PlaceOrder command) =>
 {
-    await commandDispatcher.DispatchAsync(command);
+    await mediator.Send(command);
     return Results.Accepted();
 })
 .WithName("PlaceOrder");
@@ -83,3 +80,5 @@ app.MapPost("/orders/{id:guid}/place", async (ICommandDispatcher commandDispatch
 app.MapGet("/healthz", () => "OK");
 
 app.Run();
+
+public partial class Program { }

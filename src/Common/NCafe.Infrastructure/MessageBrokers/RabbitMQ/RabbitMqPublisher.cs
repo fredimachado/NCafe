@@ -7,7 +7,7 @@ using System.Text.Json;
 
 namespace NCafe.Infrastructure.MessageBrokers.RabbitMQ;
 
-internal class RabbitMqPublisher : IPublisher
+internal class RabbitMqPublisher : IBusPublisher
 {
     private readonly IConnection _connection;
     private readonly RabbitMqSettings _settings;
