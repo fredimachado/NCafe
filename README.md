@@ -13,7 +13,7 @@ https://www.enterpriseintegrationpatterns.com/ramblings/18_starbucks.html
 
 - **C# 12/.NET 8**
 - **ASP.NET Core Minimal APIs**
-- .NET Aspire
+- **.NET Aspire**
 - **Docker**
 - **Kubernetes**
 - **EventStore**: Database for Event Sourcing where we store events as the source of truth instead of current state
@@ -30,14 +30,14 @@ I wrote some documentation below for those who are starting on this journey. I h
 
 - [x] Use SignalR to update the Barista page in real time as new orders are placed
 - [x] Kubernetes/helm/helmfile deployment to my internal K3S cluster
-- [ ] Add observability with OpenTelemetry
+- [x] Add observability with OpenTelemetry (Thanks to .NET Aspire)
+- [x] Cashier should be able to add the customer name to the order
+- [x] Cashier should be able to add multiple products to the same order
+- [x] Barista should be able to see the name of the customer and products/quantities
+- [ ] Make sure we always publish OrderPlaceMessage when Cashier places an order (Outbox?)
 - [ ] Use a database for the read models (projections)
 - [ ] Move projection services to their own microservice so reads and writes are separate
-- [ ] Add option for cashier to mark order as paid (only then ready for barista) or cancel it
-- [ ] Cashier should be able to add the customer name to the order
-- [ ] Cashier should be able to add multiple products to the same order
-- [ ] Barista should be able to see the name of the customer and products/quantities
-- [ ] Add timestamp to orders so we can show the "oldest" first
+- [ ] Add timestamp to orders so barista sees in correct order
 - [ ] Admin should be able to edit products
 - [ ] Admin should be able to delete products
 
