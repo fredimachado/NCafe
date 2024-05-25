@@ -36,7 +36,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        global-json-file: "./global.json"
 
     - name: Install minver cli
       run: dotnet tool install --tool-path ./minver minver-cli --version 5.0.0
