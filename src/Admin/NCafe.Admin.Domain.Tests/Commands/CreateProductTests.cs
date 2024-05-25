@@ -59,6 +59,6 @@ public class CreateProductTests
 
         // Assert
         A.CallTo(() => _repository.Save(A<Product>.That.Matches(p => p.Name == command.Name && p.Price == command.Price)))
-            .MustHaveHappenedOnceExactly(); ;
+            .MustHaveHappenedOnceExactly();
     }
 }

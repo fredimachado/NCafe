@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using NCafe.Cashier.Domain.ReadModels;
 using NCafe.Core.MessageBus;
+using NCafe.Core.Projections;
 using NCafe.Core.ReadModels;
 using NCafe.Core.Repositories;
 
@@ -15,6 +16,7 @@ public class CashierWebApplicationFactory<TProgram>
     private readonly IRepository _repository;
     private readonly IReadModelRepository<Product> _productRepository;
     private readonly IBusPublisher _busPublisher;
+    private readonly IProjectionService<Product> _productProjectionService;
 
     public IRepository FakeRepository => _repository;
     public IReadModelRepository<Product> FakeProductRepository => _productRepository;
@@ -25,10 +27,12 @@ public class CashierWebApplicationFactory<TProgram>
         _repository = A.Fake<IRepository>();
         _productRepository = A.Fake<IReadModelRepository<Product>>();
         _busPublisher = A.Fake<IBusPublisher>();
+        _productProjectionService = A.Fake<IProjectionService<Product>>();
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        Environment.SetEnvironmentVariable("EventStore__EnableProjections", "false");
         Environment.SetEnvironmentVariable("RabbitMq__InitializeExchange", "false");
 
         builder.ConfigureServices(services =>
@@ -45,9 +49,14 @@ public class CashierWebApplicationFactory<TProgram>
                 d => d.ServiceType == typeof(IBusPublisher));
             services.Remove(busPublisherDescriptor!);
 
+            var productProjectionServiceDescriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(IProjectionService<Product>));
+            services.Remove(productProjectionServiceDescriptor!);
+
             services.AddSingleton(_repository);
             services.AddSingleton(_productRepository);
             services.AddSingleton(_busPublisher);
+            services.AddSingleton(_productProjectionService);
         });
 
         builder.UseEnvironment("Tests");

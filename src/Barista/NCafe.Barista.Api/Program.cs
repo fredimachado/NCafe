@@ -21,7 +21,7 @@ builder.AddRabbitMQClient("rabbitmq", configureConnectionFactory: config =>
 
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
-                .AddEventStoreProjectionService<BaristaOrder>()
+                .AddEventStoreProjectionService<BaristaOrder>(builder.Configuration)
                 .AddInMemoryReadModelRepository<BaristaOrder>()
                 .AddHostedService<BaristaOrderProjectionService>();
 

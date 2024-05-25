@@ -30,10 +30,15 @@ public static class DependencyRegistration
         return services;
     }
 
-    public static IServiceCollection AddEventStoreProjectionService<TModel>(this IServiceCollection services)
+    public static IServiceCollection AddEventStoreProjectionService<TModel>(this IServiceCollection services, IConfiguration configuration)
         where TModel : ReadModel
     {
-        return services.AddSingleton<IProjectionService<TModel>, EventStoreProjectionService<TModel>>();
+        if (configuration.GetValue("EventStore:EnableProjections", false))
+        {
+            services.AddSingleton<IProjectionService<TModel>, EventStoreProjectionService<TModel>>();
+        }
+
+        return services;
     }
 
     public static IServiceCollection AddRabbitMqPublisher(this IServiceCollection services, IConfiguration configuration)

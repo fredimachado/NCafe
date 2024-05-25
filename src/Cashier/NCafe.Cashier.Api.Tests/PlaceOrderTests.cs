@@ -1,5 +1,6 @@
 using FakeItEasy;
 using NCafe.Cashier.Domain.Entities;
+using NCafe.Cashier.Domain.Messages;
 using Shouldly;
 using System.Net;
 using System.Net.Http.Json;
@@ -28,5 +29,8 @@ public class PlaceOrderTests(CashierWebApplicationFactory<Program> factory) : IC
 
         // Assert
         response.StatusCode.ShouldBe(HttpStatusCode.Accepted);
+
+        A.CallTo(() => _factory.FakeBusPublisher.Publish(A<OrderPlacedMessage>.That.Matches(p => p.Id == orderId)))
+            .MustHaveHappenedOnceExactly();
     }
 }

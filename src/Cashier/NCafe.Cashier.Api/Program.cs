@@ -13,7 +13,7 @@ builder.AddRabbitMQClient("rabbitmq");
 
 // Add services to the container.
 builder.Services.AddEventStoreRepository(builder.Configuration)
-                .AddEventStoreProjectionService<Product>()
+                .AddEventStoreProjectionService<Product>(builder.Configuration)
                 .AddInMemoryReadModelRepository<Product>()
                 .AddHostedService<ProductProjectionService>();
 
