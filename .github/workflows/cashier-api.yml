@@ -51,11 +51,11 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Test
-      run: dotnet test --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/ ../**.Tests/**.csproj
-
     - name: Build
       run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
+
+    - name: Test
+      run: dotnet test ../../../NCafe.sln --filter FullyQualifiedName~Cashier --no-restore --no-build --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/
 
     - name: Publish
       run: dotnet publish -c Release --no-restore --no-build -o ./output
