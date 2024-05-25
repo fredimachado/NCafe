@@ -48,6 +48,9 @@ jobs:
         echo "MINVERVERSIONOVERRIDE=$MINVERVERSION" >> "$GITHUB_ENV"
         echo "VERSION: $MINVERVERSION"
 
+    - name: Install Aspire Workload
+      run: dotnet workload install aspire
+
     - name: Restore dependencies
       run: dotnet restore
 
