@@ -53,14 +53,14 @@ jobs:
 
     - name: Test
       id: test
-      run: >
-        dotnet test ../**.Tests/**.csproj
-        --results-directory ${{github.workspace}}/TestResults --blame
-        --logger console --logger trx --logger html
-        --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
-        '/p:CollectCoverage=true;CoverletOutputFormat="json,lcov,cobertura";MergeWith=${{github.workspace}}/TestResults/coverage.json;CoverletOutput=${{github.workspace}}/TestResults/coverage' 
-        --
-        RunConfiguration.CollectSourceInformation=true
+      run: |
+        echo "## Test results" >> $GITHUB_STEP_SUMMARY
+        dotnet test ../**.Tests/**.csproj \
+        --results-directory ${{github.workspace}}/TestResults --blame \
+        --logger console --logger trx --logger html \
+        --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true" \
+        '/p:CollectCoverage=true;CoverletOutputFormat="json,lcov,cobertura";MergeWith=${{github.workspace}}/TestResults/coverage.json;CoverletOutput=${{github.workspace}}/TestResults/coverage' \
+        -- RunConfiguration.CollectSourceInformation=true
     
     - name: Upload Test Results
       if: (success() || steps.test.conclusion == 'failure')
