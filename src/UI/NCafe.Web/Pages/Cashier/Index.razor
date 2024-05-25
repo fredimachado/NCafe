@@ -112,7 +112,7 @@
         {
             var response = await Http.PostAsJsonAsync(
                 $"{_baseAddress}/orders/add-item",
-                new { OrderId = _order.Id, item.ProductId, item.Quantity });
+                new { OrderId = _order.Id, item.ProductId, Quantity = 1 });
             response.EnsureSuccessStatusCode();
         }
         catch (Exception ex)

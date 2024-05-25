@@ -28,6 +28,9 @@ internal sealed class PlaceOrderHandler(
         await _repository.Save(order);
 
         await _publisher.Publish(
-            new OrderPlacedMessage(order.Id, order.Items.Select(x => (Messages.OrderItem)x).ToArray(), order.Customer));
+            new OrderPlacedMessage(
+                order.Id,
+                order.Items.GroupBy(i => i.ProductId).Select(i => new Messages.OrderItem(i.First().ProductId, i.First().Name, i.Sum(x => x.Quantity), i.First().Price)).ToArray(),
+                order.Customer));
     }
 }
