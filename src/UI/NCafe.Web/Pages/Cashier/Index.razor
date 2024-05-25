@@ -58,11 +58,6 @@
 </div>
 
 <NCafe.Web.Shared.Modal IsVisible="@_isModalVisible" OnClose="HideModal" OnCancel="CancelOrder" Title="Confirm order" OnConfirm="PlaceOrder">
-    <Form @onsubmit="PlaceOrder">
-        <Form.Item Label="Customer name">
-            <Input required @bind-Value="_order.CustomerName" />
-        </Form.Item>
-    </Form>
     <label for="customer-name" class="block text">Customer name</label>
     <input autofocus type="text" @bind="_order.CustomerName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"/>
 
