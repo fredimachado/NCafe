@@ -1,4 +1,4 @@
-﻿@page "/cashier"
+@page "/cashier"
 @using NCafe.Web.Models
 @inject HttpClient Http
 @inject IConfiguration Configuration
@@ -7,103 +7,140 @@
 
 <PageTitle>Cashier - NCafe</PageTitle>
 
-<h2>New Order</h2>
-
-@if (products == null)
+@if (_products == null)
 {
     <Spin />
+    return;
 }
-else if (!products.Any())
+
+@if (!_products.Any())
 {
     <Result Title="You need products in order to place an order.">
         <Extra>
             <Button Type="@ButtonType.Primary" OnClick="GoAdmin">Go Admin</Button>
         </Extra>
     </Result>
+    return;
 }
-else
-{
-    if (cashierState == CashierState.Idle)
-    {
-        <Button Type="@ButtonType.Primary" OnClick="CreateOrder">Create Order</Button>
-    }
-    else if (cashierState == CashierState.OrderCreated)
-    {
-        <Form Loading="isLoading"
-              Model="@orderItem"
-              OnFinish="AddOrderItem"
-              LabelColSpan="8"
-              WrapperColSpan="16">
-            <FormItem Label="Product">
-                <AutoComplete @ref="productAutoComplete"
-                              TOption="Product"
-                              @bind-Value="@value"
-                              OnSelectionChange="OnSelectionChange"
-                              Options="products"
-                              Placeholder="Product..." />
-            </FormItem>
-            <FormItem Label="Quantity">
-                <AntDesign.InputNumber @bind-Value="@context.Quantity" />
-            </FormItem>
-            <FormItem WrapperColOffset="8" WrapperColSpan="16">
-                <Button Type="@ButtonType.Primary" HtmlType="submit">
-                    Add Item
-                </Button>
-            </FormItem>
-        </Form>
+<div class="grid grid-cols-[1fr,2fr] h-full">
+    <div class="grid grid-rows-[3rem,auto,3rem,5rem]">
+        <h2 class="font-bold text-xl">Order Summary</h2>
+        <ul>
+            @foreach (var item in _order.Items)
+            {
+                <li class="grid grid-cols-2 p-2 border-b-dashed border-b border-dashed last:border-b-0 text-lg">
+                    <span>@item.Quantity x @(_products.FirstOrDefault(p => p.Id == item.ProductId)?.Name)</span>
+                    <span class="text-right">@(item.Total.ToString("C"))</span>
+                </li>
+            }
+        </ul>
+        @if (_order.Items.Any()) {
+            <div class="grid grid-cols-2 p-2 text-right font-bold text-xl">
+                <span>Total</span>
+                <span>@(_order.Total.ToString("C"))</span>
+            </div>
 
-        <Card>
-            <Input Placeholder="Customer Name" @bind-Value="@customer" />
-            <Button Type="@ButtonType.Primary" HtmlType="submit" OnClick="PlaceOrder">
-                Place Order
-            </Button>
-        </Card>
-    }
-}
+            <button class="m-2 shadow border-black border-1 rounded bg-sky-800 text-white text-xl font-bold active:bg-sky-600"
+                    type="@ButtonType.Primary" @onclick="ShowModal">Place Order</button>
+        }
+    </div>
+    <div class="grid grid-cols-4 grid-rows-4 gap-2 p-4">
+        @foreach (var product in _products)
+        {
+            <button type="button" @onclick="() => AddItemToOrder(product.Id)"
+                    class="shadow hover:shadow-lg p-2 text-xl border-solid border-black border-1 active:bg-sky-600 hover:bg-sky-800 hover:text-white hover:border-slate-500 rounded">
+                <strong>@product.Name<br/>@product.Price.ToString("C")</strong>
+            </button>
+        }
+    </div>
+
+
+</div>
+
+<NCafe.Web.Shared.Modal IsVisible="@_isModalVisible" OnClose="HideModal" OnCancel="CancelOrder" Title="Confirm order" OnConfirm="PlaceOrder">
+    <Form @onsubmit="PlaceOrder">
+        <Form.Item Label="Customer name">
+            <Input required @bind-Value="_order.CustomerName" />
+        </Form.Item>
+    </Form>
+    <label for="customer-name" class="block text">Customer name</label>
+    <input autofocus type="text" @bind="_order.CustomerName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"/>
+
+    <div class="grid grid-cols-2 p-2 text-right font-bold text-xl">
+        <span>Total</span>
+        <span>@(_order.Total.ToString("C"))</span>
+    </div>
+</NCafe.Web.Shared.Modal>
 
 @code {
-    private bool isLoading;
 
-    private CashierState cashierState = CashierState.Idle;
-
-    private Product[] products;
-
-    private AutoComplete<Product> productAutoComplete;
-    private string value;
-
-    private Guid orderId;
-    private string customer = string.Empty;
-    private OrderItem orderItem = new OrderItem { Quantity = 1 };
-
-    private string baseAddress;
+    private Product[] _products;
+    private readonly Order _order = new();
+    private string _baseAddress;
+    private bool _isModalVisible;
 
     protected override async Task OnInitializedAsync()
     {
-        baseAddress = Configuration["CashierBaseAddress"];
+        _baseAddress = Configuration["CashierBaseAddress"];
 
-        products = await Http.GetFromJsonAsync<Product[]>($"{baseAddress}/products");
+        _products = await Http.GetFromJsonAsync<Product[]>($"{_baseAddress}/products");
     }
 
-    void OnSelectionChange(AutoCompleteOption item)
+    void ShowModal() => _isModalVisible = true;
+    void HideModal() => _isModalVisible = false;
+
+    void CancelOrder()
     {
-        if (item.Value is Product product)
+        _order.Clear();
+        _isModalVisible = false;
+    }
+
+    async Task AddItemToOrder(Guid productId)
+    {
+        if (_order.Id == Guid.Empty)
         {
-            orderItem.ProductId = product.Id;
+            await CreateOrder();
+        }
+
+        var product = _products.FirstOrDefault(p => p.Id == productId);
+        var item = _order.Items.FirstOrDefault(i => i.ProductId == productId);
+        if (item == null)
+        {
+            item = new OrderItem { ProductId = productId, Price = product?.Price ?? 0, Quantity = 1 };
+            _order.Items.Add(item);
+        } else
+        {
+            item.Quantity++;
+        }
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync(
+                $"{_baseAddress}/orders/add-item",
+                new { OrderId = _order.Id, item.ProductId, item.Quantity });
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            _ = NotificationService.Open(new NotificationConfig
+            {
+                Message = "Error",
+                Duration = 0,
+                Description = $"There was an error while attempting to add item: {ex.Message}.",
+                NotificationType = NotificationType.Error
+            });
         }
     }
 
     async Task CreateOrder()
     {
-        isLoading = true;
-
         try
         {
-            var response = await Http.PostAsJsonAsync($"{baseAddress}/orders", new { CreatedBy = "cashier-1" });
+            var response = await Http.PostAsJsonAsync(
+                $"{_baseAddress}/orders", new { CreatedBy = "cashier-1" });
             response.EnsureSuccessStatusCode();
 
-            orderId = await response.Content.ReadFromJsonAsync<Guid>();
-
-            cashierState = CashierState.OrderCreated;
+            _order.Id = await response.Content.ReadFromJsonAsync<Guid>();
         }
         catch (Exception ex)
         {
@@ -111,77 +148,31 @@ else
                 {
                     Message = "Error",
                     Duration = 0,
-                    Description = $"There was an error while attempting to save the product: {ex.Message}.",
+                    Description = $"There was an error while attempting to create the order: {ex.Message}.",
                     NotificationType = NotificationType.Error
                 });
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    async Task AddOrderItem()
-    {
-        isLoading = true;
-
-        try
-        {
-            var response = await Http.PostAsJsonAsync($"{baseAddress}/orders/add-item", new { OrderId = orderId, orderItem.ProductId, orderItem.Quantity });
-            response.EnsureSuccessStatusCode();
-
-            _ = NotificationService.Open(new NotificationConfig
-                {
-                    Message = "Item Added",
-                    Description = $"{orderItem.Quantity}x {productAutoComplete.SelectedValue} was added.",
-                    NotificationType = NotificationType.Success
-                });
-
-            orderItem.Quantity = 1;
-
-            // The next 2 lines will reset the product selection
-            value = "";
-            productAutoComplete.SelectedValue = null;
-        }
-        catch (Exception ex)
-        {
-            _ = NotificationService.Open(new NotificationConfig
-                {
-                    Message = "Error",
-                    Duration = 0,
-                    Description = $"There was an error while attempting to add item: {ex.Message}.",
-                    NotificationType = NotificationType.Error
-                });
-        }
-        finally
-        {
-            isLoading = false;
         }
     }
 
     async Task PlaceOrder()
     {
-        isLoading = true;
-
         try
         {
-            var response = await Http.PostAsJsonAsync($"{baseAddress}/orders/place", new { OrderId = orderId, Customer = new { Name = customer } });
+            var response = await Http.PostAsJsonAsync(
+                $"{_baseAddress}/orders/place",
+                new { OrderId = _order.Id, Customer = new { Name = _order.CustomerName } });
             response.EnsureSuccessStatusCode();
 
             _ = NotificationService.Open(new NotificationConfig
                 {
                     Message = "Order Created",
-                    Description = $"Order created successfully.",
+                    Description = "Order created successfully.",
                     NotificationType = NotificationType.Success
                 });
 
-            orderId = Guid.Empty;
-            customer = string.Empty;
-            cashierState = CashierState.Idle;
+            _order.Clear();
+            _isModalVisible = false;
 
-            // The next 2 lines will reset the product selection
-            value = "";
-            productAutoComplete.SelectedValue = null;
         }
         catch (Exception ex)
         {
@@ -193,20 +184,7 @@ else
                     NotificationType = NotificationType.Error
                 });
         }
-        finally
-        {
-            isLoading = false;
-        }
     }
 
-    void GoAdmin()
-    {
-        NavigationManager.NavigateTo("admin");
-    }
-
-    public enum CashierState
-    {
-        Idle,
-        OrderCreated
-    }
+    void GoAdmin() => NavigationManager.NavigateTo("admin");
 }
