@@ -39,7 +39,7 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Install minver cli
-      run: dotnet tool install --tool-path ./minver minver-cli --version 4.3.0
+      run: dotnet tool install --tool-path ./minver minver-cli --version 5.0.0
 
     - name: Calculate version
       run: |
@@ -55,7 +55,7 @@ jobs:
       run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
 
     - name: Test
-      run: dotnet test ../../../NCafe.sln --filter FullyQualifiedName~Cashier --no-restore --no-build --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/
+      run: dotnet test ../../../NCafe.sln --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/
 
     - name: Publish
       run: dotnet publish -c Release --no-restore --no-build -o ./output
