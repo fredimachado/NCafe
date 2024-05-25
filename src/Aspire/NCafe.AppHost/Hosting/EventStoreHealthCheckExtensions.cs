@@ -1,4 +1,5 @@
-﻿using HealthChecks.EventStore.gRPC;
+﻿using Aspirant.Hosting;
+using HealthChecks.EventStore.gRPC;
 
 namespace Aspire.Hosting;
 

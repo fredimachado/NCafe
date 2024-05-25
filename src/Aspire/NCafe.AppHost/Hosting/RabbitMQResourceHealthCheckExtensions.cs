@@ -1,4 +1,5 @@
-﻿using HealthChecks.RabbitMQ;
+﻿using Aspirant.Hosting;
+using HealthChecks.RabbitMQ;
 
 namespace Aspire.Hosting;
 

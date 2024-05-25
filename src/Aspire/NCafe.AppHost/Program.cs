@@ -1,3 +1,5 @@
+using Aspirant.Hosting;
+
 var builder = DistributedApplication.CreateBuilder(args);
 
 var eventStore = builder.AddEventStore("eventstore")

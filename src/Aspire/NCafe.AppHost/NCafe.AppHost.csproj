@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspirant.Hosting" />
     <PackageReference Include="Aspire.Hosting.AppHost" />
     <PackageReference Include="Aspire.Hosting.RabbitMQ" />
     <PackageReference Include="AspNetCore.HealthChecks.EventStore.gRPC" />
