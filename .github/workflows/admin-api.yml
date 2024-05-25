@@ -55,10 +55,10 @@ jobs:
       id: test
       run: >
         dotnet test ../**.Tests/**.csproj
-        --results-directory ./TestResults --blame
+        --results-directory ${{github.workspace}}/TestResults --blame
         --logger console --logger trx --logger html
         --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
-        '/p:CollectCoverage=true;CoverletOutputFormat="json,lcov,cobertura";MergeWith=./TestResults/coverage.json;CoverletOutput=./TestResults/coverage' 
+        '/p:CollectCoverage=true;CoverletOutputFormat="json,lcov,cobertura";MergeWith=${{github.workspace}}/TestResults/coverage.json;CoverletOutput=${{github.workspace}}/TestResults/coverage' 
         --
         RunConfiguration.CollectSourceInformation=true
     
@@ -67,7 +67,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: TestResults
-        path: ./TestResults
+        path: ${{github.workspace}}/TestResults
 
     - name: Build
       run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
