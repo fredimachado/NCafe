@@ -52,7 +52,22 @@ jobs:
       run: dotnet restore
 
     - name: Test
-      run: dotnet test --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/ ../**.Tests/**.csproj
+      id: test
+      run: >
+        dotnet test ../**.Tests/**.csproj
+        --results-directory ./TestResults --blame
+        --logger console --logger trx --logger html
+        --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
+        '/p:CollectCoverage=true;CoverletOutputFormat="json,lcov,cobertura";MergeWith=./TestResults/coverage.json;CoverletOutput=./TestResults/coverage' 
+        --
+        RunConfiguration.CollectSourceInformation=true
+    
+    - name: Upload Test Results
+      if: (success() || steps.test.conclusion == 'failure')
+      uses: actions/upload-artifact@v4
+      with:
+        name: TestResults
+        path: ./TestResults
 
     - name: Build
       run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
