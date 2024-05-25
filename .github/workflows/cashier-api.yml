@@ -97,7 +97,7 @@ jobs:
         $GITHUB_WORKSPACE/scripts/generate-artifacts -a appspec.yaml -i ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} -t ${{ steps.meta.outputs.version }} -r https://fredimachado.github.io/helm-charts
 
     - name: Archive release artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: release-artifacts
         path: src/Cashier/NCafe.Cashier.Api/deploy/
