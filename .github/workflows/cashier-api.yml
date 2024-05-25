@@ -87,7 +87,7 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
 
     - name: Install Helm
-      uses: azure/setup-helm@v3
+      uses: azure/setup-helm@v4.2.0
       with:
         version: v3.11.1
 
