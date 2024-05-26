@@ -70,6 +70,13 @@ app.MapPost("/orders/add-item", async (IMediator mediator, AddItemToOrder comman
 })
 .WithName("AddItemToOrder");
 
+app.MapPost("/orders/remove-item", async (IMediator mediator, RemoveItemFromOrder command) =>
+    {
+        await mediator.Send(command);
+        return Results.Accepted();
+    })
+    .WithName("RemoveItemFromOrder");
+
 app.MapPost("/orders/place", async (IMediator mediator, PlaceOrder command) =>
 {
     await mediator.Send(command);

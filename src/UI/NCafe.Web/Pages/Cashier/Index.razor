@@ -28,9 +28,13 @@
         <ul>
             @foreach (var item in _order.Items)
             {
-                <li class="grid grid-cols-2 p-2 border-b-dashed border-b border-dashed last:border-b-0 text-lg">
+                <li class="grid grid-cols-[1fr,2fr,auto] p-2 border-b-dashed border-b border-dashed last:border-b-0 text-lg">
                     <span>@item.Quantity x @(_products.FirstOrDefault(p => p.Id == item.ProductId)?.Name)</span>
                     <span class="text-right">@(item.Total.ToString("C"))</span>
+                    <Popconfirm Title="Are you sure delete this item?"
+                                OnConfirm="@(() => RemoveItem(item.ProductId))">
+                        <button><Icon Type="delete" Theme="outline"/></button>
+                    </Popconfirm>
                 </li>
             }
         </ul>
@@ -53,26 +57,26 @@
             </button>
         }
     </div>
-
-
 </div>
 
-<NCafe.Web.Shared.Modal IsVisible="@_isModalVisible" OnClose="HideModal" OnCancel="CancelOrder" Title="Confirm order" OnConfirm="PlaceOrder">
-    <label for="customer-name" class="block text">Customer name</label>
-    <input autofocus type="text" @bind="_order.CustomerName" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"/>
 
-    <div class="grid grid-cols-2 p-2 text-right font-bold text-xl">
-        <span>Total</span>
-        <span>@(_order.Total.ToString("C"))</span>
-    </div>
-</NCafe.Web.Shared.Modal>
+<Modal Title="Place Order" Visible="_modalVisible" DestroyOnClose="true"
+       Closable="false" OnCancel="@(() => _modalVisible = false)" OnOk="@(() => HandleOk())" >
+    <Form Model="@_order" OnFinish="PlaceOrder" @ref="@_form">
+        <FormItem Label="Customer name">
+            <Input @ref="@_inputCustomerName" @bind-Value="@_order.CustomerName" />
+        </FormItem>
+    </Form>
+</Modal>
 
 @code {
 
     private Product[] _products;
     private readonly Order _order = new();
     private string _baseAddress;
-    private bool _isModalVisible;
+    private Form<Order> _form;
+    private bool _modalVisible;
+    Input<string> _inputCustomerName;
 
     protected override async Task OnInitializedAsync()
     {
@@ -81,13 +85,36 @@
         _products = await Http.GetFromJsonAsync<Product[]>($"{_baseAddress}/products");
     }
 
-    void ShowModal() => _isModalVisible = true;
-    void HideModal() => _isModalVisible = false;
-
-    void CancelOrder()
+    private async Task RemoveItem(Guid productId)
     {
-        _order.Clear();
-        _isModalVisible = false;
+        try
+        {
+            var item = _order.Items.First(i => i.ProductId == productId);
+            var response = await Http.PostAsJsonAsync(
+                $"{_baseAddress}/orders/remove-item",
+                new { OrderId = _order.Id, productId, item.Quantity });
+            response.EnsureSuccessStatusCode();
+            _order.Items.Remove(item);
+        }
+        catch (Exception ex)
+        {
+            _ = NotificationService.Open(new NotificationConfig
+            {
+                Message = "Error",
+                Duration = 0,
+                Description = $"There was an error while attempting to remove item: {ex.Message}.",
+                NotificationType = NotificationType.Error
+            });
+        }
+    }
+
+    private void HandleOk()
+    {
+        if (!_form.Validate())
+        {
+            return;
+        }
+        _form.Submit();
     }
 
     async Task AddItemToOrder(Guid productId)
@@ -160,14 +187,14 @@
 
             _ = NotificationService.Open(new NotificationConfig
                 {
-                    Message = "Order Created",
+                    Message = $"{_order.CustomerName}'s Order Created",
                     Description = "Order created successfully.",
-                    NotificationType = NotificationType.Success
+                    NotificationType = NotificationType.Success,
                 });
 
             _order.Clear();
-            _isModalVisible = false;
-
+            _form.Reset();
+            _modalVisible = false;
         }
         catch (Exception ex)
         {
@@ -176,9 +203,16 @@
                     Message = "Error",
                     Duration = 0,
                     Description = $"There was an error while attempting to place order: {ex.Message}.",
-                    NotificationType = NotificationType.Error
+                    NotificationType = NotificationType.Error,
                 });
         }
+    }
+
+    private async Task ShowModal()
+    {
+        _modalVisible = true;
+        await Task.Delay(500); // wait for modal to show
+        await _inputCustomerName.Focus();
     }
 
     void GoAdmin() => NavigationManager.NavigateTo("admin");
