@@ -34,10 +34,12 @@ I wrote some documentation below for those who are starting on this journey. I h
 - [x] Cashier should be able to add the customer name to the order
 - [x] Cashier should be able to add multiple products to the same order
 - [x] Barista should be able to see the name of the customer and products/quantities
+- [x] Add timestamp to orders so barista sees in correct order
+- [x] Cashier should be able to remove products from the order
+- [ ] Cashier should be able to cancel order
 - [ ] Make sure we always publish OrderPlaceMessage when Cashier places an order (Outbox?)
 - [ ] Use a database for the read models (projections)
 - [ ] Move projection services to their own microservice so reads and writes are separate
-- [ ] Add timestamp to orders so barista sees in correct order
 - [ ] Admin should be able to edit products
 - [ ] Admin should be able to delete products
 
