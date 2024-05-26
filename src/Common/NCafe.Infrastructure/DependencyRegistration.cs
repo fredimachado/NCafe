@@ -7,6 +7,7 @@ using NCafe.Core.MessageBus;
 using NCafe.Core.Projections;
 using NCafe.Core.ReadModels;
 using NCafe.Core.Repositories;
+using NCafe.Infrastructure.Behaviors;
 using NCafe.Infrastructure.EventStore;
 using NCafe.Infrastructure.MessageBrokers.RabbitMQ;
 using NCafe.Infrastructure.ReadModels;
@@ -16,6 +17,17 @@ namespace NCafe.Infrastructure;
 
 public static class DependencyRegistration
 {
+    public static IServiceCollection AddMediatR<T>(this IServiceCollection services)
+    {
+        services.AddMediatR(config =>
+        {
+            config.RegisterServicesFromAssemblyContaining<T>();
+            config.AddOpenBehavior(typeof(RequestHandlerLoggingBehavior<,>));
+        });
+
+        return services;
+    }
+
     public static IServiceCollection AddEventStoreRepository(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddSingleton(e =>

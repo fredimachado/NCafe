@@ -19,7 +19,7 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
 
 builder.Services.AddRabbitMqPublisher(builder.Configuration);
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateOrder>());
+builder.Services.AddMediatR<CreateOrder>();
 
 builder.Services.AddEndpointsApiExplorer()
                 .AddSwaggerGen();

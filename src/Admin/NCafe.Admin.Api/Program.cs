@@ -15,7 +15,7 @@ builder.Services.AddEventStoreRepository(builder.Configuration)
                 .AddInMemoryReadModelRepository<Product>()
                 .AddHostedService<ProductProjectionService>();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<CreateProduct>());
+builder.Services.AddMediatR<CreateProduct>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
