@@ -252,7 +252,8 @@ Run the following command to build and start all microservices containers:
 3. Place an order in the Cashier page
 4. Complete the order in the Barista page
 
-![Admin Screenshot](images/admin.png?raw=true)
+![ncafe](https://github.com/fredimachado/NCafe/assets/29800/16f01fb9-15ef-445c-afd8-0883c0e53775)
+
 
 Or, you can use Swagger for example:
 
