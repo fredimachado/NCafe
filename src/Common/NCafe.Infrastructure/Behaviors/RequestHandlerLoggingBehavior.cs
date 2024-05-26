@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace NCafe.Infrastructure.Behaviors;
 
-public class RequestHandlerLoggingBehavior<TRequest, TResponse>(ILogger<RequestHandlerLoggingBehavior<TRequest, TResponse>> logger)
+internal class RequestHandlerLoggingBehavior<TRequest, TResponse>(ILogger<RequestHandlerLoggingBehavior<TRequest, TResponse>> logger)
     : IPipelineBehavior<TRequest, TResponse>
     where TRequest : class
 {
