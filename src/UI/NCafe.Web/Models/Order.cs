@@ -1,8 +1,11 @@
-﻿namespace NCafe.Web.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace NCafe.Web.Models;
 
 public class Order
 {
     public Guid Id { get; set; }
+    [Required]
     public string CustomerName { get; set; }
     public List<OrderItem> Items { get; set; } = new();
     public decimal Total => Items.Sum(x => x.Total);

@@ -1,4 +1,5 @@
 ﻿using Ardalis.GuardClauses;
+using NCafe.Cashier.Domain.Exceptions;
 
 namespace NCafe.Cashier.Domain.ValueObjects;
 
@@ -14,6 +15,18 @@ public record OrderItem
 
     public Guid ProductId { get; }
     public string Name { get; }
-    public int Quantity { get; }
+    public int Quantity { get; private set; }
     public decimal Price { get; }
+
+    public decimal Total => Quantity * Price;
+
+    public void IncreaseQuantity(int quantity)
+    {
+        Quantity += quantity;
+    }
+
+    public void DecreaseQuantity(int quantity)
+    {
+        Quantity -= quantity;
+    }
 }
