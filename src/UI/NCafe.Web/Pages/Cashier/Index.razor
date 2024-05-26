@@ -22,37 +22,36 @@
     </Result>
     return;
 }
-<div class="grid grid-cols-[1fr,2fr] h-full">
-    <div class="grid grid-rows-[3rem,auto,3rem,5rem]">
-        <h2 class="font-bold text-xl">Order Summary</h2>
-        <ul>
+<div class="container">
+    <div class="order-summary">
+        <Title>Order Summary</Title>
+        <ul class="order-items">
             @foreach (var item in _order.Items)
             {
-                <li class="grid grid-cols-[1fr,2fr,auto] p-2 border-b-dashed border-b border-dashed last:border-b-0 text-lg">
+                <li class="order-item">
                     <span>@item.Quantity x @(_products.FirstOrDefault(p => p.Id == item.ProductId)?.Name)</span>
-                    <span class="text-right">@(item.Total.ToString("C"))</span>
+                    <span style="text-align: right;">@(item.Total.ToString("C"))</span>
                     <Popconfirm Title="Are you sure delete this item?"
                                 OnConfirm="@(() => RemoveItem(item.ProductId))">
-                        <button><Icon Type="delete" Theme="outline"/></button>
+                        <button class="remove-item-btn"><Icon Type="delete" Theme="outline"/></button>
                     </Popconfirm>
                 </li>
             }
         </ul>
         @if (_order.Items.Any()) {
-            <div class="grid grid-cols-2 p-2 text-right font-bold text-xl">
+            <div class="order-total">
                 <span>Total</span>
                 <span>@(_order.Total.ToString("C"))</span>
             </div>
 
-            <button class="m-2 shadow border-black border-1 rounded bg-sky-800 text-white text-xl font-bold active:bg-sky-600"
-                    type="@ButtonType.Primary" @onclick="ShowModal">Place Order</button>
+            <button type="button" class="place-order-btn" @onclick="ShowModal">Place Order</button>
         }
     </div>
-    <div class="grid grid-cols-4 grid-rows-4 gap-2 p-4">
+    <div class="grid-container">
         @foreach (var product in _products)
         {
-            <button type="button" @onclick="() => AddItemToOrder(product.Id)"
-                    class="shadow hover:shadow-lg p-2 text-xl border-solid border-black border-1 active:bg-sky-600 hover:bg-sky-800 hover:text-white hover:border-slate-500 rounded">
+            <button type="button" class="product-button"
+                    @onclick="() => AddItemToOrder(product.Id)">
                 <strong>@product.Name<br/>@product.Price.ToString("C")</strong>
             </button>
         }
