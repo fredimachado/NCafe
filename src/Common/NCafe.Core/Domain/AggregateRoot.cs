@@ -6,22 +6,22 @@ namespace NCafe.Core.Domain;
 public abstract class AggregateRoot
 {
     public Guid Id { get; protected set; }
-    public long Version { get; protected set; } = -1;
+    internal long Version { get; set; } = -1;
 
-    private readonly List<IEvent> _pendingEvents = [];
+    private readonly List<Event> _pendingEvents = [];
 
     protected void RaiseEvent(Event @event)
     {
-        @event.Version = Version + 1;
+        ((IEvent)@event).Version = Version + 1;
 
         ApplyEvent(@event);
 
         _pendingEvents.Add(@event);
     }
 
-    public IEnumerable<IEvent> GetPendingEvents()
+    public IReadOnlyCollection<Event> GetPendingEvents()
     {
-        return [.. _pendingEvents];
+        return _pendingEvents.AsReadOnly();
     }
 
     internal void ClearPendingEvents()
@@ -31,7 +31,7 @@ public abstract class AggregateRoot
 
     internal void ApplyEvent(Event @event)
     {
-        if (@event.Version != Version + 1)
+        if (((IEvent)@event).Version != Version + 1)
         {
             throw new InvalidVersionException(@event, this);
         }

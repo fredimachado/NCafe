@@ -54,7 +54,7 @@ internal sealed class EventStoreProjectionService<T>(
         _logger.LogError("Subscription Dropped.");
     }
 
-    public void OnCreate<TEvent>(Func<TEvent, T> handler) where TEvent : class, IEvent
+    public void OnCreate<TEvent>(Func<TEvent, T> handler) where TEvent : Event
     {
         MapEventHandler<TEvent>(resolvedEvent =>
         {
@@ -67,7 +67,7 @@ internal sealed class EventStoreProjectionService<T>(
         });
     }
 
-    public void OnUpdate<TEvent>(GetModelId<TEvent> getId, ModelUpdate<TEvent, T> update) where TEvent : class, IEvent
+    public void OnUpdate<TEvent>(GetModelId<TEvent> getId, ModelUpdate<TEvent, T> update) where TEvent : Event
     {
         MapEventHandler<TEvent>(resolvedEvent =>
         {

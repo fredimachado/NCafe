@@ -1,6 +1,6 @@
 ﻿namespace NCafe.Core.Domain;
 
-public interface IEvent
+internal interface IEvent
 {
-    Guid Id { get; }
+    long Version { get; internal protected set; }
 }

@@ -47,8 +47,7 @@ internal class EventStoreRepository(EventStoreClient eventStoreClient, ILogger<E
         var streamName = ToStreamName(aggregate.Id, aggregate.GetType());
         var pendingEvents = aggregate.GetPendingEvents().ToArray();
 
-        var originalVersion = aggregate.Version - pendingEvents.Length;
-        var expectedVersion = originalVersion;
+        var expectedVersion = aggregate.Version - pendingEvents.Length;
 
         var eventsToAppend = pendingEvents
             .Select(e => e.AsEventData())
