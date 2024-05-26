@@ -87,12 +87,8 @@ public static class DependencyRegistration
     {
         var messageSubscriber = app.ApplicationServices.GetService<IMessageSubscriber>();
 
-        if (messageSubscriber is null)
-        {
+        return messageSubscriber ??
             throw new InvalidOperationException("Message Subscriber is not registered. Make sure to call Services.AddRabbitMqConsumerService.");
-        }
-
-        return messageSubscriber;
     }
 
     private static void InitializeRabbitMqExchange(IServiceCollection services)

@@ -7,18 +7,11 @@ using System.Text.Json;
 
 namespace NCafe.Infrastructure.MessageBrokers.RabbitMQ;
 
-internal class RabbitMqPublisher : IBusPublisher
+internal class RabbitMqPublisher(IConnection connection, IOptions<RabbitMqSettings> options, ILogger<RabbitMqPublisher> logger) : IBusPublisher
 {
-    private readonly IConnection _connection;
-    private readonly RabbitMqSettings _settings;
-    private readonly ILogger _logger;
-
-    public RabbitMqPublisher(IConnection connection, IOptions<RabbitMqSettings> options, ILogger<RabbitMqPublisher> logger)
-    {
-        _connection = connection;
-        _settings = options.Value;
-        _logger = logger;
-    }
+    private readonly IConnection _connection = connection;
+    private readonly RabbitMqSettings _settings = options.Value;
+    private readonly ILogger _logger = logger;
 
     public Task Publish<T>(T message) where T : class, IBusMessage
     {
