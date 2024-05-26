@@ -68,7 +68,10 @@ app.UseMessageSubscriber()
        // Notify clients
        await hubContext.Clients.All.SendAsync(
            "ReceiveOrder",
-           new Order(message.Id, message.OrderItems.Select(i => new NCafe.Shared.Hubs.OrderItem(i.Name, i.Quantity)).ToArray(), message.CustomerName));
+           new Order(message.Id,
+               message.OrderItems.Select(i => new NCafe.Shared.Hubs.OrderItem(i.Name, i.Quantity)).ToArray(),
+               message.CustomerName,
+               DateTimeOffset.Now));
    });
 
 app.MapDefaultEndpoints();

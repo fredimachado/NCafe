@@ -15,14 +15,14 @@
 {
     <Spin />
 }
-else if (!orders.Any(o => !o.IsCompleted))
+else if (!orders.Any())
 {
     <Result Title="No new orders for now." />
 }
 else
 {
     <Card Title="New Orders">
-    @foreach (var order in orders.Where(o => !o.IsCompleted))
+    @foreach (var order in orders.OrderBy(o => o.OrderPlacedAt))
     {
         <CardGrid Style="width:25%">
             <h5>@order.CustomerName</h5>
@@ -58,17 +58,17 @@ else
         var url = $"{Configuration["BaristaBaseAddress"]}/orders/prepared";
         try
         {
+            var order = orders.Single(o => o.Id == orderId);
             var response = await Http.PostAsJsonAsync(url, new { OrderId = orderId });
             response.EnsureSuccessStatusCode();
 
             _ = NotificationService.Open(new NotificationConfig
                 {
-                    Message = "Order Completed",
+                    Message = $"{order.CustomerName}'s order Completed",
                     Description = $"Order completed successfully.",
                     NotificationType = NotificationType.Success
                 });
 
-            var order = orders.FirstOrDefault(o => o.Id == orderId);
             orders.Remove(order);
 
             StateHasChanged();
@@ -97,7 +97,7 @@ else
                 order.Id,
                 order.Customer,
                 order.OrderItems.Select(i => new BaristaOrderItem(i.Name, i.Quantity)).ToArray(),
-                false));
+                order.OrderPlacedAt));
             StateHasChanged();
         });
 
