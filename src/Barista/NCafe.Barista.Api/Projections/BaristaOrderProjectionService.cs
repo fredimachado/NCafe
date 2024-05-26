@@ -16,16 +16,21 @@ public class BaristaOrderProjectionService : BackgroundService
         {
             Id = @event.Id,
             CustomerName = @event.Customer,
+            OrderPlacedAt = @event.OrderPlacedAt,
             Items = @event.OrderItems.Select(item => new BaristaOrderItem
             {
                 Name = item.Name,
-                Quantity = item.Quantity
+                Quantity = item.Quantity,
             }).ToArray()
         });
 
         projectionService.OnUpdate<OrderPrepared>(
             order => order.Id,
-            (@event, order) => order.IsCompleted = true);
+            (@event, order) =>
+            {
+                order.IsCompleted = true;
+                order.OrderPreparedAt = @event.OrderPreparedAt;
+            });
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)

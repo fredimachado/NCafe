@@ -10,6 +10,7 @@ public sealed record OrderPlaced : Event
         Id = id;
     }
 
+    public DateTimeOffset OrderPlacedAt { get; init; }
     public OrderItem[] OrderItems { get; init; }
     public string Customer { get; init; }
 }

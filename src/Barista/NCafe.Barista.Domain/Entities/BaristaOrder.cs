@@ -19,13 +19,16 @@ public sealed class BaristaOrder : AggregateRoot
         RaiseEvent(new OrderPlaced(id)
         {
             OrderItems = orderItems,
-            Customer = customer
+            Customer = customer,
+            OrderPlacedAt = DateTimeOffset.UtcNow,
         });
     }
 
     public IReadOnlyCollection<ValueObjects.OrderItem> Items { get; private set; }
     public string Customer { get; private set; }
     public bool IsCompleted { get; private set; }
+    public DateTimeOffset? OrderPlacedAt { get; private set; }
+    public DateTimeOffset? OrderPreparedAt { get; private set; }
 
     public void CompletePreparation()
     {
@@ -42,11 +45,13 @@ public sealed class BaristaOrder : AggregateRoot
         Id = @event.Id;
         Items = @event.OrderItems;
         Customer = @event.Customer;
+        OrderPlacedAt = @event.OrderPlacedAt;
         IsCompleted = false;
     }
 
     private void Apply(OrderPrepared @event)
     {
         IsCompleted = true;
+        OrderPreparedAt = @event.OrderPreparedAt;
     }
 }

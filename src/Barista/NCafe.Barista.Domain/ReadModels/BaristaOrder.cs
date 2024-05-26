@@ -6,6 +6,8 @@ public sealed class BaristaOrder : ReadModel
 {
     public string CustomerName { get; set; }
     public BaristaOrderItem[] Items { get; set; }
+    public DateTimeOffset OrderPlacedAt { get; set; }
+    public DateTimeOffset? OrderPreparedAt { get; set; }
     public bool IsCompleted { get; set; }
 }
 

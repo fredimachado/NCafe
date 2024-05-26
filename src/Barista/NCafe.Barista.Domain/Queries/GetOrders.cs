@@ -13,8 +13,10 @@ internal sealed class GetOrdersHandler(IReadModelRepository<BaristaOrder> orderR
 
     public Task<BaristaOrder[]> Handle(GetOrders query, CancellationToken cancellationToken)
     {
-        var products = _orderRepository.GetAll()
+        var orders = _orderRepository.GetAll()
+            .Where(order => !order.IsCompleted)
+            .OrderBy(order => order.OrderPlacedAt)
             .ToArray();
-        return Task.FromResult(products);
+        return Task.FromResult(orders);
     }
 }
