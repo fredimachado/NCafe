@@ -239,6 +239,15 @@ Run the following command to build and start all microservices containers:
 
     docker compose -f services-compose.yaml up -d
 
+### Starting the Web UI in Visual Studio
+
+Sometimes, when working on the Web UI project, it might be worth to run the infrastructure and other
+services using docker compose and then run the Web UI project in Visual Studio. This way can be easier to debug.
+
+Run this command to start all services except web-ui:
+
+    docker compose -f services-compose.yaml up -d --scale web-ui=0
+
 ### Swagger
 
 - **Admin**: [http://localhost:5010/swagger/index.html](http://localhost:5010/swagger/index.html)
@@ -259,9 +268,10 @@ Or, you can use Swagger for example:
 
 1. Create a product via the POST `/products` endpoint in **Admin**
 2. Get a product Id using the GET `/products` endpoint
-3. Place an order via the POST `/orders` endpoint in **Cashier**
-4. Get the order Id using the GET `/orders` endpoint in **Barista**
-5. Complete the order via the POST `/orders/{id}/prepared` endpoint in **Barista**
+3. Create an order via the POST `/orders` endpoint in **Cashier**, it will return the order Id
+4. Add item(s) to the order via the POST `/orders/add-item` in **Cashier**
+5. Place the order via the POST `/orders/place` endpoint in **Cashier**
+6. Complete the order via the POST `/orders/prepared` endpoint in **Barista**
 
 ### EventStore
 
