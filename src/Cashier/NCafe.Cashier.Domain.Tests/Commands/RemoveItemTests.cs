@@ -24,8 +24,7 @@ public class RemoveItemTests
         // Arrange
         var orderId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var quantity = 1;
-        var command = new RemoveItemFromOrder(orderId, productId, quantity);
+        var command = new RemoveItemFromOrder(orderId, productId, Quantity: 1);
         var order = new Order(orderId, "cashier-1", DateTimeOffset.UtcNow);
         order.AddItem(new OrderItem(productId, "product1", 1, 5));
 
@@ -48,8 +47,7 @@ public class RemoveItemTests
         // Arrange
         var orderId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var quantity = 1;
-        var command = new RemoveItemFromOrder(orderId, productId, quantity);
+        var command = new RemoveItemFromOrder(orderId, productId, Quantity: 1);
 
         // Act
         var exception = await Record.ExceptionAsync(() => _sut.Handle(command, CancellationToken.None));
@@ -59,13 +57,33 @@ public class RemoveItemTests
     }
 
     [Fact]
+    public async Task GivenNotNewOrder_ShouldThrow()
+    {
+        // Arrange
+        var orderId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var command = new RemoveItemFromOrder(orderId, productId, Quantity: 1);
+        var order = new Order(orderId, "cashier-1", DateTimeOffset.UtcNow);
+        order.AddItem(new OrderItem(productId, "product1", quantity: 1, 5));
+        order.PlaceOrder(new Customer("John Doe"), DateTimeOffset.UtcNow);
+
+        A.CallTo(() => _repository.GetById<Order>(orderId))
+            .Returns(Task.FromResult(order));
+
+        // Act
+        var exception = await Record.ExceptionAsync(() => _sut.Handle(command, CancellationToken.None));
+
+        // Assert
+        exception.ShouldBeOfType<CannotRemoveItemFromOrderException>();
+    }
+
+    [Fact]
     public async Task GivenRemovingMoreItemsThanOrdered_ShouldThrow()
     {
         // Arrange
         var orderId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var quantity = 2;
-        var command = new RemoveItemFromOrder(orderId, productId, quantity);
+        var command = new RemoveItemFromOrder(orderId, productId, Quantity: 2);
         var order = new Order(orderId, "cashier-1", DateTimeOffset.UtcNow);
         order.AddItem(new OrderItem(productId, "product1", 1, 5));
 
@@ -85,8 +103,7 @@ public class RemoveItemTests
         // Arrange
         var orderId = Guid.NewGuid();
         var productId = Guid.NewGuid();
-        var quantity = 1;
-        var command = new RemoveItemFromOrder(orderId, productId, quantity);
+        var command = new RemoveItemFromOrder(orderId, productId, Quantity: 1);
         var order = new Order(orderId, "cashier-1", DateTimeOffset.UtcNow);
         order.AddItem(new OrderItem(productId, "product1", 2, 5));
 
