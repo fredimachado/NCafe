@@ -71,7 +71,7 @@ app.UseMessageSubscriber()
            new Order(message.Id,
                message.OrderItems.Select(i => new NCafe.Shared.Hubs.OrderItem(i.Name, i.Quantity)).ToArray(),
                message.CustomerName,
-               DateTimeOffset.Now));
+               DateTimeOffset.UtcNow));
    });
 
 app.MapDefaultEndpoints();
