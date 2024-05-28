@@ -58,16 +58,16 @@ jobs:
       run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
 
     - name: Test
+      run: dotnet test ../../../NCafe.sln --results-directory ./testresults --logger "trx;LogFileName=test_results.xml" /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=./testresults/coverage/
+    - name: Test
       id: test
-      # Note that the space after the last double dash (--) is intentional
       run: >
         dotnet test ../../../NCafe.sln
         --logger console --logger trx --logger html
         --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
         --results-directory ${{github.workspace}}/TestResults --blame
-        '/p:CollectCoverage=true;CoverletOutputFormat="json,lcov,cobertura";MergeWith=${{github.workspace}}/TestResults/coverage.json;CoverletOutput=${{github.workspace}}/TestResults/coverage' \
-        -- 
-        RunConfiguration.CollectSourceInformation=true
+        '/p:CollectCoverage=true;CoverletOutputFormat="json,lcov,cobertura";MergeWith=${{github.workspace}}/TestResults/coverage.json;CoverletOutput=${{github.workspace}}/TestResults/coverage'
+        -- RunConfiguration.CollectSourceInformation=true
     
     - name: Upload Test Results
       if: (success() || steps.test.conclusion == 'failure')
