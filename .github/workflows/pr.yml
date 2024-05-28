@@ -1,0 +1,49 @@
+name: PRs
+
+on:
+  pull_request:
+    branches: [ "main" ]
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.gitignore"
+      - "**/*.gitattributes"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        global-json-file: "./global.json"
+    
+    - name: Install Aspire workload
+      run: dotnet workload install aspire
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release --no-restore /p:CopyLocalLockFileAssemblies=true
+
+    - name: Test
+      id: test
+      # Note that the space after the last double dash (--) is intentional
+      run: >
+        dotnet test --no-restore
+        --logger console --logger trx --logger html
+        --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true"
+        --results-directory ${{github.workspace}}/TestResults --blame
+        -- 
+        RunConfiguration.CollectSourceInformation=true
+    
+    - name: Upload Test Results
+      if: (success() || steps.test.conclusion == 'failure')
+      uses: actions/upload-artifact@v4
+      with:
+        name: TestResults
+        path: ${{github.workspace}}/TestResults
