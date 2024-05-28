@@ -59,7 +59,6 @@ jobs:
         --results-directory ${{github.workspace}}/TestResults --blame \
         --logger console --logger trx --logger html \
         --logger "GitHubActions;summary.includePassedTests=true;summary.includeSkippedTests=true" \
-        '/p:CollectCoverage=true;CoverletOutputFormat="json,lcov,cobertura";MergeWith=${{github.workspace}}/TestResults/coverage.json;CoverletOutput=${{github.workspace}}/TestResults/coverage' \
         -- RunConfiguration.CollectSourceInformation=true
     
     - name: Upload Test Results
