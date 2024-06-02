@@ -59,6 +59,12 @@ app.MapPost("/products", async (IMediator mediator, CreateProduct command) =>
 })
 .WithName("CreateProduct");
 
+app.MapDelete("/products/{id}", async (IMediator mediator, Guid id) =>
+{
+    await mediator.Send(new DeleteProduct(id));
+    return Results.NoContent();
+}).WithName("DeleteProduct");
+
 app.MapGet("/healthz", () => "OK");
 
 app.Run();
