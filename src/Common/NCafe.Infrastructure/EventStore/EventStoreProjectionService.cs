@@ -1,4 +1,4 @@
-﻿using EventStore.Client;
+using EventStore.Client;
 using Microsoft.Extensions.Logging;
 using NCafe.Core.Domain;
 using NCafe.Core.Projections;
@@ -51,7 +51,8 @@ internal sealed class EventStoreProjectionService<T>(
 
     private void SubscriptionDropped(StreamSubscription subscription, SubscriptionDroppedReason reason, Exception exception)
     {
-        _logger.LogError("Subscription Dropped.");
+        _logger.LogError("Subscription Dropped for '{EventStoreStream}' with reason '{SubscriptionDroppedReason}'", subscription.SubscriptionId, reason);
+        _logger.LogError(exception, "{Exception}", exception.Message);
     }
 
     public void OnCreate<TEvent>(Func<TEvent, T> handler) where TEvent : Event

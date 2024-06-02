@@ -32,11 +32,22 @@ public sealed class Product : AggregateRoot
 
     public string Name { get; private set; }
     public decimal Price { get; private set; }
+    public bool IsDeleted { get; private set; }
 
     private void Apply(ProductCreated @event)
     {
         Id = @event.Id;
         Name = @event.Name;
         Price = @event.Price;
+    }
+
+    public void Delete()
+    {
+        RaiseEvent(new ProductDeleted(Id));
+    }
+
+    private void Apply(ProductDeleted _)
+    {
+        IsDeleted = true;
     }
 }

@@ -1,8 +1,10 @@
-﻿@page "/admin"
+@page "/admin"
 @using NCafe.Web.Models
 @inject HttpClient Http
 @inject IConfiguration Configuration
 @inject NavigationManager NavigationManager
+@inject ModalService _modalService
+@inject IMessageService _message
 
 <PageTitle>Admin - NCafe</PageTitle>
 
@@ -22,37 +24,73 @@
     to help mitigate this in a later moment.
 </p>
 
-@if (products == null)
+@if (_products == null)
 {
     <Spin />
-}
-else if (!products.Any())
-{
-    <Result Title="No products to show." />
-}
-else
-{
-    <Table TItem="Product"
-           DataSource="@products"
-           Total="@(products.Length)"
-           HidePagination="true">
-        <Column @bind-Field="@context.Id" />
-        <Column @bind-Field="@context.Name" Sortable />
-        <Column @bind-Field="@context.Price" Format="C2" Sortable />
-    </Table>
+    return;
 }
 
+@if (!_products.Any())
+{
+    <Result Title="No products to show." />
+    return;
+}
+
+
+    <Table TItem="Product"
+           DataSource="@_products"
+           Total="@(_products.Length)"
+           HidePagination="true">
+        <Column @bind-Field="@context.Name" Sortable />
+        <Column @bind-Field="@context.Price" Format="C2" Sortable />
+        <ActionColumn Title="Action">
+            <Space>
+              <SpaceItem><Button Danger OnClick="@(() => ShowDeleteConfirm(context.Id))">Delete</Button></SpaceItem>
+            </Space>
+          </ActionColumn>
+    </Table>
+
+
 @code {
-    private Product[] products;
+    private Product[] _products;
 
     protected override async Task OnInitializedAsync()
     {
         var url = $"{Configuration["AdminBaseAddress"]}/products";
-        products = await Http.GetFromJsonAsync<Product[]>(url);
+        _products = await Http.GetFromJsonAsync<Product[]>(url);
     }
 
     void CreateProduct()
     {
         NavigationManager.NavigateTo("admin/create-product");
+    }
+
+
+    private async Task ShowDeleteConfirm(Guid id)
+    {
+        var productName = _products.Single(p => p.Id == id).Name;
+        var confirmed = await _modalService.ConfirmAsync(new ConfirmOptions
+        {
+            Title = "Delete item",
+            Content = $"Are you sure you want to delete {productName}?",
+            OkType = "danger",
+            Icon = @<Icon Type="exclamation-circle" Theme="outline"></Icon>
+        });
+
+        if (confirmed)
+        {
+            await DeleteItem(id);
+        }
+    }
+
+    private async Task DeleteItem(Guid id)
+    {
+        var url = $"{Configuration["AdminBaseAddress"]}/products/{id}";
+        var response = await Http.DeleteAsync(url);
+        response.EnsureSuccessStatusCode();
+
+        var product = _products.Single(p => p.Id == id);
+        await _message.Info($"{product.Name} has been deleted.");
+        _products = _products.Where(p => p.Id != id).ToArray();
     }
 }

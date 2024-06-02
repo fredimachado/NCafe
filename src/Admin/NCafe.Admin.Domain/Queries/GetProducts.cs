@@ -13,6 +13,7 @@ internal sealed class GetProductsHandler(IReadModelRepository<Product> productRe
     public Task<Product[]> Handle(GetProducts query, CancellationToken cancellation)
     {
         var products = _productRepository.GetAll()
+            .Where(p => !p.IsDeleted)
             .ToArray();
         return Task.FromResult(products);
     }

@@ -18,6 +18,12 @@ public class ProductProjectionService : BackgroundService
             Name = @event.Name,
             Price = @event.Price
         });
+
+        projectionService.OnUpdate<ProductDeleted>(
+            product => product.Id,
+            (@event, product) => product.IsDeleted = true);
+
+
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
