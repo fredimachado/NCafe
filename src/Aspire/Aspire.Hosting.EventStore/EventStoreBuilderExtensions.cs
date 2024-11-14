@@ -1,5 +1,8 @@
 ﻿using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.EventStore;
+using HealthChecks.EventStore.gRPC;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Aspire.Hosting;
 
@@ -17,15 +20,35 @@ public static class EventStoreBuilderExtensions
     public static IResourceBuilder<EventStoreResource> AddEventStore(
         this IDistributedApplicationBuilder builder, string name, int? httpPort = null, int? tcpPort = null)
     {
-        var eventStoreContainer = new EventStoreResource(name);
+        var eventStoreResource = new EventStoreResource(name);
+
+        string? connectionString = null;
+
+        builder.Eventing.Subscribe<ConnectionStringAvailableEvent>(eventStoreResource, async (@event, cancellationToken) =>
+        {
+            connectionString = await eventStoreResource.ConnectionStringExpression
+                .GetValueAsync(cancellationToken)
+                .ConfigureAwait(false)
+                ?? throw new DistributedApplicationException($"ConnectionStringAvailableEvent was published for the '{eventStoreResource.Name}' resource but the connection string was null.");
+        });
+
+        var healthCheckKey = $"{name}_check";
+        builder.Services.AddHealthChecks()
+            .Add(new HealthCheckRegistration(
+                healthCheckKey,
+                sp => new EventStoreHealthCheck(connectionString!),
+                failureStatus: default,
+                tags: default,
+                timeout: default));
 
         return builder
-            .AddResource(eventStoreContainer)
+            .AddResource(eventStoreResource)
             .WithEndpoint(port: tcpPort, targetPort: EventStoreResource.DefaultTcpPort, name: EventStoreResource.TcpEndpointName)
             .WithHttpEndpoint(port: httpPort, targetPort: EventStoreResource.DefaultHttpPort, name: EventStoreResource.HttpEndpointName)
             .WithImage(EventStoreContainerImageTags.Image, EventStoreContainerImageTags.Tag)
             .WithImageRegistry(EventStoreContainerImageTags.Registry)
-            .WithEnvironment(ConfigureEventStoreContainer);
+            .WithEnvironment(ConfigureEventStoreContainer)
+            .WithHealthCheck(healthCheckKey);
     }
 
     /// <summary>

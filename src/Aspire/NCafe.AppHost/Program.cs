@@ -1,14 +1,10 @@
-using Aspirant.Hosting;
-
 var builder = DistributedApplication.CreateBuilder(args);
 
 var eventStore = builder.AddEventStore("eventstore")
-    .WithHealthCheck()
     .WithDataVolume();
 
 var rabbitMq = builder.AddRabbitMQ("rabbitmq")
     .WithDataVolume()
-    .WithHealthCheck()
     .WithManagementPlugin();
 
 builder.AddProject<Projects.NCafe_Admin_Api>("admin-api")
