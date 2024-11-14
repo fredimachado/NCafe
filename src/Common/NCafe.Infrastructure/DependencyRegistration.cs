@@ -93,7 +93,7 @@ public static class DependencyRegistration
 
     private static void InitializeRabbitMqExchange(IServiceCollection services)
     {
-        var scope = services.BuildServiceProvider().CreateScope();
+        using var scope = services.BuildServiceProvider().CreateScope();
         var connection = scope.ServiceProvider.GetRequiredService<IConnection>();
         var settings = scope.ServiceProvider.GetRequiredService<IOptions<RabbitMqSettings>>();
 
