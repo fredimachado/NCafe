@@ -1,9 +1,6 @@
 ﻿using MediatR;
 using NCafe.Cashier.Domain.Entities;
 using NCafe.Cashier.Domain.Exceptions;
-using NCafe.Cashier.Domain.ReadModels;
-using NCafe.Cashier.Domain.ValueObjects;
-using NCafe.Core.ReadModels;
 using NCafe.Core.Repositories;
 
 namespace NCafe.Cashier.Domain.Commands;

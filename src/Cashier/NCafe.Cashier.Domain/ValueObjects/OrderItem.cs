@@ -1,5 +1,4 @@
 ﻿using Ardalis.GuardClauses;
-using NCafe.Cashier.Domain.Exceptions;
 
 namespace NCafe.Cashier.Domain.ValueObjects;
 

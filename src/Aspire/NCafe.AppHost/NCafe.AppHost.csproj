@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.EventStore" />
     <PackageReference Include="Aspire.Hosting.RabbitMQ" />
   </ItemGroup>
 
@@ -20,7 +21,6 @@
     <ProjectReference Include="..\..\Barista\NCafe.Barista.Api\NCafe.Barista.Api.csproj" />
     <ProjectReference Include="..\..\Cashier\NCafe.Cashier.Api\NCafe.Cashier.Api.csproj" />
     <ProjectReference Include="..\..\UI\NCafe.Web\NCafe.Web.csproj" />
-    <ProjectReference Include="..\Aspire.Hosting.EventStore\Aspire.Hosting.EventStore.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
 
 </Project>

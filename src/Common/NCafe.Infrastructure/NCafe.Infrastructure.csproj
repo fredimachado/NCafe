@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.RabbitMQ.Client" />
-    <PackageReference Include="EventStore.Client.Grpc.Streams" />
+    <PackageReference Include="CommunityToolkit.Aspire.EventStore" />
     <PackageReference Include="MediatR" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Newtonsoft.Json" />

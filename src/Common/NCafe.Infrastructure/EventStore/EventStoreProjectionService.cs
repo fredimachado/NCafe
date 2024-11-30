@@ -26,8 +26,10 @@ internal sealed class EventStoreProjectionService<T>(
 
         _logger.LogInformation("Subscribing to EventStore Stream '{EventStoreStream}'.", streamName);
 
+        // TODO: Add support for checkpointing or use persistent subscription.
         await _eventStoreClient.SubscribeToStreamAsync(
             streamName,
+            FromStream.Start,
             EventAppeared,
             resolveLinkTos: true,
             SubscriptionDropped,

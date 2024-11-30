@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>524b37d5-722b-4196-bcb9-5f33ceb92960</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

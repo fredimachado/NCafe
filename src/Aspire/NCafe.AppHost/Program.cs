@@ -1,7 +1,8 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var eventStore = builder.AddEventStore("eventstore")
-    .WithDataVolume();
+    .WithDataVolume()
+    .WithEnvironment("EVENTSTORE_ENABLE_ATOM_PUB_OVER_HTTP", "true"); // https://github.com/EventStore/EventStore/issues/2640
 
 var rabbitMq = builder.AddRabbitMQ("rabbitmq")
     .WithDataVolume()

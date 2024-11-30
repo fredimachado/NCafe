@@ -1,7 +1,7 @@
-﻿using EventStore.Client;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using NCafe.Core.MessageBus;
 using NCafe.Core.Projections;
@@ -28,18 +28,12 @@ public static class DependencyRegistration
         return services;
     }
 
-    public static IServiceCollection AddEventStoreRepository(this IServiceCollection services, IConfiguration configuration)
+    public static IHostApplicationBuilder AddEventStore(this IHostApplicationBuilder builder, string connectionName)
     {
-        services.AddSingleton(e =>
-        {
-            var settings = EventStoreClientSettings.Create(configuration.GetConnectionString("EventStore"));
-            var client = new EventStoreClient(settings);
-            return client;
-        });
+        builder.AddEventStoreClient(connectionName);
+        builder.Services.AddTransient<IRepository, EventStoreRepository>();
 
-        services.AddTransient<IRepository, EventStoreRepository>();
-
-        return services;
+        return builder;
     }
 
     public static IServiceCollection AddEventStoreProjectionService<TModel>(this IServiceCollection services, IConfiguration configuration)
