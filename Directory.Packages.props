@@ -7,7 +7,7 @@
     <PackageVersion Include="Aspirant.Hosting" Version="0.0.3" />
     <PackageVersion Include="Aspire.Hosting" Version="9.0.0" />
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.0.0" />
-    <PackageVersion Include="CommunityToolkit.Aspire.EventStore" Version="9.0.1-beta.92" />
+    <PackageVersion Include="CommunityToolkit.Aspire.EventStore" Version="9.0.1-beta.102" />
     <PackageVersion Include="CommunityToolkit.Aspire.Hosting.EventStore" Version="9.0.1-beta.102" />
     <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="9.0.0" />
     <PackageVersion Include="Aspire.RabbitMQ.Client" Version="9.0.0" />
